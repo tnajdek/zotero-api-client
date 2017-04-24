@@ -86,9 +86,9 @@ const functions = {
 		})
 	},
 
-	search: function(search) {
+	searches: function(searches) {
 		return efr.bind(this)({
-			search: search || null
+			searches: searches || null
 		})
 	},
 
@@ -163,17 +163,15 @@ const functions = {
 			method: 'delete'
 		};
 
-
 		if('resource' in requestConfig && 'items' in requestConfig.resource) {
 			relevantSearchKey = 'itemKey';
 		} else if('resource' in requestConfig && 'collections' in requestConfig.resource) {
 			relevantSearchKey = 'collectionKey';
 		} else if('resource' in requestConfig && 'tags' in requestConfig.resource) {
 			relevantSearchKey = 'tag';
-		} else if('resource' in requestConfig && 'search' in requestConfig.resource) {
+		} else if('resource' in requestConfig && 'searches' in requestConfig.resource) {
 			relevantSearchKey = 'searchKey';
 		} else {
-			console.log(requestConfig);
 			throw new Error('Called delete() without first specifing what to delete.')
 		}
 
@@ -188,7 +186,6 @@ const functions = {
 
 		return request(requestConfig);
 	},
-
 
 	_getConfig: function() {
 		return this;

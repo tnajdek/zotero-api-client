@@ -6,6 +6,10 @@ class ApiResponse {
 		this.options = options;
 		this.response = response;
 	}
+
+	getData() {
+		return this.raw;
+	}
 }
 
 class SingleReadResponse extends ApiResponse {
@@ -64,6 +68,7 @@ class MultiWriteResponse extends ApiResponse {
 class DeleteResponse extends ApiResponse {}
 
 module.exports = {
+	ApiResponse,
 	SingleReadResponse,
 	MultiReadResponse,
 	SingleWriteResponse,

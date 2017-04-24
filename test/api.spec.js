@@ -157,18 +157,18 @@ describe('ZoteroJS', () => {
 			assert.isNull(lrc.resource.tags);
 		});
 
-		it('handles api.library.search.get', () => {
-			api(KEY).library(LIBRARY_KEY).search().get();
+		it('handles api.library.searches.get', () => {
+			api(KEY).library(LIBRARY_KEY).searches().get();
 			assert.equal(lrc.method, 'get');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
-			assert.isNull(lrc.resource.search);
+			assert.isNull(lrc.resource.searches);
 		});
 
-		it('handles api.library.search(S).get', () => {
-			api(KEY).library(LIBRARY_KEY).search(SEARCH_KEY).get();
+		it('handles api.library.searches(S).get', () => {
+			api(KEY).library(LIBRARY_KEY).searches(SEARCH_KEY).get();
 			assert.equal(lrc.method, 'get');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
-			assert.equal(lrc.resource.search, SEARCH_KEY);
+			assert.equal(lrc.resource.searches, SEARCH_KEY);
 		});
 
 		it('handles api.library.tags().get', () => {
@@ -265,21 +265,21 @@ describe('ZoteroJS', () => {
 			assert.deepEqual(lrc.collectionKey.sort(), keysToDelete.sort())
 		});
 
-		it('handles api.library.search.post([S1b, S2b])', () => {
+		it('handles api.library.searches.post([S1b, S2b])', () => {
 			let body = [{ key: 'SEARCH11' }, { key: 'SEARCH22' }];
-			api(KEY).library(LIBRARY_KEY).search().post(body);
+			api(KEY).library(LIBRARY_KEY).searches().post(body);
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
-			assert.isNull(lrc.resource.search);
+			assert.isNull(lrc.resource.searches);
 			assert.equal(lrc.body, JSON.stringify(body));
 		});
 
-		it('handles api.library.search().delete([S1, S2])', () => {
+		it('handles api.library.searches().delete([S1, S2])', () => {
 			let keysToDelete = ['SEARCH11', 'SEARCH22'];
-			api(KEY).library(LIBRARY_KEY).search().delete(keysToDelete);
+			api(KEY).library(LIBRARY_KEY).searches().delete(keysToDelete);
 			assert.equal(lrc.method, 'delete');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
-			assert.isNull(lrc.resource.search);
+			assert.isNull(lrc.resource.searches);
 			assert.deepEqual(lrc.searchKey.sort(), keysToDelete.sort())
 		});
 

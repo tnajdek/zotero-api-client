@@ -3,6 +3,7 @@
 require('isomorphic-fetch');
 
 const {
+	ApiResponse,
 	SingleReadResponse,
 	MultiReadResponse,
 	SingleWriteResponse,
@@ -61,8 +62,14 @@ const nonKeyResource = [
 	'itemTypeCreatorTypes'
 ];
 
+const dataResource = [
+	'collections',
+	'items',
+	'searches'
+];
+
 const keyResource = [
-	'library', 'collections', 'items', 'searches', 'keys', 'users', 'tags', 'template'
+	'library', 'collections', 'items', 'searches', 'tags', 'template'
 ];
 
 const defaults = {
@@ -131,6 +138,7 @@ module.exports = async options => {
 		}
 	}
 
+
 	const path = makeUrlPath(options.resource);
 	const query = makeUrlQuery(options);
 	const url = `https://${options.apiAuthorityPart}/${path}${query}`;
@@ -157,10 +165,14 @@ module.exports = async options => {
 	switch(options.method.toUpperCase()) {
 		case 'GET':
 		default:
-			if(Array.isArray(content)) {
-				return new MultiReadResponse(content, options, response);
+			if(dataResource.some(dataResource => dataResource in options.resource)) {
+				if(Array.isArray(content)) {
+					return new MultiReadResponse(content, options, response);
+				} else {
+					return new SingleReadResponse(content, options, response);
+				}
 			} else {
-				return new SingleReadResponse(content, options, response);
+				return new ApiResponse(content, options, response);
 			}
 		case 'POST':
 		case 'PUT':

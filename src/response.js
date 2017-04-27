@@ -67,11 +67,20 @@ class MultiWriteResponse extends ApiResponse {
 
 class DeleteResponse extends ApiResponse {}
 
+class ErrorResponse extends Error {
+	constructor(message, response) {
+		super(message);
+		this.response = response;
+		this.message = message;
+	}
+}
+
 module.exports = {
 	ApiResponse,
 	SingleReadResponse,
 	MultiReadResponse,
 	SingleWriteResponse,
 	MultiWriteResponse,
-	DeleteResponse
+	DeleteResponse,
+	ErrorResponse
 };

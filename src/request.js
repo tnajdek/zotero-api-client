@@ -8,7 +8,8 @@ const {
 	MultiReadResponse,
 	SingleWriteResponse,
 	MultiWriteResponse,
-	DeleteResponse
+	DeleteResponse,
+	ErrorResponse
 } = require('./response');
 
 const headerNames = {
@@ -157,6 +158,10 @@ module.exports = async options => {
 
 	if(options.format != 'json') {
 		return response;
+	}
+
+	if(response.status < 200 || response.status >= 400) {
+		throw new ErrorResponse(`${response.status}: ${response.statusText}`, response);
 	}
 
 	let content = await response.json();

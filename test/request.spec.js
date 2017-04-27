@@ -8,7 +8,8 @@ const request = require('../src/request');
 const {
 	ApiResponse,
 	SingleReadResponse,
-	MultiReadResponse
+	MultiReadResponse,
+	ErrorResponse
 } = require('../src/response.js');
 const singleGetResponseFixture = require('./fixtures/single-object-get-response.json');
 const multiGetResponseFixture = require('./fixtures/multi-object-get-response.json');
@@ -17,7 +18,15 @@ const searchesResponseFixture = require('./fixtures/searches-data-response.json'
 const itemTypesDataFixture = require('./fixtures/item-types-data.json');
 
 describe('ZoteroJS request', () => {
-	describe('Execute meta read requests', () => {
+	beforeEach(() => {
+			fetchMock.catch(request => {
+				throw(new Error(`A request to ${request} was not expected`));
+			});
+		});
+
+	afterEach(fetchMock.restore);
+
+	describe('Meta read requests', () => {
 		it('should get item types', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/itemTypes',
@@ -36,15 +45,7 @@ describe('ZoteroJS request', () => {
 		});
 	});
 
-	describe('Execute item read requests', () => {
-		beforeEach(() => {
-			fetchMock.catch(request => {
-				throw(new Error(`A request to ${request} was not expected`));
-			});
-		});
-
-		afterEach(fetchMock.restore);
-
+	describe('Item read requests', () => {
 		it('should get a single item', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/items/X42A7DEE',
@@ -254,7 +255,7 @@ describe('ZoteroJS request', () => {
 		});
 	});
 
-	describe('Execute other read requests', () => {
+	describe('Misc read requests', () => {
 		it('should get a single search', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/searches',
@@ -306,7 +307,9 @@ describe('ZoteroJS request', () => {
 				assert.equal(response.getData().length, 25);
 			});
 		});
+	});
 
+	describe('Requests with extra params', () => {
 		it('should include headers in the request', () => {
 			fetchMock.mock(
 				(url, opts) => {
@@ -317,20 +320,76 @@ describe('ZoteroJS request', () => {
 					assert.equal(opts.headers['If-Unmodified-Since-Version'], 1);
 					assert.equal(opts.headers['Content-Type'], 'c');
 					return true;
-				},
-				{}
+				}, {}
 			);
 
 			return request({
 				resource: {
 					library: 'u475425',
-					tags: null
+					items: null
 				},
 				'authorization': 'a',
 				'zoteroWriteToken': 'b',
 				'ifModifiedSinceVersion': 1,
 				'ifUnmodifiedSinceVersion': 1 ,
 				'contentType': 'c'
+			});
+		});
+
+		it('should include query params in the request', () => {
+			fetchMock.mock(
+				url => { 
+					return [
+						'format', 'include', 'content', 'style', 'itemKey',
+						'collectionKey', 'searchKey', 'itemType', 'qmode',
+						'since', 'tag', 'sort', 'direction', 'limit', 'start'
+					].every(qp => url.includes(`${qp}=`));
+				}, {}
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: null
+				},
+				format: 'foo',
+				include: 'foo',
+				content: 'foo',
+				style: 'foo',
+				itemKey: 'foo',
+				collectionKey: 'foo',
+				searchKey: 'foo',
+				itemType: 'foo',
+				qmode: 'foo',
+				since: 'foo',
+				tag: 'foo',
+				sort: 'foo',
+				direction: 'foo',
+				limit: 'foo',
+				start: 'foo'
+			});
+		});
+	});
+
+	describe('Failing and invalid requests', () => {
+		it('should throw ErrorResponse for non ok results', () => {
+			fetchMock.mock('begin:https://api.zotero.org/', {
+				status: 404,
+				body: 'These aren\'t the droids You are looking for'
+			});
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: null
+				}
+			}).then(() => {
+				throw new Error('fail');
+			}).catch(async response => {
+				assert.instanceOf(response, ErrorResponse);
+				assert.isOk(response.message.includes('404'));
+				let error = await response.response.text();
+				assert.equal(error, 'These aren\'t the droids You are looking for');
 			});
 		});
 	});

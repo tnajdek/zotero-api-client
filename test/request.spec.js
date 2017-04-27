@@ -16,8 +16,27 @@ const tagsResponseFixture = require('./fixtures/tags-data-response.json');
 const searchesResponseFixture = require('./fixtures/searches-data-response.json');
 const itemTypesDataFixture = require('./fixtures/item-types-data.json');
 
-describe('ZoteroJS', () => {
-	describe('request()', () => {
+describe('ZoteroJS request', () => {
+	describe('Execute meta read requests', () => {
+		it('should get item types', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/itemTypes',
+				itemTypesDataFixture
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					itemTypes: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, ApiResponse);
+				assert.equal(response.getData().length, 2);
+			});
+		});
+	});
+
+	describe('Execute item read requests', () => {
 		beforeEach(() => {
 			fetchMock.catch(request => {
 				throw(new Error(`A request to ${request} was not expected`));
@@ -134,40 +153,6 @@ describe('ZoteroJS', () => {
 			});
 		});
 
-		it('should get a set of all tags in the library', () => {
-			fetchMock.mock(
-				'begin:https://api.zotero.org/users/475425/tags',
-				tagsResponseFixture
-			);
-
-			return request({
-				resource: {
-					library: 'u475425',
-					tags: null
-				}
-			}).then(response => {
-				assert.instanceOf(response, ApiResponse);
-				assert.equal(response.getData().length, 25);
-			});
-		});
-
-		it('should get a set of all tags in the library', () => {
-			fetchMock.mock(
-				'begin:https://api.zotero.org/users/475425/tags',
-				tagsResponseFixture
-			);
-
-			return request({
-				resource: {
-					library: 'u475425',
-					tags: null
-				}
-			}).then(response => {
-				assert.instanceOf(response, ApiResponse);
-				assert.equal(response.getData().length, 25);
-			});
-		});
-
 		it('should get a single tag by name', () => {
 			fetchMock.mock(
 				/https:\/\/api\.zotero\.org\/users\/475425\/tags\?.*?tag=Fiction.*?/,
@@ -180,23 +165,6 @@ describe('ZoteroJS', () => {
 					tags: null
 					},
 				tag: 'Fiction'
-			}).then(response => {
-				assert.instanceOf(response, ApiResponse);
-				assert.equal(response.getData().length, 1);
-			});
-		});
-
-		it('should get searches', () => {
-			fetchMock.mock(
-				'begin:https://api.zotero.org/users/475425/searches',
-				searchesResponseFixture
-			);
-
-			return request({
-				resource: {
-					library: 'u475425',
-					searches: null
-					}
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
 				assert.equal(response.getData().length, 1);
@@ -284,7 +252,9 @@ describe('ZoteroJS', () => {
 				assert.equal(response.getData().length, 1);
 			});
 		});
+	});
 
+	describe('Execute other read requests', () => {
 		it('should get a single search', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/searches',
@@ -303,22 +273,65 @@ describe('ZoteroJS', () => {
 			});
 		});
 
-		it('should get item types', () => {
+		it('should get searches', () => {
 			fetchMock.mock(
-				'begin:https://api.zotero.org/users/475425/itemTypes',
-				itemTypesDataFixture
+				'begin:https://api.zotero.org/users/475425/searches',
+				searchesResponseFixture
 			);
 
 			return request({
 				resource: {
 					library: 'u475425',
-					itemTypes: null
-				}
+					searches: null
+					}
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
-				assert.equal(response.getData().length, 2);
+				assert.equal(response.getData().length, 1);
 			});
 		});
 
+		it('should get a set of all tags in the library', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/tags',
+				tagsResponseFixture
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					tags: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, ApiResponse);
+				assert.equal(response.getData().length, 25);
+			});
+		});
+
+		it('should include headers in the request', () => {
+			fetchMock.mock(
+				(url, opts) => {
+					assert.property(opts, 'headers');
+					assert.equal(opts.headers['Authorization'], 'a');
+					assert.equal(opts.headers['Zotero-Write-Token'], 'b');
+					assert.equal(opts.headers['If-Modified-Since-Version'], 1);
+					assert.equal(opts.headers['If-Unmodified-Since-Version'], 1);
+					assert.equal(opts.headers['Content-Type'], 'c');
+					return true;
+				},
+				{}
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					tags: null
+				},
+				'authorization': 'a',
+				'zoteroWriteToken': 'b',
+				'ifModifiedSinceVersion': 1,
+				'ifUnmodifiedSinceVersion': 1 ,
+				'contentType': 'c'
+			});
+		});
 	});
 });

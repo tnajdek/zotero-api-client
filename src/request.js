@@ -11,7 +11,7 @@ const {
 	DeleteResponse
 } = require('./response');
 
-const headers = {
+const headerNames = {
 	authorization: 'Authorization',
 	zoteroWriteToken: 'Zotero-Write-Token',
 	ifModifiedSinceVersion: 'If-Modified-Since-Version',
@@ -132,12 +132,11 @@ module.exports = async options => {
 	options = {...defaults, ...options};
 	const headers = {};
 
-	for(let header of Object.keys(headers)) {
+	for(let header of Object.keys(headerNames)) {
 		if(header in options) {
-			headers[header] = options[header];
+			headers[headerNames[header]] = options[header];
 		}
 	}
-
 
 	const path = makeUrlPath(options.resource);
 	const query = makeUrlQuery(options);
@@ -152,7 +151,7 @@ module.exports = async options => {
 		fetchConfig[param] = options[param];
 	}
 
-	fetchConfig[headers] = headers;
+	fetchConfig.headers = headers;
 
 	let response = await fetch(url, fetchConfig);
 

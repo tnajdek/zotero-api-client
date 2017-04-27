@@ -10,7 +10,7 @@ const COLLECTION_KEY = 'CCOOLLEE';
 const SEARCH_KEY = 'SEARCH_KEY';
 const URL_ENCODED_TAGS = 'URL_ENCODED_TAGS';
 
-describe('ZoteroJS', () => {
+describe('ZoteroJS api interface', () => {
 	var lrc;
 	// mock api so it never calls request(), instead
 	// entire config is placed into lrc variable

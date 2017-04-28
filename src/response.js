@@ -68,10 +68,11 @@ class MultiWriteResponse extends ApiResponse {
 class DeleteResponse extends ApiResponse {}
 
 class ErrorResponse extends Error {
-	constructor(message, response) {
+	constructor(message, response, options) {
 		super(message);
 		this.response = response;
 		this.message = message;
+		this.options = options;
 	}
 }
 

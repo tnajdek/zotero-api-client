@@ -155,16 +155,21 @@ module.exports = async options => {
 	fetchConfig.headers = headers;
 
 	let response = await fetch(url, fetchConfig);
+	let content;
 
 	if(options.format != 'json') {
 		return response;
 	}
 
 	if(response.status < 200 || response.status >= 400) {
-		throw new ErrorResponse(`${response.status}: ${response.statusText}`, response);
+		throw new ErrorResponse(`${response.status}: ${response.statusText}`, response, options);
 	}
 
-	let content = await response.json();
+	try {
+		content = await response.json();
+	} catch(e) {
+		return new ApiResponse(null, options, response);
+	}
 
 	switch(options.method.toUpperCase()) {
 		case 'GET':

@@ -371,7 +371,7 @@ describe('ZoteroJS request', () => {
 		});
 	});
 
-	describe('Failing and invalid requests', () => {
+	describe('Failing, empty & raw response requests', () => {
 		it('should throw ErrorResponse for non ok results', () => {
 			fetchMock.mock('begin:https://api.zotero.org/', {
 				status: 404,
@@ -392,5 +392,44 @@ describe('ZoteroJS request', () => {
 				assert.equal(error, 'These aren\'t the droids You are looking for');
 			});
 		});
+
+		it('should handly empty-body 304 response', () => {
+			fetchMock.mock('begin:https://api.zotero.org/', {
+				status: 304,
+				body: ''
+			});
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: null
+				},
+				ifModifiedSinceVersion: 42
+			}).then(response => {
+				assert.instanceOf(response, ApiResponse);
+				assert.isNull(response.getData());
+				assert.equal(response.response.status, 304);
+			});
+		});
+
+		it('should return raw response for non-json requests', () => {
+			fetchMock.mock('begin:https://api.zotero.org/', {
+				status: 200,
+				body: '<xml></xml>'
+			});
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: null
+				},
+				format: 'atom'
+			}).then(response => {
+				assert.instanceOf(response, Response);
+				assert.equal(response.status, 200);
+			});
+		});
+
+
 	});
 });

@@ -110,12 +110,23 @@ const functions = {
 		})
 	},
 
+	version: function(version) {
+		return ef.bind(this)({
+			version: version || null
+		})
+	},
+
 	get: function(opts) {
 		let requestConfig = {
 			...this,
 			...opts,
 			method: 'get'
 		};
+
+		if('version' in requestConfig) {
+			requestConfig['ifModifiedSinceVersion'] = requestConfig['version'];
+			delete requestConfig['version'];
+		}
 
 		return request(requestConfig);
 	},
@@ -127,6 +138,11 @@ const functions = {
 			body: data,
 			method: 'post'
 		};
+
+		if('version' in requestConfig) {
+			requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
+			delete requestConfig['version'];
+		}
 
 		return request(requestConfig);
 
@@ -140,6 +156,11 @@ const functions = {
 			method: 'put'
 		};
 
+		if('version' in requestConfig) {
+			requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
+			delete requestConfig['version'];
+		}
+
 		return request(requestConfig);
 
 	},
@@ -152,8 +173,12 @@ const functions = {
 			method: 'patch'
 		};
 
-		return request(requestConfig);
+		if('version' in requestConfig) {
+			requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
+			delete requestConfig['version'];
+		}
 
+		return request(requestConfig);
 	},
 
 	delete: function(keysToDelete, opts) {
@@ -162,6 +187,11 @@ const functions = {
 			...opts,
 			method: 'delete'
 		};
+
+		if('version' in requestConfig) {
+			requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
+			delete requestConfig['version'];
+		}
 
 		if('resource' in requestConfig && 'items' in requestConfig.resource) {
 			relevantSearchKey = 'itemKey';

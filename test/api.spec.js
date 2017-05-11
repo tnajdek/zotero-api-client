@@ -39,6 +39,21 @@ describe('ZoteroJS api interface', () => {
 			const request = api(KEY).library('group', '111')._getConfig();
 			assert.equal(request.resource.library, 'g111');
 		});
+
+		it('convert version() to a relevant header', () => {
+			api(KEY).library(LIBRARY_KEY).items('AABBCCDD').version(42).get();
+			assert.equal(lrc.ifModifiedSinceVersion, 42);
+
+			api(KEY).library(LIBRARY_KEY).items().version(42).post([]);
+			assert.equal(lrc.ifUnmodifiedSinceVersion, 42);
+
+			api(KEY).library(LIBRARY_KEY).items('AABBCCDD').version(42).put({});
+			assert.equal(lrc.ifUnmodifiedSinceVersion, 42);
+
+			api(KEY).library(LIBRARY_KEY).items('AABBCCDD').version(42).patch({});
+			assert.equal(lrc.ifUnmodifiedSinceVersion, 42);
+		});
+
 	});
 
 	describe('Construct get requests', () => {

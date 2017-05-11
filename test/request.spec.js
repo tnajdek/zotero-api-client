@@ -9,6 +9,8 @@ const {
 	ApiResponse,
 	SingleReadResponse,
 	MultiReadResponse,
+	SingleWriteResponse,
+	MultiWriteResponse,
 	ErrorResponse
 } = require('../src/response.js');
 const singleGetResponseFixture = require('./fixtures/single-object-get-response.json');
@@ -16,6 +18,8 @@ const multiGetResponseFixture = require('./fixtures/multi-object-get-response.js
 const tagsResponseFixture = require('./fixtures/tags-data-response.json');
 const searchesResponseFixture = require('./fixtures/searches-data-response.json');
 const itemTypesDataFixture = require('./fixtures/item-types-data.json');
+const multiMixedWriteResponseFixture = require('./fixtures/multi-mixed-write-response.json');
+const multiSuccessWriteResponseFixture = require('./fixtures/multi-success-write-response.json');
 
 describe('ZoteroJS request', () => {
 	beforeEach(() => {
@@ -309,7 +313,7 @@ describe('ZoteroJS request', () => {
 		});
 	});
 
-	describe('Requests with extra params', () => {
+	describe('Get requests with extra params', () => {
 		it('should include headers in the request', () => {
 			fetchMock.mock(
 				(url, opts) => {
@@ -371,7 +375,7 @@ describe('ZoteroJS request', () => {
 		});
 	});
 
-	describe('Failing, empty & raw response requests', () => {
+	describe('Failing, empty & raw response get requests', () => {
 		it('should throw ErrorResponse for non ok results', () => {
 			fetchMock.mock('begin:https://api.zotero.org/', {
 				status: 404,
@@ -427,9 +431,120 @@ describe('ZoteroJS request', () => {
 			}).then(response => {
 				assert.instanceOf(response, Response);
 				assert.equal(response.status, 200);
+				assert.equal(response.bodyUsed, false);
+			});
+		});
+	});
+
+	describe('Item write & delete requests', () => {
+		it('should post a new item', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
+					assert.equal(opts.method, 'post');
+					return true;
+				}, {
+				headers: {
+					'Last-Modified-Version': 1337
+				},
+				body: multiSuccessWriteResponseFixture
+			});
+
+			const item ={
+				'key': 'AZBCAADA',
+				'version': 0,
+				'itemType': 'book',
+				'title': 'My Amazing Book'
+			};
+
+			return request({
+				method: 'post',
+				body: [item],
+				resource: {
+					library: 'u475425',
+					items: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiWriteResponse);
+				assert.isOk(response.isSuccess());
+				assert.equal(response.getData()[0].key, 'AZBCAADA');
+				assert.equal(response.getData()[0].title, 'My Amazing Book');
+				assert.equal(response.getData()[0].itemType, 'book');
+				assert.equal(response.getData()[0].version, 1337);
 			});
 		});
 
+		it('should post multiple items', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
+					assert.equal(opts.method, 'post');
+					return true;
+				}, {
+				headers: {
+					'Last-Modified-Version': 1337
+				},
+				body: multiMixedWriteResponseFixture
+			});
 
+			const book = {
+				'key': 'ABCD1111',
+				'version': 0,
+				'itemType': 'book',
+				'title': 'My Amazing Book'
+			};
+
+			const bug1 = {
+				'key': 'ABCD4444',
+				'version': 0
+			}
+
+			const paper = {
+				'key': 'ABCD2222',
+				'version': 0,
+				'itemType': 'journalArticle',
+				'title': 'My super paper'
+			};
+
+			const bug2 = {
+				'key': 'ABCD5555',
+				'version': 0
+			}
+
+			const unchanged = {
+				'key': 'ABCD3333',
+				'version': 0,
+				'itemType': 'journalArticle',
+				'title': 'My super paper'
+			};
+
+			return request({
+				method: 'post',
+				body: [book, bug1, paper, bug2, unchanged],
+				resource: {
+					library: 'u475425',
+					items: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiWriteResponse);
+				assert.isNotOk(response.isSuccess());
+
+				assert.equal(response.getData().length, 5);
+				assert.equal(response.getData()[0].version, 1337); // successful
+				assert.equal(response.getData()[1].version, 0); // failed
+				assert.equal(response.getData()[4].version, 0); // unchanged
+
+				assert.equal(response.getErrors()[1].message, 'Bad input');
+				assert.equal(response.getErrors()[3].message, 'Bad input');
+
+				assert.equal(response.getEntityByIndex(2).key, 'ABCD2222');
+				assert.equal(response.getEntityByIndex(2).version, 1337);
+				assert.equal(response.getEntityByIndex(4).key, 'ABCD3333');
+				assert.equal(response.getEntityByIndex(4).version, 0);
+
+				assert.throws(response.getEntityByIndex.bind(response, 1), /400: Bad input/);
+				assert.throws(response.getEntityByIndex.bind(response, 10), /Index 10 is not present in the reponse/);
+				assert.throws(response.getEntityByKey.bind(response, 'ABCD5555'), /400: Bad input/);
+				assert.throws(response.getEntityByKey.bind(response, 'LORE1234'), /Key LORE1234 is not present in the request/);
+			});
+		});
 	});
 });

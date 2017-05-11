@@ -6,8 +6,9 @@
   "author": "Tom Najdek",
   "license": "",
   "scripts": {
-    "test": "mocha --compilers js:babel-register",
-    "test-watch": "mocha -w --compilers js:babel-register"
+    "test": "nyc mocha --compilers js:babel-register",
+    "coverage": "nyc --reporter=html --reporter=text mocha --compilers js:babel-register",
+    "test-watch": "nyc mocha -w --compilers js:babel-register"
   },
   "dependencies": {
     "babel-regenerator-runtime": "^6.5.0",
@@ -32,6 +33,7 @@
     "node-sass": "^4.5.2",
     "nodemon": "^1.11.0",
     "npm-run-all": "^4.0.2",
+    "nyc": "^10.3.2",
     "rimraf": "^2.6.1",
     "uglifyify": "^3.0.4",
     "watchify": "^3.9.0"

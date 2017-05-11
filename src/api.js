@@ -124,7 +124,7 @@ const functions = {
 		let requestConfig = {
 			...this,
 			...opts,
-			body: JSON.stringify(data),
+			body: data,
 			method: 'post'
 		};
 
@@ -136,7 +136,7 @@ const functions = {
 		let requestConfig = {
 			...this,
 			...opts,
-			body: JSON.stringify(data),
+			body: data,
 			method: 'put'
 		};
 
@@ -148,7 +148,7 @@ const functions = {
 		let requestConfig = {
 			...this,
 			...opts,
-			body: JSON.stringify(data),
+			body: data,
 			method: 'patch'
 		};
 

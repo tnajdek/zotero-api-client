@@ -194,7 +194,7 @@ describe('ZoteroJS api interface', () => {
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.isNull(lrc.resource.items);
-			assert.equal(lrc.body, JSON.stringify(body));
+			assert.deepEqual(lrc.body, body);
 		});
 
 		it('handles api.library.items(I1).put(I1b)', () => {
@@ -203,7 +203,7 @@ describe('ZoteroJS api interface', () => {
 			assert.equal(lrc.method, 'put');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.equal(lrc.resource.items, ITEM_KEY);
-			assert.equal(lrc.body, JSON.stringify(body));
+			assert.deepEqual(lrc.body, body);
 		});
 
 		it('handles api.library.items(I1).patch(I1pb)', () => {
@@ -212,7 +212,7 @@ describe('ZoteroJS api interface', () => {
 			assert.equal(lrc.method, 'patch');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.equal(lrc.resource.items, ITEM_KEY);
-			assert.equal(lrc.body, JSON.stringify(body));
+			assert.deepEqual(lrc.body, body);
 		});
 
 		it('handles api.library.items(I1).delete()', () => {
@@ -237,7 +237,7 @@ describe('ZoteroJS api interface', () => {
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.isNull(lrc.resource.collections);
-			assert.equal(lrc.body, JSON.stringify(body));
+			assert.deepEqual(lrc.body, body);
 		});
 
 		it('handles api.library.collections(C1).put(C1b)', () => {
@@ -246,7 +246,7 @@ describe('ZoteroJS api interface', () => {
 			assert.equal(lrc.method, 'put');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.equal(lrc.resource.collections, COLLECTION_KEY);
-			assert.equal(lrc.body, JSON.stringify(body));
+			assert.deepEqual(lrc.body, body);
 		});
 
 		it('handles api.library.collections(C1).delete()', () => {
@@ -271,7 +271,7 @@ describe('ZoteroJS api interface', () => {
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.isNull(lrc.resource.searches);
-			assert.equal(lrc.body, JSON.stringify(body));
+			assert.deepEqual(lrc.body, body);
 		});
 
 		it('handles api.library.searches().delete([S1, S2])', () => {

@@ -149,7 +149,11 @@ module.exports = async options => {
 	}
 	
 	for(let param of fetchParamNames) {
-		fetchConfig[param] = options[param];
+		if(param === 'body') {
+			fetchConfig[param] = JSON.stringify(options[param]);
+		} else {
+			fetchConfig[param] = options[param];	
+		}
 	}
 
 	fetchConfig.headers = headers;

@@ -379,6 +379,7 @@ describe('ZoteroJS request', () => {
 		it('should throw ErrorResponse for non ok results', () => {
 			fetchMock.mock('begin:https://api.zotero.org/', {
 				status: 404,
+				statusText: 'Not Found',
 				body: 'These aren\'t the droids You are looking for'
 			});
 
@@ -389,11 +390,11 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(() => {
 				throw new Error('fail');
-			}).catch(async response => {
-				assert.instanceOf(response, ErrorResponse);
-				assert.isOk(response.message.includes('404'));
-				let error = await response.response.text();
-				assert.equal(error, 'These aren\'t the droids You are looking for');
+			}).catch(async error => {
+				assert.instanceOf(error, ErrorResponse);
+				assert.equal(error.message, '404: Not Found');
+				assert.equal(error.reason, 'These aren\'t the droids You are looking for');
+				assert.equal(error.response.bodyUsed, false);
 			});
 		});
 

@@ -166,7 +166,13 @@ module.exports = async options => {
 	}
 
 	if(response.status < 200 || response.status >= 400) {
-		throw new ErrorResponse(`${response.status}: ${response.statusText}`, response, options);
+		let clonedResponse = response.clone();
+		let reason = null;
+		try {
+			reason = await clonedResponse.text();
+		} finally {
+			throw new ErrorResponse(`${response.status}: ${response.statusText}`, reason, response, options);
+		}
 	}
 
 	try {

@@ -10,6 +10,10 @@ class ApiResponse {
 	getData() {
 		return this.raw;
 	}
+
+	getVersion() {
+		return this.response.headers.get('Last-Modified-Version');
+	}
 }
 
 class SingleReadResponse extends ApiResponse {
@@ -29,7 +33,7 @@ class SingleWriteResponse extends ApiResponse {
 		if(this.response.status === 204) {
 			return {
 				...this.options.body,
-				version: this.response.headers.get('Last-Modified-Version') 
+				version: this.response.headers.get('Last-Modified-Version')
 			}
 		} else {
 			return this.raw.data;

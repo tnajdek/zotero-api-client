@@ -11,6 +11,7 @@ const {
 	MultiReadResponse,
 	SingleWriteResponse,
 	MultiWriteResponse,
+	DeleteResponse,
 	ErrorResponse
 } = require('../src/response.js');
 const singleGetResponseFixture = require('./fixtures/single-object-get-response.json');
@@ -438,7 +439,7 @@ describe('ZoteroJS request', () => {
 	});
 
 	describe('Item write & delete requests', () => {
-		it('should post a new item', () => {
+		it('should post a single item', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
 					assert.equal(opts.method, 'post');
@@ -474,7 +475,7 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
-		it('should post multiple items', () => {
+		it('should post multiple items and handle mixed response', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
 					assert.equal(opts.method, 'post');
@@ -526,6 +527,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiWriteResponse);
+				assert.equal(response.getVersion(), 1337);
 				assert.isNotOk(response.isSuccess());
 
 				assert.equal(response.getData().length, 5);
@@ -546,6 +548,193 @@ describe('ZoteroJS request', () => {
 				assert.throws(response.getEntityByKey.bind(response, 'ABCD5555'), /400: Bad input/);
 				assert.throws(response.getEntityByKey.bind(response, 'LORE1234'), /Key LORE1234 is not present in the request/);
 			});
+		});
+
+		it('should update put a single, complete item', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
+					assert.equal(opts.method, 'put');
+					return true;
+				}, {
+				status: 204,
+				statusText: 'No Content',
+				headers: {
+					'Last-Modified-Version': 42
+				}
+			});
+
+			const book = {
+				'key': 'ABCD1111',
+				'version': 41,
+				'itemType': 'book',
+				'title': 'My Amazing Book'
+			};
+
+			return request({
+				method: 'put',
+				body: book,
+				resource: {
+					library: 'u475425',
+					items: 'ABCD1111'
+				}
+			}).then(response => {
+				assert.instanceOf(response, SingleWriteResponse);
+				assert.equal(response.getVersion(), 42);
+				assert.equal(response.getData().version, 42);
+				assert.equal(response.getData().key, 'ABCD1111');
+				assert.equal(response.response.status, 204);
+				assert.deepEqual(response.raw, {});
+			});
+		});
+
+		it('should patch a single item', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
+					assert.equal(opts.method, 'patch');
+					return true;
+				}, {
+				status: 204,
+				statusText: 'No Content',
+				headers: {
+					'Last-Modified-Version': 42
+				}
+			});
+
+			const patch = {
+				'version': 41,
+				'title': 'My Amazing Book'
+			};
+
+			return request({
+				method: 'patch',
+				body: patch,
+				resource: {
+					library: 'u475425',
+					items: 'ABCD1111'
+				}
+			}).then(response => {
+				assert.instanceOf(response, SingleWriteResponse);
+				assert.equal(response.getVersion(), 42);
+				assert.equal(response.getData().version, 42);
+				assert.equal(response.getData().title, 'My Amazing Book');
+				assert.equal(response.response.status, 204);
+				assert.deepEqual(response.raw, {});
+			});
+		});
+
+		it('should delete a single item', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
+					assert.equal(opts.method, 'delete');
+					return true;
+				}, {
+				status: 204,
+				statusText: 'No Content',
+				headers: {
+					'Last-Modified-Version': 43
+				}
+			});
+
+			return request({
+				method: 'delete',
+				ifUnmodifiedSinceVersion: 42,
+				resource: {
+					library: 'u475425',
+					items: 'ABCD1111'
+				}
+			}).then(response => {
+				assert.instanceOf(response, DeleteResponse);
+				assert.equal(response.getVersion(), 43);
+				assert.equal(response.response.status, 204);
+				assert.deepEqual(response.raw, {});
+			});
+		});
+
+		it('should delete multiple items', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.equal(opts.method, 'delete');
+					let parsedUrl = URL.parse(url);
+					parsedUrl = parsedUrl.search.slice(1);
+					parsedUrl = parsedUrl.split('&');
+					assert.isOk(parsedUrl.includes('itemKey=ABCD1111,ABCD2222,ABCD3333'));
+					return true;
+				}, {
+				status: 204,
+				statusText: 'No Content',
+				headers: {
+					'Last-Modified-Version': 100
+				}
+			});
+
+			return request({
+				method: 'delete',
+				ifUnmodifiedSinceVersion: 99,
+				itemKey: ['ABCD1111', 'ABCD2222', 'ABCD3333'],
+				resource: {
+					library: 'u475425'
+				}
+			}).then(response => {
+				assert.instanceOf(response, DeleteResponse);
+				assert.equal(response.getVersion(), 100);
+				assert.equal(response.response.status, 204);
+				assert.deepEqual(response.raw, {});
+			});
+		});
+	});
+
+	describe('Failing write & delete requests', () => {
+		it('should throw ErrorResponse for error post responses', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
+					assert.equal(opts.method, 'put');
+					return true;
+				}, {
+				status: 400,
+				statusText: 'Bad Request',
+				body: 'Uploaded data must be a JSON array'
+			});
+
+			return request({
+				method: 'put',
+				body: {},
+				resource: {
+					library: 'u475425',
+					items: 'ABCD1111'
+				}
+			}).then(() => {
+				throw new Error('fail');
+			}).catch(error => {
+				assert.instanceOf(error, ErrorResponse);
+				assert.equal(error.message, '400: Bad Request');
+				assert.equal(error.reason, 'Uploaded data must be a JSON array');
+			})
+		});
+
+		it('should throw ErrorResponse for error put responses', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
+					assert.equal(opts.method, 'put');
+					return true;
+				}, {
+				status: 412,
+				statusText: 'Precondition Failed',
+				body: 'Item has been modified since specified version (expected 42, found 41)'
+			});
+
+			return request({
+				method: 'put',
+				body: {},
+				resource: {
+					library: 'u475425',
+					items: 'ABCD1111'
+				}
+			}).then(() => {
+				throw new Error('fail');
+			}).catch(error => {
+				assert.instanceOf(error, ErrorResponse);
+				assert.equal(error.message, '412: Precondition Failed');
+				assert.equal(error.reason, 'Item has been modified since specified version (expected 42, found 41)');
+			})
 		});
 	});
 });

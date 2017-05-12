@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/tnajdek/zoterojs.svg?branch=master)](https://travis-ci.org/tnajdek/zoterojs)
+[![Coverage Status](https://coveralls.io/repos/github/tnajdek/zoterojs/badge.svg?branch=master)](https://coveralls.io/github/tnajdek/zoterojs?branch=master)
+[![Dependency Status](https://david-dm.org/tnajdek/zoterojs.svg)](https://david-dm.org/tnajdek/zoterojs)
+
 Overview
 --------
 This is a lightweight, minimalistic Zotero API client written in JavaScript. It's been developed based on the following principles:

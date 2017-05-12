@@ -1,14 +1,15 @@
 {
   "name": "zoterojs",
-  "version": "0.0.1",
-  "description": "",
-  "main": "",
+  "version": "0.9.0",
+  "description": "A lightweight, minimalistic Zotero API client",
+  "main": "src/api.js",
   "author": "Tom Najdek",
-  "license": "",
+  "license": "AGPL-3.0",
   "scripts": {
+  "readme": "jsdoc2md --template docs/README.md --no-cache --configure .jsdoc.json src/*.js > README.md",
     "test": "nyc mocha --compilers js:babel-register",
     "coverage": "nyc --reporter=html --reporter=text mocha --compilers js:babel-register",
-    "test-watch": "nyc mocha -w --compilers js:babel-register"
+    "test-watch": "mocha -w --compilers js:babel-register"
   },
   "dependencies": {
     "babel-regenerator-runtime": "^6.5.0",
@@ -27,6 +28,8 @@
     "fetch-mock": "^5.10.0",
     "fetch-ponyfill": "^4.0.0",
     "jasmine-core": "^2.5.2",
+    "jsdoc-strip-async-await": "^0.1.0",
+    "jsdoc-to-markdown": "^3.0.0",
     "live-reload": "^1.1.0",
     "mocha": "^3.2.0",
     "mockery": "^2.0.0",

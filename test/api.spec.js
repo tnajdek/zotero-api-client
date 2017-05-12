@@ -149,7 +149,6 @@ describe('ZoteroJS api interface', () => {
 			assert.equal(lrc.method, 'get');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.equal(lrc.resource.collections, COLLECTION_KEY);
-			console.log(lrc);
 			assert.isNull(lrc.resource.items);
 		});
 

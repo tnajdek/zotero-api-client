@@ -17,7 +17,7 @@ const request = require('./request');
  * @param  {Object} opts - Optional api configuration. For a list of all
  *                         possible properties, see documentation for
  *                         request() function
- * @return {Object}      - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const api = function(key = '', opts = {}) {
 	let props = {...opts};
@@ -38,7 +38,7 @@ const api = function(key = '', opts = {}) {
  *                          second parameter is present, library type i.e
  *                          either 'group' or 'user'
  * @param {Number} [id]   - Only when first argument is a type, library id
- * @return {Object}       - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const library = function() {
 	var libraryKey;
@@ -68,7 +68,7 @@ const library = function() {
  * children(), tags() and any execution function (e.g. get(), post())
  * @param  {String} items - Item key, if present, configure api to point at
  *                          this specific item
- * @return {Object}       - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const items = function(items = null) {
 	return efr.bind(this)({
@@ -79,7 +79,7 @@ const items = function(items = null) {
 /**
  * Configure api to request all item types
  * Can only be used in conjuction with get()
- * @return {Object}       - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const itemTypes = function() {
 	return efr.bind(this)({
@@ -90,7 +90,7 @@ const itemTypes = function() {
 /**
  * Configure api to request all item fields
  * Can only be used in conjuction with get()
- * @return {Object}       - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const itemFields = function() {
 	return efr.bind(this)({
@@ -101,7 +101,7 @@ const itemFields = function() {
 /**
  * Configure api to request localized creator fields
  * Can only be used in conjuction with get()
- * @return {Object}       - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const creatorFields = function() {
 	return efr.bind(this)({
@@ -114,7 +114,7 @@ const creatorFields = function() {
  * Can only be used in conjuction with get()
  * @param  {String} itemType - item type for which valid fields will be
  *                             requested, e.g. 'book' or 'journalType'
- * @return {Object}          - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const itemTypeFields = function(itemType) {
 	return efr.bind(this)({
@@ -128,7 +128,7 @@ const itemTypeFields = function(itemType) {
  * @param  {String} itemType - item type for which valid creator types
  *                             will be requested, e.g. 'book' or 
  *                             'journalType'
- * @return {Object}           - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const itemTypeCreatorTypes = function(itemType) {
 	return efr.bind(this)({
@@ -141,7 +141,7 @@ const itemTypeCreatorTypes = function(itemType) {
  * Can only be used in conjuction with get()
  * @param  {String} itemType - item type for which template will be
  *                             requested, e.g. 'book' or 'journalType'
- * @return {Object}          - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const template = function(itemType) {
 	return efr.bind(this)({
@@ -155,7 +155,7 @@ const template = function(itemType) {
  * any of the execution function (e.g. get(), post())
  * @param  {String} items - Collection key, if present, configure api to
  *                          point to this specific collection
- * @return {Object}       - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const collections = function(collections) {
 	return efr.bind(this)({
@@ -171,7 +171,7 @@ const collections = function(collections) {
  * conjuctin with get()
  * @param  {String} tags - name of a tag to request. If preset, configure
  *                         api to request specific tag.
- * @return {Object}      - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const tags = function(tags = null) {
 	return efr.bind(this)({
@@ -185,7 +185,7 @@ const tags = function(tags = null) {
  * functions
  * @param  {String} searches - Search key, if present, configure api to point at
  *                             this specific saved search
- * @return {Object}          - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const searches = function(searches = null) {
 	return efr.bind(this)({
@@ -197,7 +197,7 @@ const searches = function(searches = null) {
  * Configure api to narrow the request only to the top level items
  * Can be used in conjuction with items() and collections() and only
  * with conjuction with a get() execution function
- * @return {Object}          - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const top = function() {
 	return efr.bind(this)({
@@ -209,7 +209,7 @@ const top = function() {
  * Configure api to narrow the request only to the items in the trash
  * Can be only used in conjuction with items() and get() execution
  * function
- * @return {Object}          - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const trash = function() {
 	return efr.bind(this)({
@@ -222,7 +222,7 @@ const trash = function() {
  * item
  * Can be only used in conjuction with items() and get() execution
  * function
- * @return {Object}          - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const children = function() {
 	return efr.bind(this)({
@@ -237,7 +237,7 @@ const children = function() {
  * When used in conjuction with post(), put(), patch() or delete() it will
  * populate the If-Unmodified-Since-Version header.
  * @param  {Number} version - local version of the entity
- * @return {Object}          - Partially configured api functions
+ * @return {Object} Partially configured api functions
  */
 const version = function(version = null) {
 	return ef.bind(this)({
@@ -251,10 +251,9 @@ const version = function(version = null) {
  *                         overrides properties already present. For a list
  *                         of all possible properties, see documentation
  *                         for request() function
- * @return {Promise}     - Returns a promise that will eventually return
- *                         either an ApiResponse, SingleReadResponse or
- *                         MultiReadResponse. Might throw Error or 
- *                         ErrorResponse
+ * @return {Promise} A promise that will eventually return either an 
+ *                   ApiResponse, SingleReadResponse or MultiReadResponse.
+ *                   Might throw Error or ErrorResponse.
  */
 const get = function(opts) {
 	let requestConfig = {
@@ -278,9 +277,8 @@ const get = function(opts) {
  *                         overrides properties already present. For a list
  *                         of all possible properties, see documentation
  *                         for request() function
- * @return {Promise}     - Returns a promise that will eventually return
- *                         either an MultiWriteResponse. Might throw Error
- *                         or ErrorResponse
+ * @return {Promise} A promise that will eventually return either an
+ *                   MultiWriteResponse. Might throw Error or ErrorResponse
  */
 const post = function(data, opts) {
 	let requestConfig = {
@@ -306,9 +304,8 @@ const post = function(data, opts) {
  *                         overrides properties already present. For a list
  *                         of all possible properties, see documentation
  *                         for request() function
- * @return {Promise}     - Returns a promise that will eventually return
- *                         either an SingleWriteResponse. Might throw Error
- *                         or ErrorResponse
+ * @return {Promise} A promise that will eventually return either an
+ *                   SingleWriteResponse. Might throw Error or ErrorResponse
  */
 const put = function(data, opts) {
 	let requestConfig = {
@@ -335,9 +332,8 @@ const put = function(data, opts) {
  *                         overrides properties already present. For a list
  *                         of all possible properties, see documentation
  *                         for request() function
- * @return {Promise}     - Returns a promise that will eventually return
- *                         either an SingleWriteResponse. Might throw Error
- *                         or ErrorResponse
+ * @return {Promise} A promise that will eventually return either an 
+ *                   SingleWriteResponse. Might throw Error or ErrorResponse
  */
 const patch = function(data, opts) {
 	let requestConfig = {
@@ -369,9 +365,8 @@ const patch = function(data, opts) {
  *                         overrides properties already present. For a list
  *                         of all possible properties, see documentation
  *                         for request() function
- * @return {Promise}     - Returns a promise that will eventually return
- *                         either an DeleteResponse. Might throw Error
- *                         or ErrorResponse
+ * @return {Promise} A promise that will eventually return either an
+ *                   DeleteResponse. Might throw Error or ErrorResponse
  */
 const del = function(keysToDelete, opts) {
 	let requestConfig = {
@@ -413,16 +408,10 @@ const del = function(keysToDelete, opts) {
 	return request(requestConfig);
 };
 
-/**
- * @private
- */
 const _getConfig = function() {
 	return this;
 };
 
-/**
- * @private
- */
 const functions = {
 	api,
 	library,
@@ -448,9 +437,6 @@ const functions = {
 	_getConfig
 }
 
-/**
- * @private
- */
 const ef = function(opts) {
 	let context = { ...this, ...opts };
 	let enhancedFunctions = {};
@@ -461,9 +447,6 @@ const ef = function(opts) {
 	return enhancedFunctions;
 }
 
-/**
- * @private
- */
 const efr = function(resource, opts) {
 	resource = { ...this.resource, ...resource };
 	opts = { ...opts, resource};

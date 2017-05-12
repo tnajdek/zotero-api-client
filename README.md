@@ -35,20 +35,27 @@ Simple example reading items from the public/test user library.
 
 1. Require the library
 
-	const api = require('zoterojs');
+```
+const api = require('zoterojs');
+```
 
-1. Use the api to make the request (we're using [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function))
+2. Use the api to make the request (we're using [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function))
 
-	const response = await api().library('user', 475425).collections('9KH9TNSJ').items().get();
+```
+const response = await api().library('user', 475425).collections('9KH9TNSJ').items().get();
+```
 
-1. Extract items from the response
+3. Extract items from the response
 
-	const items = response.getData();
+```
+const items = response.getData();
+```
 
-1. Print titles of all the items in the library to console
+4. Print titles of all the items in the library to console
 
-	console.log(items.map(i => i.title));
-
+```
+console.log(items.map(i => i.title));
+```
 
 Overview
 --------

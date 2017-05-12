@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * Module contains a request() function, a low-level Zotero API client
+ * @module request
+ */
+
 require('isomorphic-fetch');
 
 const {
@@ -19,11 +24,6 @@ const headerNames = {
 	ifUnmodifiedSinceVersion: 'If-Unmodified-Since-Version',
 	contentType: 'Content-Type'
 };
-
-const core = [
-	'resource',
-	'apiAuthorityPart'
-];
 
 const queryParamNames = [
 	'format',
@@ -88,7 +88,7 @@ const defaults = {
 //@TODO implement validation
 const validateUrlPath = urlPath => {
 	return true;
-}
+};
 
 const makeUrlPath = resource => {
 	let path = [];
@@ -117,7 +117,7 @@ const makeUrlPath = resource => {
 	}
 
 	return path.join('/');
-}
+};
 
 const makeUrlQuery = options => {
 	let params = [];
@@ -127,9 +127,56 @@ const makeUrlQuery = options => {
 		}
 	}
 	return params.length ? '?' + params.join('&') : '';
-}
+};
 
-module.exports = async options => {
+/**
+ * Executes request and returns a response
+ * @param {String} options.authorization					- 'Authorization' header
+ * @param {String} options.zoteroWriteToken					- 'Zotero-Write-Token' header 
+ * @param {String} options.ifModifiedSinceVersion			- 'If-Modified-Since-Version' header
+ * @param {String} options.ifUnmodifiedSinceVersion			- 'If-Unmodified-Since-Version' header
+ * @param {String} options.contentType						- 'Content-Type' header
+ * @param {String} options.format 							- 'format' query argument
+ * @param {String} options.include 							- 'include' query argument
+ * @param {String} options.content 							- 'content' query argument
+ * @param {String} options.style 							- 'style' query argument
+ * @param {String} options.itemKey 							- 'itemKey' query argument
+ * @param {String} options.collectionKey 					- 'collectionKey' query argument
+ * @param {String} options.searchKey 						- 'searchKey' query argument
+ * @param {String} options.itemType 						- 'itemType' query argument
+ * @param {String} options.qmode 							- 'qmode' query argument
+ * @param {Number} options.since 							- 'since' query argument
+ * @param {String} options.tag 								- 'tag' query argument
+ * @param {String} options.sort 							- 'sort' query argument
+ * @param {String} options.direction 						- 'direction' query argument
+ * @param {Number} options.limit 							- 'limit' query argument
+ * @param {Number} options.start 							- 'start' query argument 
+ * @param {String} options.resource.top					    - use 'top' resource  
+ * @param {String} options.resource.trash					- use 'trash' resource  
+ * @param {String} options.resource.children				- use 'children' resource  	
+ * @param {String} options.resource.groups					- use 'groups' resource  
+ * @param {String} options.resource.itemTypes				- use 'itemTypes' resource  	
+ * @param {String} options.resource.itemFields				- use 'itemFields' resource  	
+ * @param {String} options.resource.creatorFields			- use 'creatorFields' resource  		
+ * @param {String} options.resource.itemTypeFields			- use 'itemTypeFields' resource  		
+ * @param {String} options.resource.itemTypeCreatorTypes	- use 'itemTypeCreatorTypes' resource  				
+ * @param {String} options.resource.library					- use 'library' resource  
+ * @param {String} options.resource.collections				- use 'collections' resource  	
+ * @param {String} options.resource.items					- use 'items' resource  
+ * @param {String} options.resource.searches				- use 'searches' resource  	
+ * @param {String} options.resource.tags					- use 'tags' resource  
+ * @param {String} options.resource.template				- use 'template' resource  	
+ * @param {String} options.method 							- forwarded to fetch()
+ * @param {String} options.body 							- forwarded to fetch()
+ * @param {String} options.mode 							- forwarded to fetch()
+ * @param {String} options.cache 							- forwarded to fetch()
+ * @param {String} options.credentials 						- forwarded to fetch()
+ * 
+ * @return {Object} Returns a Promise that will eventually return a response object
+ * @throws {Error} If options specify impossible configuration
+ * @throws {ErrorResponse} If API responds with a non-ok response
+ */
+const request = async options => {
 	options = {...defaults, ...options};
 	const headers = {};
 
@@ -204,4 +251,6 @@ module.exports = async options => {
 		case 'DELETE':
 			return new DeleteResponse(content, options, response);
 	}
-}
+};
+
+module.exports = request;

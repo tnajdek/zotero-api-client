@@ -18,7 +18,7 @@ describe('ZoteroJS api interface', () => {
 		lrc = options;
 	});
 	mockery.enable({ warnOnUnregistered: false });
-	const { api } = require('../src/api');
+	const api = require('../src/api');
 	mockery.disable();
 	beforeEach(() => {
 		lrc = null;
@@ -28,6 +28,11 @@ describe('ZoteroJS api interface', () => {
 		it('accepts api key', () => {
 			const request = api(KEY)._getConfig();
 			assert.equal(request.authorization, `Bearer ${KEY}`);
+		});
+
+		it('allows unauthorised requests', () => {
+			const request = api()._getConfig();
+			assert.notProperty(request, 'authorization');
 		});
 
 		it('constructs user library key', () => {
@@ -144,6 +149,7 @@ describe('ZoteroJS api interface', () => {
 			assert.equal(lrc.method, 'get');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.equal(lrc.resource.collections, COLLECTION_KEY);
+			console.log(lrc);
 			assert.isNull(lrc.resource.items);
 		});
 

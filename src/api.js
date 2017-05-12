@@ -12,12 +12,12 @@ const request = require('./request');
  * Can be used to configure any other properties of the api
  * Returns a set of function that are bound to that configuration
  * and can be called to specify further api configuration.
- * @chainable
  * @param  {String} key  - Authentication key
  * @param  {Object} opts - Optional api configuration. For a list of all
  *                         possible properties, see documentation for
  *                         request() function
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const api = function(key = '', opts = {}) {
 	let props = {...opts};
@@ -34,11 +34,13 @@ const api = function(key = '', opts = {}) {
 
 /**
  * Configures which library api requests should use.
+ * @chainable
  * @param {*} [typeOrKey] - Library key, e.g. g1234. Alternatively, if
  *                          second parameter is present, library type i.e
  *                          either 'group' or 'user'
  * @param {Number} [id]   - Only when first argument is a type, library id
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const library = function() {
 	var libraryKey;
@@ -69,6 +71,7 @@ const library = function() {
  * @param  {String} items - Item key, if present, configure api to point at
  *                          this specific item
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const items = function(items = null) {
 	return efr.bind(this)({
@@ -80,6 +83,7 @@ const items = function(items = null) {
  * Configure api to request all item types
  * Can only be used in conjuction with get()
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const itemTypes = function() {
 	return efr.bind(this)({
@@ -91,6 +95,7 @@ const itemTypes = function() {
  * Configure api to request all item fields
  * Can only be used in conjuction with get()
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const itemFields = function() {
 	return efr.bind(this)({
@@ -102,6 +107,7 @@ const itemFields = function() {
  * Configure api to request localized creator fields
  * Can only be used in conjuction with get()
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const creatorFields = function() {
 	return efr.bind(this)({
@@ -115,6 +121,7 @@ const creatorFields = function() {
  * @param  {String} itemType - item type for which valid fields will be
  *                             requested, e.g. 'book' or 'journalType'
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const itemTypeFields = function(itemType) {
 	return efr.bind(this)({
@@ -129,6 +136,7 @@ const itemTypeFields = function(itemType) {
  *                             will be requested, e.g. 'book' or 
  *                             'journalType'
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const itemTypeCreatorTypes = function(itemType) {
 	return efr.bind(this)({
@@ -142,6 +150,7 @@ const itemTypeCreatorTypes = function(itemType) {
  * @param  {String} itemType - item type for which template will be
  *                             requested, e.g. 'book' or 'journalType'
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const template = function(itemType) {
 	return efr.bind(this)({
@@ -156,6 +165,7 @@ const template = function(itemType) {
  * @param  {String} items - Collection key, if present, configure api to
  *                          point to this specific collection
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const collections = function(collections) {
 	return efr.bind(this)({
@@ -172,6 +182,7 @@ const collections = function(collections) {
  * @param  {String} tags - name of a tag to request. If preset, configure
  *                         api to request specific tag.
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const tags = function(tags = null) {
 	return efr.bind(this)({
@@ -186,6 +197,7 @@ const tags = function(tags = null) {
  * @param  {String} searches - Search key, if present, configure api to point at
  *                             this specific saved search
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const searches = function(searches = null) {
 	return efr.bind(this)({
@@ -198,6 +210,7 @@ const searches = function(searches = null) {
  * Can be used in conjuction with items() and collections() and only
  * with conjuction with a get() execution function
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const top = function() {
 	return efr.bind(this)({
@@ -210,6 +223,7 @@ const top = function() {
  * Can be only used in conjuction with items() and get() execution
  * function
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const trash = function() {
 	return efr.bind(this)({
@@ -223,6 +237,7 @@ const trash = function() {
  * Can be only used in conjuction with items() and get() execution
  * function
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const children = function() {
 	return efr.bind(this)({
@@ -238,6 +253,7 @@ const children = function() {
  * populate the If-Unmodified-Since-Version header.
  * @param  {Number} version - local version of the entity
  * @return {Object} Partially configured api functions
+ * @chainable
  */
 const version = function(version = null) {
 	return ef.bind(this)({

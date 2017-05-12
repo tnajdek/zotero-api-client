@@ -178,6 +178,7 @@ and can be called to specify further api configuration.
 Configures which library api requests should use.
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
 | Param | Type | Description |
@@ -193,6 +194,7 @@ Can be used in conjuction with library(), collections(), top(), trash(),
 children(), tags() and any execution function (e.g. get(), post())
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
 | Param | Type | Description |
@@ -206,6 +208,7 @@ Configure api to request all item types
 Can only be used in conjuction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 <a name="module_api..itemFields"></a>
 
@@ -214,6 +217,7 @@ Configure api to request all item fields
 Can only be used in conjuction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 <a name="module_api..creatorFields"></a>
 
@@ -222,6 +226,7 @@ Configure api to request localized creator fields
 Can only be used in conjuction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 <a name="module_api..itemTypeFields"></a>
 
@@ -230,6 +235,7 @@ Configure api to request all valid fields for an item type
 Can only be used in conjuction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
 | Param | Type | Description |
@@ -243,6 +249,7 @@ Configure api to request valid creator types for an item type
 Can only be used in conjuction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
 | Param | Type | Description |
@@ -256,6 +263,7 @@ Configure api to request template for a new item
 Can only be used in conjuction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
 | Param | Type | Description |
@@ -270,6 +278,7 @@ Can be used in conjuction with library(), items(), top(), tags() and
 any of the execution function (e.g. get(), post())
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
 | Param | Type | Description |
@@ -286,6 +295,7 @@ if the first argument is not present. Otherwise can only be used in
 conjuctin with get()
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
 | Param | Type | Description |
@@ -300,6 +310,7 @@ Can be used in conjuction with library() and any of the execution
 functions
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
 | Param | Type | Description |
@@ -314,6 +325,7 @@ Can be used in conjuction with items() and collections() and only
 with conjuction with a get() execution function
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 <a name="module_api..trash"></a>
 
@@ -323,6 +335,7 @@ Can be only used in conjuction with items() and get() execution
 function
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 <a name="module_api..children"></a>
 
@@ -333,6 +346,7 @@ Can be only used in conjuction with items() and get() execution
 function
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 <a name="module_api..version"></a>
 
@@ -344,6 +358,7 @@ When used in conjuction with post(), put(), patch() or delete() it will
 populate the If-Unmodified-Since-Version header.
 
 **Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
 | Param | Type | Description |

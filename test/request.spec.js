@@ -538,7 +538,7 @@ describe('ZoteroJS request', () => {
 				assert.equal(response.getErrors()[1].message, 'Bad input');
 				assert.equal(response.getErrors()[3].message, 'Bad input');
 
-				assert.equal(response.getEntityByIndex(2).key, 'ABCD2222');
+				assert.equal(response.getEntityByIndex('2').key, 'ABCD2222');
 				assert.equal(response.getEntityByIndex(2).version, 1337);
 				assert.equal(response.getEntityByIndex(4).key, 'ABCD3333');
 				assert.equal(response.getEntityByIndex(4).version, 0);

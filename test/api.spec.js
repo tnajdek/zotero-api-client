@@ -57,6 +57,9 @@ describe('ZoteroJS api interface', () => {
 
 			api(KEY).library(LIBRARY_KEY).items('AABBCCDD').version(42).patch({});
 			assert.equal(lrc.ifUnmodifiedSinceVersion, 42);
+
+			api(KEY).library(LIBRARY_KEY).items('AABBCCDD').version(42).delete();
+			assert.equal(lrc.ifUnmodifiedSinceVersion, 42);
 		});
 
 	});
@@ -353,5 +356,18 @@ describe('ZoteroJS api interface', () => {
 			assert.isNull(lrc.resource.template);
 		});
 
+	});
+
+	describe('Handles invalid calls', () => {
+		it('throws when invalid library is specified', () => {
+			let configuredApi = api();
+			assert.throws(configuredApi.library.bind(configuredApi, 'foobar', 1), /Unrecognized library type foobar/);
+		});
+
+		it('throws when delete is called incorrectly', () => {
+			let configuredApi = api();
+			assert.throws(configuredApi.delete.bind(configuredApi), /Called delete\(\) without first specifing what to delete/);
+			assert.throws(configuredApi.delete.bind(configuredApi, 'foobar'), /Called delete\(\) with string, expected an Array/);
+		});
 	});
 });

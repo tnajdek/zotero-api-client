@@ -62,13 +62,9 @@ class SingleWriteResponse extends ApiResponse {
 	 *                  For patch requests, this reprents only updated fields of the updated object.
 	 */
 	getData() {
-		if(this.response.status === 204) {
-			return {
-				...this.options.body,
-				version: this.response.headers.get('Last-Modified-Version')
-			}
-		} else {
-			return this.raw.data;
+		return {
+			...this.options.body,
+			version: this.response.headers.get('Last-Modified-Version')
 		}
 	}
 }

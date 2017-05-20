@@ -392,7 +392,7 @@ const del = function(keysToDelete, opts) {
 	};
 
 	if(keysToDelete && !Array.isArray(keysToDelete)) {
-		throw new Error(`Called delete with ${typeof keysToDelete}, expected Array`);
+		throw new Error(`Called delete() with ${typeof keysToDelete}, expected an Array`);
 	}
 
 	if('version' in requestConfig) {
@@ -409,7 +409,7 @@ const del = function(keysToDelete, opts) {
 	} else if('resource' in requestConfig && 'searches' in requestConfig.resource) {
 		relevantSearchKey = 'searchKey';
 	} else {
-		throw new Error('Called delete() without first specifing what to delete.')
+		throw new Error('Called delete() without first specifing what to delete')
 	}
 
 	if(keysToDelete) {

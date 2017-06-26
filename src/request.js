@@ -51,17 +51,19 @@ const fetchParamNames = [
 	'credentials'
 ];
 
-const nonKeyResource = [
-	'top',
-	'trash',
-	'children',
-	'groups',
-	'itemTypes',
-	'itemFields',
-	'creatorFields',
-	'itemTypeFields',
-	'itemTypeCreatorTypes'
-];
+const nonKeyResource = {
+	//name in resource: name in the url (usually the same but there are exceptions)
+	'top': 'top',
+	'trash': 'trash',
+	'children': 'children',
+	'groups': 'groups',
+	'subcollections': 'collections',
+	'itemTypes': 'itemTypes',
+	'itemFields': 'itemFields',
+	'creatorFields': 'creatorFields',
+	'itemTypeFields': 'itemTypeFields',
+	'itemTypeCreatorTypes': 'itemTypeCreatorTypes'
+};
 
 const dataResource = [
 	'collections',
@@ -110,9 +112,9 @@ const makeUrlPath = resource => {
 		}	
 	}
 
-	for(let i of nonKeyResource) {
+	for(let i in nonKeyResource) {
 		if(i in resource) {
-			path.push(i);
+			path.push(nonKeyResource[i]);
 		}
 	}
 

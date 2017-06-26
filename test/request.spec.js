@@ -122,6 +122,24 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
+		it('should get subcollections from the collection', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/collections/N7W92H48/collections',
+				multiGetResponseFixture
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					collections: 'N7W92H48',
+					subcollections: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.equal(response.getData().length, 15);
+			});
+		});
+
 		it('should get items from the collection', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/collections/N7W92H48/items',

@@ -123,6 +123,14 @@ describe('ZoteroJS api interface', () => {
 			assert.isNull(lrc.resource.collections);
 		});
 
+		it('handles api.library.collections(C).subcollections.get', () => {
+			api(KEY).library(LIBRARY_KEY).collections(COLLECTION_KEY).subcollections().get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.collections, COLLECTION_KEY);
+			assert.isNull(lrc.resource.subcollections);
+		});
+
 		it('handles api.library.collections.top.get', () => {
 			api(KEY).library(LIBRARY_KEY).collections().top().get();
 			assert.equal(lrc.method, 'get');

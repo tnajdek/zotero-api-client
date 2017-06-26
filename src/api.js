@@ -174,6 +174,20 @@ const collections = function(collections) {
 };
 
 /**
+ * Configure api to use subcollections that reside underneath the specified
+ * collection.
+ * Should only be used in conjuction with both library() and collection()
+ * and any of the execution function (e.g. get(), post())
+ * @return {Object} Partially configured api functions
+ * @chainable
+ */
+const subcollections = function() {
+	return efr.bind(this)({
+		subcollections: null
+	})
+};
+
+/**
  * Configure api to request or delete tags or request a specific tag
  * Can be used in conjuction with library(), items(), collections() and
  * any of the following execution functions: get(), delete() but only
@@ -439,6 +453,7 @@ const functions = {
 	itemTypeCreatorTypes,
 	template,
 	collections,
+	subcollections,
 	tags,
 	searches,
 	top,

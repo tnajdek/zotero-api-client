@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/tnajdek/zoterojs.svg?branch=master)](https://travis-ci.org/tnajdek/zoterojs)
-[![Coverage Status](https://coveralls.io/repos/github/tnajdek/zoterojs/badge.svg?branch=master)](https://coveralls.io/github/tnajdek/zoterojs?branch=master)
-[![Dependency Status](https://david-dm.org/tnajdek/zoterojs.svg)](https://david-dm.org/tnajdek/zoterojs)
+[![Build Status](https://travis-ci.org/tnajdek/zotero-api-client.svg?branch=master)](https://travis-ci.org/tnajdek/zotero-api-client)
+[![Coverage Status](https://coveralls.io/repos/github/tnajdek/zotero-api-client/badge.svg?branch=master)](https://coveralls.io/github/tnajdek/zotero-api-client?branch=master)
+[![Dependency Status](https://david-dm.org/tnajdek/zotero-api-client.svg)](https://david-dm.org/tnajdek/zotero-api-client)
 
 Overview
 --------
@@ -25,7 +25,7 @@ This library should be considered a low level tool to talk to the API. For more 
 Getting The Library
 -------------------
 
-	npm i zoterojs
+	npm i zotero-api-client
 
 
 Example
@@ -36,7 +36,7 @@ Simple example reading items from the public/test user library.
 1. Require the library
 
 ```
-const api = require('zoterojs');
+const api = require('zotero-api-client');
 ```
 
 2. Use the api to make the request (we're using [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function))
@@ -82,7 +82,7 @@ API interface
 
 API interface is a function that returns set of functions bound to previously configured options. This way it can be chained and stored at any level. Common scenario is to store authentication details and library details, which can be done quite simply:
 
-	const myapi = require('zoterojs')('AUTH').library('user', 0);
+	const myapi = require('zotero-api-client')('AUTH').library('user', 0);
 
 That produces api client already configured with your credentials and user library id. You can re-use it obtain list of collections in that library:
 

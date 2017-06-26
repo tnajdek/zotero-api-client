@@ -601,7 +601,7 @@ describe('ZoteroJS request', () => {
 				assert.equal(response.getData().version, 42);
 				assert.equal(response.getData().key, 'ABCD1111');
 				assert.equal(response.response.status, 204);
-				assert.deepEqual(response.raw, {});
+				assert.isNull(response.raw);
 			});
 		});
 
@@ -636,7 +636,7 @@ describe('ZoteroJS request', () => {
 				assert.equal(response.getData().version, 42);
 				assert.equal(response.getData().title, 'My Amazing Book');
 				assert.equal(response.response.status, 204);
-				assert.deepEqual(response.raw, {});
+				assert.isNull(response.raw);
 			});
 		});
 
@@ -664,7 +664,7 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(response, DeleteResponse);
 				assert.equal(response.getVersion(), 43);
 				assert.equal(response.response.status, 204);
-				assert.deepEqual(response.raw, {});
+				assert.isNull(response.raw);
 			});
 		});
 
@@ -695,7 +695,7 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(response, DeleteResponse);
 				assert.equal(response.getVersion(), 100);
 				assert.equal(response.response.status, 204);
-				assert.deepEqual(response.raw, {});
+				assert.isNull(response.raw);
 			});
 		});
 	});

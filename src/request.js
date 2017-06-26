@@ -208,7 +208,7 @@ const request = async options => {
 	fetchConfig.headers = headers;
 
 	let response = await fetch(url, fetchConfig);
-	let content;
+	var content;
 
 	if(options.format != 'json') {
 		return response;
@@ -226,15 +226,15 @@ const request = async options => {
 
 	try {
 		content = await response.json();
-	} catch(e) {
-		return new ApiResponse(null, options, response);
+	} catch(_) {
+		content = null;	
 	}
 
 	switch(options.method.toUpperCase()) {
 		case 'GET':
 		default:
 			if(dataResource.some(dataResource => dataResource in options.resource)) {
-				if(Array.isArray(content)) {
+				if(content && Array.isArray(content)) {
 					return new MultiReadResponse(content, options, response);
 				} else {
 					return new SingleReadResponse(content, options, response);
@@ -245,7 +245,7 @@ const request = async options => {
 		case 'POST':
 		case 'PUT':
 		case 'PATCH':
-			if('success' in content) {
+			if(content && 'success' in content) {
 				return new MultiWriteResponse(content, options, response);
 			} else {
 				return new SingleWriteResponse(content, options, response);

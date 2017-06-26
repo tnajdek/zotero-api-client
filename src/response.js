@@ -34,7 +34,7 @@ class SingleReadResponse extends ApiResponse {
 	 * @return {Object} entity returned in this response
 	 */
 	getData() {
-		return this.raw.data;
+		return this.raw ? this.raw.data : this.raw;
 	}
 }
 

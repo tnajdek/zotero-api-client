@@ -143,6 +143,7 @@ Module contains api() function, a Zotero API client
     * [~itemTypeCreatorTypes(itemType)](#module_api..itemTypeCreatorTypes) ⇒ <code>Object</code>
     * [~template(itemType)](#module_api..template) ⇒ <code>Object</code>
     * [~collections(items)](#module_api..collections) ⇒ <code>Object</code>
+    * [~subcollections()](#module_api..subcollections) ⇒ <code>Object</code>
     * [~tags(tags)](#module_api..tags) ⇒ <code>Object</code>
     * [~searches(searches)](#module_api..searches) ⇒ <code>Object</code>
     * [~top()](#module_api..top) ⇒ <code>Object</code>
@@ -154,6 +155,7 @@ Module contains api() function, a Zotero API client
     * [~put(data, opts)](#module_api..put) ⇒ <code>Promise</code>
     * [~patch(data, opts)](#module_api..patch) ⇒ <code>Promise</code>
     * [~del(keysToDelete, opts)](#module_api..del) ⇒ <code>Promise</code>
+    * [~getConfig()](#module_api..getConfig) ⇒ <code>Object</code>
 
 <a name="module_api..api"></a>
 
@@ -285,6 +287,17 @@ any of the execution function (e.g. get(), post())
 | --- | --- | --- |
 | items | <code>String</code> | Collection key, if present, configure api to                          point to this specific collection |
 
+<a name="module_api..subcollections"></a>
+
+### api~subcollections() ⇒ <code>Object</code>
+Configure api to use subcollections that reside underneath the specified
+collection.
+Should only be used in conjuction with both library() and collection()
+and any of the execution function (e.g. get(), post())
+
+**Kind**: inner method of [<code>api</code>](#module_api)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
 <a name="module_api..tags"></a>
 
 ### api~tags(tags) ⇒ <code>Object</code>
@@ -437,6 +450,15 @@ method.
 | keysToDelete | <code>Array</code> | An array of keys to delete. Depending on                                how api has been configured, these will                                be item keys, collection keys, search                                 keys or tag names. If not present, api                                should be configured to use specific                                 item, collection or saved search, in                                which case, that entity will be deleted |
 | opts | <code>Object</code> | Optional api configuration. If duplicate,                          overrides properties already present. For a list                         of all possible properties, see documentation                         for request() function |
 
+<a name="module_api..getConfig"></a>
+
+### api~getConfig() ⇒ <code>Object</code>
+Execution function. Returns current config without doing any requests.
+Usually used in advanced scenarios where config needs to be tweaked
+manually before submitted to the request method or as a debugging tool.
+
+**Kind**: inner method of [<code>api</code>](#module_api)  
+**Returns**: <code>Object</code> - current config  
 <a name="module_request"></a>
 
 ## request

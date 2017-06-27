@@ -438,7 +438,13 @@ const del = function(keysToDelete, opts) {
 	return request(requestConfig);
 };
 
-const _getConfig = function() {
+/**
+ * Execution function. Returns current config without doing any requests.
+ * Usually used in advanced scenarios where config needs to be tweaked
+ * manually before submitted to the request method or as a debugging tool.
+ * @return {Object} current config
+ */
+const getConfig = function() {
 	return this;
 };
 
@@ -465,7 +471,7 @@ const functions = {
 	put,
 	patch,
 	delete: del, //delete is a keyword
-	_getConfig
+	getConfig
 }
 
 const ef = function(opts) {

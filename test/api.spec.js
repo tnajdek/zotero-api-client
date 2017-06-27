@@ -26,22 +26,22 @@ describe('ZoteroJS api interface', () => {
 
 	describe('Accept request parameters', () => {
 		it('accepts api key', () => {
-			const request = api(KEY)._getConfig();
+			const request = api(KEY).getConfig();
 			assert.equal(request.authorization, `Bearer ${KEY}`);
 		});
 
 		it('allows unauthorised requests', () => {
-			const request = api()._getConfig();
+			const request = api().getConfig();
 			assert.notProperty(request, 'authorization');
 		});
 
 		it('constructs user library key', () => {
-			const request = api(KEY).library('user', '111')._getConfig();
+			const request = api(KEY).library('user', '111').getConfig();
 			assert.equal(request.resource.library, 'u111');
 		});
 
 		it('constructs group library key', () => {
-			const request = api(KEY).library('group', '111')._getConfig();
+			const request = api(KEY).library('group', '111').getConfig();
 			assert.equal(request.resource.library, 'g111');
 		});
 
@@ -66,7 +66,7 @@ describe('ZoteroJS api interface', () => {
 
 	describe('Construct get requests', () => {
 		it('accepts api key', () => {
-			const request = api(KEY)._getConfig();
+			const request = api(KEY).getConfig();
 			assert.equal(request.authorization, `Bearer ${KEY}`);
 		});
 		

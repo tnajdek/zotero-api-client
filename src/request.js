@@ -199,7 +199,7 @@ const request = async options => {
 	}
 	
 	for(let param of fetchParamNames) {
-		if(param === 'body') {
+		if(param === 'body' && options[param] !== null ) {
 			fetchConfig[param] = JSON.stringify(options[param]);
 		} else {
 			fetchConfig[param] = options[param];	

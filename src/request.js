@@ -62,7 +62,8 @@ const nonKeyResource = {
 	'itemFields': 'itemFields',
 	'creatorFields': 'creatorFields',
 	'itemTypeFields': 'itemTypeFields',
-	'itemTypeCreatorTypes': 'itemTypeCreatorTypes'
+	'itemTypeCreatorTypes': 'itemTypeCreatorTypes',
+	'template': 'items/new'
 };
 
 const dataResource = [
@@ -72,7 +73,7 @@ const dataResource = [
 ];
 
 const keyResource = [
-	'library', 'collections', 'items', 'searches', 'tags', 'template'
+	'library', 'collections', 'items', 'searches', 'tags'
 ];
 
 const defaults = {

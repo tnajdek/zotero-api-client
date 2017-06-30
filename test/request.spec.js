@@ -34,18 +34,38 @@ describe('ZoteroJS request', () => {
 	describe('Meta read requests', () => {
 		it('should get item types', () => {
 			fetchMock.mock(
-				'begin:https://api.zotero.org/users/475425/itemTypes',
+				'begin:https://api.zotero.org/itemTypes',
 				itemTypesDataFixture
 			);
 
 			return request({
 				resource: {
-					library: 'u475425',
 					itemTypes: null
 				}
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
 				assert.equal(response.getData().length, 2);
+			});
+		});
+
+		it('should get item template', () => {
+			fetchMock.mock(
+				/https:\/\/api.zotero.org\/items\/new\/?.*?itemType=book/i,
+				{
+					itemType: 'book',
+					title: ''
+				}
+			);
+
+			return request({
+				resource: {
+					template: null
+				},
+				itemType: 'book'
+			}).then(response => {
+				assert.instanceOf(response, ApiResponse);
+				assert.equal(response.getData().itemType, 'book');
+				assert.equal(Object.keys(response.getData()).length, 2);
 			});
 		});
 	});

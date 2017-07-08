@@ -64,7 +64,7 @@ class SingleWriteResponse extends ApiResponse {
 	getData() {
 		return {
 			...this.options.body,
-			version: this.response.headers.get('Last-Modified-Version')
+			version: parseInt(this.response.headers.get('Last-Modified-Version'), 10)
 		}
 	}
 }

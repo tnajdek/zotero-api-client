@@ -206,6 +206,8 @@ const request = async options => {
 		}
 	}
 
+	// checking against access-control-allow-methods seems to be case sensitive
+	fetchConfig.method = fetchConfig.method.toUpperCase();
 	fetchConfig.headers = headers;
 
 	let response = await fetch(url, fetchConfig);

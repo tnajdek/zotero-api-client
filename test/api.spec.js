@@ -30,6 +30,14 @@ describe('ZoteroJS api interface', () => {
 			assert.equal(request.authorization, `Bearer ${KEY}`);
 		});
 
+		it('accepts api key and optional config', () => {
+			const request = api(KEY, {
+				apiAuthorityPart: 'some-other-api.zotero.org'
+			}).getConfig();
+			assert.equal(request.authorization, `Bearer ${KEY}`);
+			assert.equal(request.apiAuthorityPart, 'some-other-api.zotero.org');
+		});
+
 		it('allows unauthorised requests', () => {
 			const request = api().getConfig();
 			assert.notProperty(request, 'authorization');

@@ -480,7 +480,7 @@ describe('ZoteroJS request', () => {
 		it('should post a single item', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
-					assert.equal(opts.method, 'post');
+					assert.equal(opts.method, 'POST');
 					return true;
 				}, {
 				headers: {
@@ -516,7 +516,7 @@ describe('ZoteroJS request', () => {
 		it('should post multiple items and handle mixed response', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
-					assert.equal(opts.method, 'post');
+					assert.equal(opts.method, 'POST');
 					return true;
 				}, {
 				headers: {
@@ -591,7 +591,7 @@ describe('ZoteroJS request', () => {
 		it('should update put a single, complete item', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.equal(opts.method, 'put');
+					assert.equal(opts.method, 'PUT');
 					return true;
 				}, {
 				status: 204,
@@ -628,7 +628,7 @@ describe('ZoteroJS request', () => {
 		it('should patch a single item', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.equal(opts.method, 'patch');
+					assert.equal(opts.method, 'PATCH');
 					return true;
 				}, {
 				status: 204,
@@ -663,7 +663,7 @@ describe('ZoteroJS request', () => {
 		it('should delete a single item', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.equal(opts.method, 'delete');
+					assert.equal(opts.method, 'DELETE');
 					return true;
 				}, {
 				status: 204,
@@ -690,7 +690,7 @@ describe('ZoteroJS request', () => {
 
 		it('should delete multiple items', () => {
 			fetchMock.mock( (url, opts) => {
-					assert.equal(opts.method, 'delete');
+					assert.equal(opts.method, 'DELETE');
 					let parsedUrl = URL.parse(url);
 					parsedUrl = parsedUrl.search.slice(1);
 					parsedUrl = parsedUrl.split('&');
@@ -724,7 +724,7 @@ describe('ZoteroJS request', () => {
 		it('should throw ErrorResponse for error post responses', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.equal(opts.method, 'put');
+					assert.equal(opts.method, 'PUT');
 					return true;
 				}, {
 				status: 400,
@@ -751,7 +751,7 @@ describe('ZoteroJS request', () => {
 		it('should throw ErrorResponse for error put responses', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.equal(opts.method, 'put');
+					assert.equal(opts.method, 'PUT');
 					return true;
 				}, {
 				status: 412,

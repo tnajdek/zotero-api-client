@@ -4,7 +4,7 @@
 const URL = require('url');
 const fetchMock = require('fetch-mock');
 const { assert } = require('chai');
-const request = require('../src/request');
+const _request = require('../src/request');
 const {
 	ApiResponse,
 	SingleReadResponse,
@@ -21,6 +21,11 @@ const searchesResponseFixture = require('./fixtures/searches-data-response.json'
 const itemTypesDataFixture = require('./fixtures/item-types-data.json');
 const multiMixedWriteResponseFixture = require('./fixtures/multi-mixed-write-response.json');
 const multiSuccessWriteResponseFixture = require('./fixtures/multi-success-write-response.json');
+
+const request = async (opts) => {
+	var config = await _request(opts);
+	return 'response' in config && config.response || undefined;
+}
 
 describe('ZoteroJS request', () => {
 	beforeEach(() => {

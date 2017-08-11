@@ -179,8 +179,12 @@ const makeUrlQuery = options => {
  * @throws {Error} If options specify impossible configuration
  * @throws {ErrorResponse} If API responds with a non-ok response
  */
-const request = async options => {
-	options = {...defaults, ...options};
+const request = async config => {
+	if('response' in config && config.response) {
+		return config;
+	}
+
+	const options = {...defaults, ...config};
 	const headers = {};
 
 	for(let header of Object.keys(headerNames)) {
@@ -210,52 +214,63 @@ const request = async options => {
 	fetchConfig.method = fetchConfig.method.toUpperCase();
 	fetchConfig.headers = headers;
 
-	let response = await fetch(url, fetchConfig);
+	let rawResponse = await fetch(url, fetchConfig);
 	var content;
 
 	if(options.format != 'json') {
-		return response;
-	}
+		response = rawResponse;
+	} else {
+		if(rawResponse.status < 200 || rawResponse.status >= 400) {
+			let clonedRawResponse = rawResponse.clone();
+			let reason = null;
+			try {
+				reason = await clonedRawResponse.text();
+			} finally {
+				throw new ErrorResponse(`${rawResponse.status}: ${rawResponse.statusText}`, reason, rawResponse, options);
+			}
+		}
 
-	if(response.status < 200 || response.status >= 400) {
-		let clonedResponse = response.clone();
-		let reason = null;
 		try {
-			reason = await clonedResponse.text();
-		} finally {
-			throw new ErrorResponse(`${response.status}: ${response.statusText}`, reason, response, options);
+			content = await rawResponse.json();
+		} catch(_) {
+			content = null;	
+		}
+
+		var response;
+
+		switch(options.method.toUpperCase()) {
+			case 'GET':
+			default:
+				if(dataResource.some(dataResource => dataResource in options.resource)) {
+					if(content && Array.isArray(content)) {
+						response = new MultiReadResponse(content, options, rawResponse);
+					} else {
+						response = new SingleReadResponse(content, options, rawResponse);
+					}
+				} else {
+					response = new ApiResponse(content, options, rawResponse);
+				}
+			break;
+			case 'POST':
+			case 'PUT':
+			case 'PATCH':
+				if(content && 'success' in content) {
+					response = new MultiWriteResponse(content, options, rawResponse);
+				} else {
+					response = new SingleWriteResponse(content, options, rawResponse);
+				}
+			break
+			case 'DELETE':
+				response = new DeleteResponse(content, options, rawResponse);
+			break
 		}
 	}
 
-	try {
-		content = await response.json();
-	} catch(_) {
-		content = null;	
-	}
-
-	switch(options.method.toUpperCase()) {
-		case 'GET':
-		default:
-			if(dataResource.some(dataResource => dataResource in options.resource)) {
-				if(content && Array.isArray(content)) {
-					return new MultiReadResponse(content, options, response);
-				} else {
-					return new SingleReadResponse(content, options, response);
-				}
-			} else {
-				return new ApiResponse(content, options, response);
-			}
-		case 'POST':
-		case 'PUT':
-		case 'PATCH':
-			if(content && 'success' in content) {
-				return new MultiWriteResponse(content, options, response);
-			} else {
-				return new SingleWriteResponse(content, options, response);
-			}
-		case 'DELETE':
-			return new DeleteResponse(content, options, response);
-	}
+	return {
+		...config,
+		source: 'request',
+		response
+	};
 };
 
 module.exports = request;

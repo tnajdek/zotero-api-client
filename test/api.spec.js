@@ -10,16 +10,21 @@ const COLLECTION_KEY = 'CCOOLLEE';
 const SEARCH_KEY = 'SEARCH_KEY';
 const URL_ENCODED_TAGS = 'URL_ENCODED_TAGS';
 
-describe('ZoteroJS api interface', () => {
+describe('Zotero Api Client', () => {
 	var lrc;
 	// mock api so it never calls request(), instead
 	// entire config is placed into lrc variable
-	mockery.registerMock('./request', async options => {
-		lrc = options;
+	mockery.registerMock('./request', async opts => {
+		lrc = opts;
+		return {
+			...opts,
+			response: 'response' in opts && opts.response || null
+		};
 	});
 	mockery.enable({ warnOnUnregistered: false });
 	const api = require('../src/api');
 	mockery.disable();
+	
 	beforeEach(() => {
 		lrc = null;
 	});
@@ -384,6 +389,43 @@ describe('ZoteroJS api interface', () => {
 			let configuredApi = api();
 			assert.throws(configuredApi.delete.bind(configuredApi), /Called delete\(\) without first specifing what to delete/);
 			assert.throws(configuredApi.delete.bind(configuredApi, 'foobar'), /Called delete\(\) with string, expected an Array/);
+		});
+	});
+
+	describe('Handles extensions', () => {
+		it('allows additional executors', async () => {
+			const extension = args => {
+				const { config, ef } = args;
+				const executor = () => ({ response: 'good'});
+				return ef.bind(config)({
+					executors: [executor, ...config.executors]
+				});
+			}
+
+			const response = await api().use(extension).library(LIBRARY_KEY).items('AABBCCDD').get();
+
+			assert.equal(response, 'good');
+		});
+
+		it('allows additional functions', async () => {
+			const extension = args => {
+				const { config, ef, functions } = args;
+				functions.foo = function() {
+					return ef.bind(this)({
+						foo: true
+					})
+				};
+
+				return ef.bind(config)();
+			}
+
+			const partial = api().use(extension);
+			const configWithoutFoo = await partial.library(LIBRARY_KEY).items('AABBCCDD').getConfig();
+			assert.notProperty(configWithoutFoo, 'foo');
+
+			const configWithFoo = await partial.foo().library(LIBRARY_KEY).items('AABBCCDD').getConfig();
+			assert.property(configWithFoo, 'foo');
+			assert.equal(configWithFoo.foo, true);
 		});
 	});
 });

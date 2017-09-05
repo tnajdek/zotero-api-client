@@ -447,6 +447,16 @@ const api = function(key = '', opts = {}) {
 		return this;
 	};
 
+	/**
+	 * Used for extending capabilities of the library by installing plugins.
+	 * In most cases plugins inject additional executors or bind api to an
+	 * alternative/extended set of functions
+	 * @param  {function} extend  - function that installs alternative
+	 *                              or additional functionality of the api.
+	 *                              It should return bound api functions,
+	 *                              usually by caling arguments[0].ef()
+	 * @return {Object} Extended/partially configured api functions
+	 */
 	const use = function(extend) {
 		return extend({
 			config: this,
@@ -508,7 +518,7 @@ const api = function(key = '', opts = {}) {
 		return config.response;
 	}
 
-	return ef.bind({})(props);
+	return ef.bind(this || {})(props);
 };
 
 module.exports = api;

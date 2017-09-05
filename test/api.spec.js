@@ -29,7 +29,7 @@ describe('Zotero Api Client', () => {
 		lrc = null;
 	});
 
-	describe('Accept request parameters', () => {
+	describe('Accepts request parameters', () => {
 		it('accepts api key', () => {
 			const request = api(KEY).getConfig();
 			assert.equal(request.authorization, `Bearer ${KEY}`);
@@ -41,6 +41,21 @@ describe('Zotero Api Client', () => {
 			}).getConfig();
 			assert.equal(request.authorization, `Bearer ${KEY}`);
 			assert.equal(request.apiAuthorityPart, 'some-other-api.zotero.org');
+		});
+
+		it('allows configuration via multiple api() calls', () => {
+			const request = api(KEY).api(null, {
+				apiAuthorityPart: 'some-other-api.zotero.org'
+			}).api().api().getConfig();
+			assert.equal(request.authorization, `Bearer ${KEY}`);
+			assert.equal(request.apiAuthorityPart, 'some-other-api.zotero.org');
+		});
+
+		it('allows independendly configured clients', () => {
+			const request1 = api('A');
+			const request2 = api('B');
+			assert.equal(request1.getConfig().authorization, 'Bearer A');
+			assert.equal(request2.getConfig().authorization, 'Bearer B');
 		});
 
 		it('allows unauthorised requests', () => {

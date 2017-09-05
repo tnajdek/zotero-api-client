@@ -422,6 +422,19 @@ describe('Zotero Api Client', () => {
 			assert.equal(response, 'good');
 		});
 
+		it('allows configuration via multiple api() calls while preserving additional executors', async () => {
+			const extension = args => {
+				const { config, ef } = args;
+				const executor = () => ({ response: 'good'});
+				return ef.bind(config)({
+					executors: [executor, ...config.executors]
+				});
+			}
+
+			const response = await api().use(extension).api().library(LIBRARY_KEY).api().items('AABBCCDD').api().get();
+			assert.equal(response, 'good');
+		});
+
 		it('allows additional functions', async () => {
 			const extension = args => {
 				const { config, ef, functions } = args;

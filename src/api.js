@@ -20,16 +20,14 @@ const request = require('./request');
  * @chainable
  */
 const api = function(key = '', opts = {}) {
-	let props = {
-		...opts,
-		executors: [request]
-	};
+	let props = { ...opts };
+
+	if(!this || !('executors' in this)) {
+		props.executors = [request];
+	}
 
 	if(key) {
-		props = {
-			...props,
-			authorization: `Bearer ${key}`
-		}
+		props.authorization =  `Bearer ${key}`;
 	}
 
 	/**

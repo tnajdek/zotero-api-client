@@ -8,26 +8,34 @@ const request = require('./request');
 
 
 /**
- * Entry point of the interface. Configures authentication.
- * Can be used to configure any other properties of the api
- * Returns a set of function that are bound to that configuration
- * and can be called to specify further api configuration.
- * @param  {String} key  - Authentication key
- * @param  {Object} opts - Optional api configuration. For a list of all
- *                         possible properties, see documentation for
- *                         request() function
+ * Wrapper function creates closure scope and calls api()
  * @return {Object} Partially configured api functions
- * @chainable
  */
-const api = function(key = '', opts = {}) {
-	let props = { ...opts };
+module.exports = function() {
+	/**
+	 * Entry point of the interface. Configures authentication.
+	 * Can be used to configure any other properties of the api
+	 * Returns a set of function that are bound to that configuration
+	 * and can be called to specify further api configuration.
+	 * @param  {String} key  - Authentication key
+	 * @param  {Object} opts - Optional api configuration. For a list of all
+	 *                         possible properties, see documentation for
+	 *                         request() function
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const api = function(key = '', opts = {}) {
+		let props = { ...opts };
+		
+		if(!this || !('executors' in this)) {
+			props.executors = [request];
+		}
 
-	if(!this || !('executors' in this)) {
-		props.executors = [request];
-	}
-
-	if(key) {
-		props.authorization =  `Bearer ${key}`;
+		if(key) {
+			props.authorization =  `Bearer ${key}`;
+		}
+		
+		return ef.bind(this)(props)
 	}
 
 	/**
@@ -516,7 +524,5 @@ const api = function(key = '', opts = {}) {
 		return config.response;
 	}
 
-	return ef.bind(this || {})(props);
+	return api(...arguments);
 };
-
-module.exports = api;

@@ -440,7 +440,7 @@ describe('Zotero Api Client', () => {
 				const { config, ef, functions } = args;
 				functions.foo = function() {
 					return ef.bind(this)({
-						foo: true
+						isFoo: true
 					})
 				};
 
@@ -449,11 +449,33 @@ describe('Zotero Api Client', () => {
 
 			const partial = api().use(extension);
 			const configWithoutFoo = await partial.library(LIBRARY_KEY).items('AABBCCDD').getConfig();
-			assert.notProperty(configWithoutFoo, 'foo');
+			assert.notProperty(configWithoutFoo, 'isFoo');
 
 			const configWithFoo = await partial.foo().library(LIBRARY_KEY).items('AABBCCDD').getConfig();
-			assert.property(configWithFoo, 'foo');
-			assert.equal(configWithFoo.foo, true);
+			assert.property(configWithFoo, 'isFoo');
+			assert.equal(configWithFoo.isFoo, true);
+		});
+
+		it('allows configuration via multiple api() calls while preserving extension functions', async () => {
+			const extension = args => {
+				const { config, ef, functions } = args;
+				functions.foo = function() {
+					return ef.bind(this)({
+						isFoo: true
+					})
+				};
+
+				return ef.bind(config)();
+			}
+
+			const partial = api().use(extension).api(KEY);
+			const configWithoutFoo = await partial.library(LIBRARY_KEY).items('AABBCCDD').getConfig();
+			assert.notProperty(configWithoutFoo, 'isFoo');
+
+			const configWithFoo = await partial.foo().library(LIBRARY_KEY).items('AABBCCDD').getConfig();
+			assert.property(configWithFoo, 'isFoo');
+			assert.equal(configWithFoo.isFoo, true);
+			assert.equal(configWithFoo.authorization, `Bearer ${KEY}`);
 		});
 	});
 });

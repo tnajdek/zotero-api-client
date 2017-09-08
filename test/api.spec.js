@@ -52,10 +52,13 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('allows independendly configured clients', () => {
-			const request1 = api('A');
-			const request2 = api('B');
-			assert.equal(request1.getConfig().authorization, 'Bearer A');
-			assert.equal(request2.getConfig().authorization, 'Bearer B');
+			const myapi = api(KEY).api;
+			const request1 = myapi().library('user', '1');
+			const request2 = myapi().library('user', '2');
+			assert.equal(request1.getConfig().authorization, `Bearer ${KEY}`);
+			assert.equal(request1.getConfig().resource.library, 'u1');
+			assert.equal(request2.getConfig().authorization, `Bearer ${KEY}`);
+			assert.equal(request2.getConfig().resource.library, 'u2');
 		});
 
 		it('allows unauthorised requests', () => {

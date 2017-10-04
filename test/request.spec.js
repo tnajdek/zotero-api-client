@@ -779,5 +779,19 @@ describe('ZoteroJS request', () => {
 				assert.equal(error.reason, 'Item has been modified since specified version (expected 42, found 41)');
 			})
 		});
+
+		it('should forward previous response if present (play nicely with other executors)', () => {
+			const previousResponse = new ApiResponse({ foo: 'bar' }, {}, {});
+			request({
+				method: 'get',
+				resource: {
+					library: 'u475425',
+					items: 'ABCD1111'
+				},
+				response: previousResponse
+			}).then(response => {
+				assert.equal(response.getData().foo, 'bar');
+			});
+		});
 	});
 });

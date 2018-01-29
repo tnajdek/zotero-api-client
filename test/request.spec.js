@@ -423,7 +423,6 @@ describe('ZoteroJS request', () => {
 		it('should throw ErrorResponse for non ok results', () => {
 			fetchMock.mock('begin:https://api.zotero.org/', {
 				status: 404,
-				statusText: 'Not Found',
 				body: 'These aren\'t the droids You are looking for'
 			});
 
@@ -600,7 +599,6 @@ describe('ZoteroJS request', () => {
 					return true;
 				}, {
 				status: 204,
-				statusText: 'No Content',
 				headers: {
 					'Last-Modified-Version': 42
 				}
@@ -637,7 +635,6 @@ describe('ZoteroJS request', () => {
 					return true;
 				}, {
 				status: 204,
-				statusText: 'No Content',
 				headers: {
 					'Last-Modified-Version': 42
 				}
@@ -672,7 +669,6 @@ describe('ZoteroJS request', () => {
 					return true;
 				}, {
 				status: 204,
-				statusText: 'No Content',
 				headers: {
 					'Last-Modified-Version': 43
 				}
@@ -703,7 +699,6 @@ describe('ZoteroJS request', () => {
 					return true;
 				}, {
 				status: 204,
-				statusText: 'No Content',
 				headers: {
 					'Last-Modified-Version': 100
 				}
@@ -733,7 +728,6 @@ describe('ZoteroJS request', () => {
 					return true;
 				}, {
 				status: 400,
-				statusText: 'Bad Request',
 				body: 'Uploaded data must be a JSON array'
 			});
 
@@ -760,7 +754,6 @@ describe('ZoteroJS request', () => {
 					return true;
 				}, {
 				status: 412,
-				statusText: 'Precondition Failed',
 				body: 'Item has been modified since specified version (expected 42, found 41)'
 			});
 
@@ -782,7 +775,7 @@ describe('ZoteroJS request', () => {
 
 		it('should forward previous response if present (play nicely with other executors)', () => {
 			const previousResponse = new ApiResponse({ foo: 'bar' }, {}, {});
-			request({
+			return request({
 				method: 'get',
 				resource: {
 					library: 'u475425',

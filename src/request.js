@@ -40,7 +40,8 @@ const queryParamNames = [
 	'sort',
 	'direction',
 	'limit',
-	'start'
+	'start',
+	'linkMode'
 ];
 
 const fetchParamNames = [

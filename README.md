@@ -133,39 +133,49 @@ Module contains api() function, a Zotero API client
 
 
 * [api](#module_api)
-    * [~api(key, opts)](#module_api..api) ⇒ <code>Object</code>
-    * [~library([typeOrKey], [id])](#module_api..library) ⇒ <code>Object</code>
-    * [~items(items)](#module_api..items) ⇒ <code>Object</code>
-    * [~itemTypes()](#module_api..itemTypes) ⇒ <code>Object</code>
-    * [~itemFields()](#module_api..itemFields) ⇒ <code>Object</code>
-    * [~creatorFields()](#module_api..creatorFields) ⇒ <code>Object</code>
-    * [~itemTypeFields(itemType)](#module_api..itemTypeFields) ⇒ <code>Object</code>
-    * [~itemTypeCreatorTypes(itemType)](#module_api..itemTypeCreatorTypes) ⇒ <code>Object</code>
-    * [~template(itemType)](#module_api..template) ⇒ <code>Object</code>
-    * [~collections(items)](#module_api..collections) ⇒ <code>Object</code>
-    * [~subcollections()](#module_api..subcollections) ⇒ <code>Object</code>
-    * [~tags(tags)](#module_api..tags) ⇒ <code>Object</code>
-    * [~searches(searches)](#module_api..searches) ⇒ <code>Object</code>
-    * [~top()](#module_api..top) ⇒ <code>Object</code>
-    * [~trash()](#module_api..trash) ⇒ <code>Object</code>
-    * [~children()](#module_api..children) ⇒ <code>Object</code>
-    * [~version(version)](#module_api..version) ⇒ <code>Object</code>
-    * [~get(opts)](#module_api..get) ⇒ <code>Promise</code>
-    * [~post(data, opts)](#module_api..post) ⇒ <code>Promise</code>
-    * [~put(data, opts)](#module_api..put) ⇒ <code>Promise</code>
-    * [~patch(data, opts)](#module_api..patch) ⇒ <code>Promise</code>
-    * [~del(keysToDelete, opts)](#module_api..del) ⇒ <code>Promise</code>
-    * [~getConfig()](#module_api..getConfig) ⇒ <code>Object</code>
+    * [module.exports()](#exp_module_api--module.exports) ⇒ <code>Object</code> ⏏
+        * [~api(key, opts)](#module_api--module.exports..api) ⇒ <code>Object</code>
+        * [~library([typeOrKey], [id])](#module_api--module.exports..library) ⇒ <code>Object</code>
+        * [~items(items)](#module_api--module.exports..items) ⇒ <code>Object</code>
+        * [~itemTypes()](#module_api--module.exports..itemTypes) ⇒ <code>Object</code>
+        * [~itemFields()](#module_api--module.exports..itemFields) ⇒ <code>Object</code>
+        * [~creatorFields()](#module_api--module.exports..creatorFields) ⇒ <code>Object</code>
+        * [~itemTypeFields(itemType)](#module_api--module.exports..itemTypeFields) ⇒ <code>Object</code>
+        * [~itemTypeCreatorTypes(itemType)](#module_api--module.exports..itemTypeCreatorTypes) ⇒ <code>Object</code>
+        * [~template(itemType)](#module_api--module.exports..template) ⇒ <code>Object</code>
+        * [~collections(items)](#module_api--module.exports..collections) ⇒ <code>Object</code>
+        * [~subcollections()](#module_api--module.exports..subcollections) ⇒ <code>Object</code>
+        * [~tags(tags)](#module_api--module.exports..tags) ⇒ <code>Object</code>
+        * [~searches(searches)](#module_api--module.exports..searches) ⇒ <code>Object</code>
+        * [~top()](#module_api--module.exports..top) ⇒ <code>Object</code>
+        * [~trash()](#module_api--module.exports..trash) ⇒ <code>Object</code>
+        * [~children()](#module_api--module.exports..children) ⇒ <code>Object</code>
+        * [~version(version)](#module_api--module.exports..version) ⇒ <code>Object</code>
+        * [~attachment(fileName, file, mtime)](#module_api--module.exports..attachment) ⇒ <code>Object</code>
+        * [~get(opts)](#module_api--module.exports..get) ⇒ <code>Promise</code>
+        * [~post(data, opts)](#module_api--module.exports..post) ⇒ <code>Promise</code>
+        * [~put(data, opts)](#module_api--module.exports..put) ⇒ <code>Promise</code>
+        * [~patch(data, opts)](#module_api--module.exports..patch) ⇒ <code>Promise</code>
+        * [~del(keysToDelete, opts)](#module_api--module.exports..del) ⇒ <code>Promise</code>
+        * [~getConfig()](#module_api--module.exports..getConfig) ⇒ <code>Object</code>
+        * [~use(extend)](#module_api--module.exports..use) ⇒ <code>Object</code>
 
-<a name="module_api..api"></a>
+<a name="exp_module_api--module.exports"></a>
 
-### api~api(key, opts) ⇒ <code>Object</code>
+### module.exports() ⇒ <code>Object</code> ⏏
+Wrapper function creates closure scope and calls api()
+
+**Kind**: Exported function  
+**Returns**: <code>Object</code> - Partially configured api functions  
+<a name="module_api--module.exports..api"></a>
+
+#### module.exports~api(key, opts) ⇒ <code>Object</code>
 Entry point of the interface. Configures authentication.
 Can be used to configure any other properties of the api
 Returns a set of function that are bound to that configuration
 and can be called to specify further api configuration.
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
@@ -174,12 +184,12 @@ and can be called to specify further api configuration.
 | key | <code>String</code> | Authentication key |
 | opts | <code>Object</code> | Optional api configuration. For a list of all                         possible properties, see documentation for                         request() function |
 
-<a name="module_api..library"></a>
+<a name="module_api--module.exports..library"></a>
 
-### api~library([typeOrKey], [id]) ⇒ <code>Object</code>
+#### module.exports~library([typeOrKey], [id]) ⇒ <code>Object</code>
 Configures which library api requests should use.
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
@@ -188,55 +198,55 @@ Configures which library api requests should use.
 | [typeOrKey] | <code>\*</code> | Library key, e.g. g1234. Alternatively, if                          second parameter is present, library type i.e                          either 'group' or 'user' |
 | [id] | <code>Number</code> | Only when first argument is a type, library id |
 
-<a name="module_api..items"></a>
+<a name="module_api--module.exports..items"></a>
 
-### api~items(items) ⇒ <code>Object</code>
+#### module.exports~items(items) ⇒ <code>Object</code>
 Configures api to use items or a specific item
 Can be used in conjuction with library(), collections(), top(), trash(),
 children(), tags() and any execution function (e.g. get(), post())
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| items | <code>String</code> | Item key, if present, configure api to point at                          this specific item |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| items | <code>String</code> | <code></code> | Item key, if present, configure api to point at                          this specific item |
 
-<a name="module_api..itemTypes"></a>
+<a name="module_api--module.exports..itemTypes"></a>
 
-### api~itemTypes() ⇒ <code>Object</code>
+#### module.exports~itemTypes() ⇒ <code>Object</code>
 Configure api to request all item types
 Can only be used in conjuction with get()
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
-<a name="module_api..itemFields"></a>
+<a name="module_api--module.exports..itemFields"></a>
 
-### api~itemFields() ⇒ <code>Object</code>
+#### module.exports~itemFields() ⇒ <code>Object</code>
 Configure api to request all item fields
 Can only be used in conjuction with get()
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
-<a name="module_api..creatorFields"></a>
+<a name="module_api--module.exports..creatorFields"></a>
 
-### api~creatorFields() ⇒ <code>Object</code>
+#### module.exports~creatorFields() ⇒ <code>Object</code>
 Configure api to request localized creator fields
 Can only be used in conjuction with get()
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
-<a name="module_api..itemTypeFields"></a>
+<a name="module_api--module.exports..itemTypeFields"></a>
 
-### api~itemTypeFields(itemType) ⇒ <code>Object</code>
+#### module.exports~itemTypeFields(itemType) ⇒ <code>Object</code>
 Configure api to request all valid fields for an item type
 Can only be used in conjuction with get()
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
@@ -244,13 +254,13 @@ Can only be used in conjuction with get()
 | --- | --- | --- |
 | itemType | <code>String</code> | item type for which valid fields will be                             requested, e.g. 'book' or 'journalType' |
 
-<a name="module_api..itemTypeCreatorTypes"></a>
+<a name="module_api--module.exports..itemTypeCreatorTypes"></a>
 
-### api~itemTypeCreatorTypes(itemType) ⇒ <code>Object</code>
+#### module.exports~itemTypeCreatorTypes(itemType) ⇒ <code>Object</code>
 Configure api to request valid creator types for an item type
 Can only be used in conjuction with get()
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
@@ -258,13 +268,13 @@ Can only be used in conjuction with get()
 | --- | --- | --- |
 | itemType | <code>String</code> | item type for which valid creator types                             will be requested, e.g. 'book' or                              'journalType' |
 
-<a name="module_api..template"></a>
+<a name="module_api--module.exports..template"></a>
 
-### api~template(itemType) ⇒ <code>Object</code>
+#### module.exports~template(itemType) ⇒ <code>Object</code>
 Configure api to request template for a new item
 Can only be used in conjuction with get()
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
@@ -272,14 +282,14 @@ Can only be used in conjuction with get()
 | --- | --- | --- |
 | itemType | <code>String</code> | item type for which template will be                             requested, e.g. 'book' or 'journalType' |
 
-<a name="module_api..collections"></a>
+<a name="module_api--module.exports..collections"></a>
 
-### api~collections(items) ⇒ <code>Object</code>
+#### module.exports~collections(items) ⇒ <code>Object</code>
 Configure api to use collections or a specific collection
 Can be used in conjuction with library(), items(), top(), tags() and
 any of the execution function (e.g. get(), post())
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
@@ -287,103 +297,121 @@ any of the execution function (e.g. get(), post())
 | --- | --- | --- |
 | items | <code>String</code> | Collection key, if present, configure api to                          point to this specific collection |
 
-<a name="module_api..subcollections"></a>
+<a name="module_api--module.exports..subcollections"></a>
 
-### api~subcollections() ⇒ <code>Object</code>
+#### module.exports~subcollections() ⇒ <code>Object</code>
 Configure api to use subcollections that reside underneath the specified
 collection.
 Should only be used in conjuction with both library() and collection()
 and any of the execution function (e.g. get(), post())
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
-<a name="module_api..tags"></a>
+<a name="module_api--module.exports..tags"></a>
 
-### api~tags(tags) ⇒ <code>Object</code>
+#### module.exports~tags(tags) ⇒ <code>Object</code>
 Configure api to request or delete tags or request a specific tag
 Can be used in conjuction with library(), items(), collections() and
 any of the following execution functions: get(), delete() but only
 if the first argument is not present. Otherwise can only be used in
 conjuctin with get()
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| tags | <code>String</code> | name of a tag to request. If preset, configure                         api to request specific tag. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| tags | <code>String</code> | <code></code> | name of a tag to request. If preset, configure                         api to request specific tag. |
 
-<a name="module_api..searches"></a>
+<a name="module_api--module.exports..searches"></a>
 
-### api~searches(searches) ⇒ <code>Object</code>
+#### module.exports~searches(searches) ⇒ <code>Object</code>
 Configure api to use saved searches or a specific saved search
 Can be used in conjuction with library() and any of the execution
 functions
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| searches | <code>String</code> | Search key, if present, configure api to point at                             this specific saved search |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| searches | <code>String</code> | <code></code> | Search key, if present, configure api to point at                             this specific saved search |
 
-<a name="module_api..top"></a>
+<a name="module_api--module.exports..top"></a>
 
-### api~top() ⇒ <code>Object</code>
+#### module.exports~top() ⇒ <code>Object</code>
 Configure api to narrow the request only to the top level items
 Can be used in conjuction with items() and collections() and only
 with conjuction with a get() execution function
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
-<a name="module_api..trash"></a>
+<a name="module_api--module.exports..trash"></a>
 
-### api~trash() ⇒ <code>Object</code>
+#### module.exports~trash() ⇒ <code>Object</code>
 Configure api to narrow the request only to the items in the trash
 Can be only used in conjuction with items() and get() execution
 function
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
-<a name="module_api..children"></a>
+<a name="module_api--module.exports..children"></a>
 
-### api~children() ⇒ <code>Object</code>
+#### module.exports~children() ⇒ <code>Object</code>
 Configure api to narrow the request only to the children of given
 item
 Can be only used in conjuction with items() and get() execution
 function
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
-<a name="module_api..version"></a>
+<a name="module_api--module.exports..version"></a>
 
-### api~version(version) ⇒ <code>Object</code>
+#### module.exports~version(version) ⇒ <code>Object</code>
 Configure api to specify local version of given entity.
 When used in conjuction with get() exec function, it will populate the
 If-Modified-Since-Version header.
 When used in conjuction with post(), put(), patch() or delete() it will
 populate the If-Unmodified-Since-Version header.
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| version | <code>Number</code> | <code></code> | local version of the entity |
+
+<a name="module_api--module.exports..attachment"></a>
+
+#### module.exports~attachment(fileName, file, mtime) ⇒ <code>Object</code>
+Configure api to upload a file
+Can be only used in conjuction with items() and post()
+Use items() to select attachment item for which file is uploaded
+Will populate Content-Type, If-None-Match headers
+
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| version | <code>Number</code> | local version of the entity |
+| fileName | <code>String</code> | name of the file, should match values in attachment                              item entry |
+| file | <code>ArrayBuffer</code> | file to be uploaded |
+| mtime | <code>Number</code> | file's mtime, if not provided current time is used |
 
-<a name="module_api..get"></a>
+<a name="module_api--module.exports..get"></a>
 
-### api~get(opts) ⇒ <code>Promise</code>
+#### module.exports~get(opts) ⇒ <code>Promise</code>
 Execution function. Specifies that the request should use a GET method.
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Returns**: <code>Promise</code> - A promise that will eventually return either an 
                   ApiResponse, SingleReadResponse or MultiReadResponse.
                   Might throw Error or ErrorResponse.  
@@ -392,12 +420,12 @@ Execution function. Specifies that the request should use a GET method.
 | --- | --- | --- |
 | opts | <code>Object</code> | Optional api configuration. If duplicate,                          overrides properties already present. For a list                         of all possible properties, see documentation                         for request() function |
 
-<a name="module_api..post"></a>
+<a name="module_api--module.exports..post"></a>
 
-### api~post(data, opts) ⇒ <code>Promise</code>
+#### module.exports~post(data, opts) ⇒ <code>Promise</code>
 Execution function. Specifies that the request should use a POST method.
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Returns**: <code>Promise</code> - A promise that will eventually return either an
                   MultiWriteResponse. Might throw Error or ErrorResponse  
 
@@ -406,12 +434,12 @@ Execution function. Specifies that the request should use a POST method.
 | data | <code>Array</code> | An array of entities to post |
 | opts | <code>Object</code> | Optional api configuration. If duplicate,                          overrides properties already present. For a list                         of all possible properties, see documentation                         for request() function |
 
-<a name="module_api..put"></a>
+<a name="module_api--module.exports..put"></a>
 
-### api~put(data, opts) ⇒ <code>Promise</code>
+#### module.exports~put(data, opts) ⇒ <code>Promise</code>
 Execution function. Specifies that the request should use a PUT method.
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Returns**: <code>Promise</code> - A promise that will eventually return either an
                   SingleWriteResponse. Might throw Error or ErrorResponse  
 
@@ -420,13 +448,13 @@ Execution function. Specifies that the request should use a PUT method.
 | data | <code>Object</code> | An entity to put |
 | opts | <code>Object</code> | Optional api configuration. If duplicate,                          overrides properties already present. For a list                         of all possible properties, see documentation                         for request() function |
 
-<a name="module_api..patch"></a>
+<a name="module_api--module.exports..patch"></a>
 
-### api~patch(data, opts) ⇒ <code>Promise</code>
+#### module.exports~patch(data, opts) ⇒ <code>Promise</code>
 Execution function. Specifies that the request should use a PATCH
 method.
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Returns**: <code>Promise</code> - A promise that will eventually return either an 
                   SingleWriteResponse. Might throw Error or ErrorResponse  
 
@@ -435,13 +463,13 @@ method.
 | data | <code>Object</code> | Partial entity data to patch |
 | opts | <code>Object</code> | Optional api configuration. If duplicate,                          overrides properties already present. For a list                         of all possible properties, see documentation                         for request() function |
 
-<a name="module_api..del"></a>
+<a name="module_api--module.exports..del"></a>
 
-### api~del(keysToDelete, opts) ⇒ <code>Promise</code>
+#### module.exports~del(keysToDelete, opts) ⇒ <code>Promise</code>
 Execution function. Specifies that the request should use a DELETE
 method.
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Returns**: <code>Promise</code> - A promise that will eventually return either an
                   DeleteResponse. Might throw Error or ErrorResponse  
 
@@ -450,15 +478,29 @@ method.
 | keysToDelete | <code>Array</code> | An array of keys to delete. Depending on                                how api has been configured, these will                                be item keys, collection keys, search                                 keys or tag names. If not present, api                                should be configured to use specific                                 item, collection or saved search, in                                which case, that entity will be deleted |
 | opts | <code>Object</code> | Optional api configuration. If duplicate,                          overrides properties already present. For a list                         of all possible properties, see documentation                         for request() function |
 
-<a name="module_api..getConfig"></a>
+<a name="module_api--module.exports..getConfig"></a>
 
-### api~getConfig() ⇒ <code>Object</code>
+#### module.exports~getConfig() ⇒ <code>Object</code>
 Execution function. Returns current config without doing any requests.
 Usually used in advanced scenarios where config needs to be tweaked
 manually before submitted to the request method or as a debugging tool.
 
-**Kind**: inner method of [<code>api</code>](#module_api)  
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Returns**: <code>Object</code> - current config  
+<a name="module_api--module.exports..use"></a>
+
+#### module.exports~use(extend) ⇒ <code>Object</code>
+Used for extending capabilities of the library by installing plugins.
+In most cases plugins inject additional executors or bind api to an
+alternative/extended set of functions
+
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
+**Returns**: <code>Object</code> - Extended/partially configured api functions  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| extend | <code>function</code> | function that installs alternative                              or additional functionality of the api.                              It should return bound api functions,                              usually by caling arguments[0].ef() |
+
 <a name="module_request"></a>
 
 ## request
@@ -540,6 +582,7 @@ Module contains classes that offer abstraction over Zotero API responses
         * [.getEntityByKey(key)](#module_response..MultiWriteResponse+getEntityByKey)
         * [.getEntityByIndex(index)](#module_response..MultiWriteResponse+getEntityByIndex) ⇒ <code>Object</code>
     * [~DeleteResponse](#module_response..DeleteResponse) ⇐ <code>ApiResponse</code>
+    * [~FileUploadResponse](#module_response..FileUploadResponse) ⇐ <code>ApiResponse</code>
     * [~ErrorResponse](#module_response..ErrorResponse) ⇐ <code>Error</code>
 
 <a name="module_response..SingleReadResponse"></a>
@@ -654,6 +697,22 @@ represents a response to a DELETE request
 
 **Kind**: inner class of [<code>response</code>](#module_response)  
 **Extends**: <code>ApiResponse</code>  
+<a name="module_response..FileUploadResponse"></a>
+
+### response~FileUploadResponse ⇐ <code>ApiResponse</code>
+represents a response to a file upload request
+
+**Kind**: inner class of [<code>response</code>](#module_response)  
+**Extends**: <code>ApiResponse</code>  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| authResponse | <code>Object</code> | Response object for the stage 1 (upload authorisation)                                       request |
+| response | <code>Object</code> | alias for "authResponse" |
+| uploadResponse | <code>Object</code> | Response object for the stage 2 (file upload) request |
+| registerResponse | <code>Objext</code> | Response object for the stage 3 (upload registration)                                       request |
+
 <a name="module_response..ErrorResponse"></a>
 
 ### response~ErrorResponse ⇐ <code>Error</code>

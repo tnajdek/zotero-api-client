@@ -282,16 +282,17 @@ module.exports = function() {
 	};
 
 	/**
-	 * Execution function. Specifies that the request should use a GET method.
-	 * @param  {Object} opts - Optional api configuration. If duplicate, 
-	 *                         overrides properties already present. For a list
-	 *                         of all possible properties, see documentation
-	 *                         for request() function
-	 * @return {Promise} A promise that will eventually return either an 
-	 *                   ApiResponse, SingleReadResponse or MultiReadResponse.
-	 *                   Might throw Error or ErrorResponse.
+	 * Configure api to upload a file
+	 * Can be only used in conjuction with items() and post()
+	 * Use items() to select attachment item for which file is uploaded
+	 * Will populate Content-Type, If-None-Match headers
+	 * @param  {String} fileName  - name of the file, should match values in attachment
+	 *                              item entry
+	 * @param  {ArrayBuffer} file - file to be uploaded
+	 * @param  {Number} mtime     - file's mtime, if not provided current time is used
+	 * @return {Object} Partially configured api functions
+	 * @chainable
 	 */
-	
 	const attachment = function(fileName, file, mtime) {
 		let resource = { 
 			...this.resource,
@@ -308,6 +309,16 @@ module.exports = function() {
 		})
 	}
 
+	/**
+	 * Execution function. Specifies that the request should use a GET method.
+	 * @param  {Object} opts - Optional api configuration. If duplicate, 
+	 *                         overrides properties already present. For a list
+	 *                         of all possible properties, see documentation
+	 *                         for request() function
+	 * @return {Promise} A promise that will eventually return either an 
+	 *                   ApiResponse, SingleReadResponse or MultiReadResponse.
+	 *                   Might throw Error or ErrorResponse.
+	 */
 	const get = function(opts) {
 		let requestConfig = {
 			...this,

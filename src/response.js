@@ -172,8 +172,14 @@ class MultiWriteResponse extends ApiResponse {
 class DeleteResponse extends ApiResponse {}
 
 /**
- * @class represents a response to a DELETE request
+ * @class represents a response to a file upload request
  * @extends ApiResponse
+ * @property {Object} authResponse     - Response object for the stage 1 (upload authorisation)
+ *                                       request
+ * @property {Object} response 	       - alias for "authResponse" 
+ * @property {Object} uploadResponse   - Response object for the stage 2 (file upload) request
+ * @property {Objext} registerResponse - Response object for the stage 3 (upload registration)
+ *                                       request
  */
 class FileUploadResponse extends ApiResponse {
 	constructor(options, authResponse, uploadResponse, registerResponse) {

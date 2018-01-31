@@ -291,6 +291,23 @@ module.exports = function() {
 	 *                   ApiResponse, SingleReadResponse or MultiReadResponse.
 	 *                   Might throw Error or ErrorResponse.
 	 */
+	
+	const attachment = function(fileName, file, mtime) {
+		let resource = { 
+			...this.resource,
+			file: null
+		};
+		return ef.bind(this)({
+			format: null,
+			ifNoneMatch: '*',
+			contentType: 'application/x-www-form-urlencoded',
+			fileName,
+			file,
+			resource,
+			mtime
+		})
+	}
+
 	const get = function(opts) {
 		let requestConfig = {
 			...this,
@@ -475,29 +492,30 @@ module.exports = function() {
 
 	const functions = {
 		api,
-		library,
-		items,
-		itemTypes,
-		itemFields,
-		creatorFields,
-		itemTypeFields,
-		itemTypeCreatorTypes,
-		template,
-		collections,
-		subcollections,
-		tags,
-		searches,
-		top,
-		trash,
+		attachment,
 		children,
-		version,
+		collections,
+		creatorFields,
+		delete: del, //delete is a keyword
 		get,
+		getConfig,
+		itemFields,
+		items,
+		itemTypeCreatorTypes,
+		itemTypeFields,
+		itemTypes,
+		library,
+		patch,
 		post,
 		put,
-		patch,
-		delete: del, //delete is a keyword
-		getConfig,
-		use
+		searches,
+		subcollections,
+		tags,
+		template,
+		top,
+		trash,
+		use,
+		version,
 	}
 
 	const ef = function(opts) {

@@ -6,15 +6,17 @@
  */
 
 require('isomorphic-fetch');
+const md5 = require('js-md5');
 
 const {
 	ApiResponse,
-	SingleReadResponse,
-	MultiReadResponse,
-	SingleWriteResponse,
-	MultiWriteResponse,
 	DeleteResponse,
-	ErrorResponse
+	ErrorResponse,
+	FileUploadResponse,
+	MultiReadResponse,
+	MultiWriteResponse,
+	SingleReadResponse,
+	SingleWriteResponse,
 } = require('./response');
 
 const headerNames = {
@@ -22,7 +24,9 @@ const headerNames = {
 	zoteroWriteToken: 'Zotero-Write-Token',
 	ifModifiedSinceVersion: 'If-Modified-Since-Version',
 	ifUnmodifiedSinceVersion: 'If-Unmodified-Since-Version',
-	contentType: 'Content-Type'
+	contentType: 'Content-Type',
+	ifNoneMatch: 'If-None-Match',
+	ifMatch: 'If-Match'
 };
 
 const queryParamNames = [
@@ -64,7 +68,8 @@ const nonKeyResource = {
 	'creatorFields': 'creatorFields',
 	'itemTypeFields': 'itemTypeFields',
 	'itemTypeCreatorTypes': 'itemTypeCreatorTypes',
-	'template': 'items/new'
+	'template': 'items/new',
+	'file': 'file'
 };
 
 const dataResource = [
@@ -132,6 +137,20 @@ const makeUrlQuery = options => {
 	}
 	return params.length ? '?' + params.join('&') : '';
 };
+
+const hasDefinedKey = (object, key) => {
+	return key in object && object[key] !== null && typeof(object[key]) !== 'undefined';
+}
+
+const throwErrorResponse = async (rawResponse, options, requestDesc) => {
+	let clonedRawResponse = rawResponse.clone();
+	let reason = null;
+	try {
+		reason = await clonedRawResponse.text();
+	} finally {
+		throw new ErrorResponse(`${requestDesc}${rawResponse.status}: ${rawResponse.statusText}`, reason, rawResponse, options);
+	}
+}
 
 /**
  * Executes request and returns a response
@@ -202,13 +221,27 @@ const request = async config => {
 	if(!validateUrlPath(path)) {
 		throw new Error('Invalid resource');
 	}
-	
+
 	for(let param of fetchParamNames) {
-		if(param === 'body' && options[param] !== null ) {
+		if(param === 'body' && hasDefinedKey(options, param)) {
 			fetchConfig[param] = JSON.stringify(options[param]);
 		} else {
 			fetchConfig[param] = options[param];	
 		}
+	}
+
+	// build pre-upload (authorisation) request body based on the file provided
+	if(hasDefinedKey(options, 'body') && hasDefinedKey(options, 'file')) {
+		throw new Error('Cannot use both "file" and "body" in a single request.');
+	}
+
+	// process the request for file upload authorisation request
+	if(hasDefinedKey(options, 'file') && hasDefinedKey(options, 'fileName')) {
+		let fileName = options.fileName;
+		let md5sum = md5(options.file);
+		let filesize = options.file.byteLength;
+		let mtime = options.mtime || Date.now();
+		fetchConfig['body'] = `md5=${md5sum}&filename=${fileName}&filesize=${filesize}&mtime=${mtime}`;
 	}
 
 	// checking against access-control-allow-methods seems to be case sensitive
@@ -218,19 +251,50 @@ const request = async config => {
 	let rawResponse = await fetch(url, fetchConfig);
 	var content;
 
-	if(options.format != 'json') {
+	if(hasDefinedKey(options, 'file') && hasDefinedKey(options, 'fileName')) {
+		if(rawResponse.ok) {
+			let authData = await rawResponse.json();
+			if('exists' in authData && authData.exists) {
+				let reason = 'File already exists';
+				throw new ErrorResponse(`Upload stage 1: ${reason}`, reason, rawResponse, options);
+			}
+			let prefix = new Uint8ClampedArray(authData.prefix.split('').map(e => e.charCodeAt(0)));
+			let suffix = new Uint8ClampedArray(authData.suffix.split('').map(e => e.charCodeAt(0)));
+			let body = new Uint8ClampedArray(prefix.byteLength + options.file.byteLength + suffix.byteLength);
+			body.set(prefix, 0);
+			body.set(new Uint8ClampedArray(options.file), prefix.byteLength);
+			body.set(suffix, prefix.byteLength + options.file.byteLength);
+			
+			// follow-up request
+			let uploadResponse = await fetch(authData.url, {
+				headers: {
+					[headerNames['contentType']]: authData.contentType,
+				},
+				method: 'post',
+				body: body.buffer
+			});
+
+			if(uploadResponse.status === 201) {
+				let registerResponse = await fetch(url, {
+					...fetchConfig,
+					body: `upload=${authData.uploadKey}`
+				});
+				if(!registerResponse.ok) {
+					await throwErrorResponse(registerResponse, options, 'Upload stage 3: ');	
+				}
+				response = new FileUploadResponse({}, options, rawResponse, uploadResponse, registerResponse);
+			} else {
+				await throwErrorResponse(uploadResponse, options, 'Upload stage 2: ');
+			}
+		} else {
+			await throwErrorResponse(rawResponse, options, 'Upload stage 1: ');
+		}
+	} else if(options.format != 'json') {
 		response = rawResponse;
 	} else {
 		if(rawResponse.status < 200 || rawResponse.status >= 400) {
-			let clonedRawResponse = rawResponse.clone();
-			let reason = null;
-			try {
-				reason = await clonedRawResponse.text();
-			} finally {
-				throw new ErrorResponse(`${rawResponse.status}: ${rawResponse.statusText}`, reason, rawResponse, options);
-			}
+			await throwErrorResponse(rawResponse, options, '');
 		}
-
 		try {
 			content = await rawResponse.json();
 		} catch(_) {

@@ -172,6 +172,18 @@ class MultiWriteResponse extends ApiResponse {
 class DeleteResponse extends ApiResponse {}
 
 /**
+ * @class represents a response to a DELETE request
+ * @extends ApiResponse
+ */
+class FileUploadResponse extends ApiResponse {
+	constructor(options, authResponse, uploadResponse, registerResponse) {
+		super({}, options, authResponse);
+		this.uploadResponse = uploadResponse;
+		this.registerResponse = registerResponse;
+	}
+}
+
+/**
  * @class represents an error response from the api
  * @extends Error
  * @property {Object} response - Response object for the request, with untouched body
@@ -191,10 +203,11 @@ class ErrorResponse extends Error {
 
 module.exports = {
 	ApiResponse,
-	SingleReadResponse,
-	MultiReadResponse,
-	SingleWriteResponse,
-	MultiWriteResponse,
 	DeleteResponse,
-	ErrorResponse
+	ErrorResponse,
+	FileUploadResponse,
+	MultiReadResponse,
+	MultiWriteResponse,
+	SingleReadResponse,
+	SingleWriteResponse,
 };

@@ -5,14 +5,20 @@ const URL = require('url');
 const fetchMock = require('fetch-mock');
 const { assert } = require('chai');
 const _request = require('../src/request');
+
+const FILE = Uint8ClampedArray.from('lorem ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
+const FILE_MD5 = '80a751fde577028640c419000e33eba6';
+const FILE_NAME = 'test.txt';
+const FILE_SIZE = FILE.byteLength;
 const {
 	ApiResponse,
-	SingleReadResponse,
-	MultiReadResponse,
-	SingleWriteResponse,
-	MultiWriteResponse,
 	DeleteResponse,
-	ErrorResponse
+	ErrorResponse,
+	FileUploadResponse,
+	MultiReadResponse,
+	MultiWriteResponse,
+	SingleReadResponse,
+	SingleWriteResponse,
 } = require('../src/response.js');
 const singleGetResponseFixture = require('./fixtures/single-object-get-response.json');
 const multiGetResponseFixture = require('./fixtures/multi-object-get-response.json');
@@ -478,6 +484,24 @@ describe('ZoteroJS request', () => {
 				assert.equal(response.bodyUsed, false);
 			});
 		});
+
+		it('should be possible to make an empty requests', () => {
+			fetchMock.mock('https://api.zotero.org/', {
+				status: 200,
+				body: 'Nothing to see here.'
+			});
+
+			return request({
+				resource: {},
+				format: null
+			}).then(response => {
+				assert.instanceOf(response, Response);
+				assert.equal(response.status, 200);
+				assert.equal(response.url, 'https://api.zotero.org/');
+				assert.equal(response.body, 'Nothing to see here.');
+				assert.equal(response.bodyUsed, false);
+			});
+		});
 	});
 
 	describe('Item write & delete requests', () => {
@@ -785,6 +809,149 @@ describe('ZoteroJS request', () => {
 			}).then(response => {
 				assert.equal(response.getData().foo, 'bar');
 			});
+		});
+	});
+
+	describe('File upload', () => {
+		let fileUploadRequest = {
+			method: 'post',
+			resource: {
+				library: 'u475425',
+				items: 'ABCD1111',
+				file: null
+			},
+			format: null,
+			file: FILE,
+			body: undefined,
+			fileName: FILE_NAME,
+			contentType: 'application/x-www-form-urlencoded',
+		};
+		it('should perform 3-step file upload procedure ', () => {
+			let counter = 0; 
+			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', (url, options) => {
+				var config = options.body.split('&').reduce(
+					(acc, val) => { 
+						acc[val.split('=')[0]] = val.split('=')[1];
+						return acc
+					}, {}
+				);
+				switch(counter++) {
+					case 0:
+						assert.propertyVal(config, 'md5', FILE_MD5);
+						assert.propertyVal(config, 'filename', FILE_NAME);
+						assert.propertyVal(config, 'filesize', FILE_SIZE.toString());
+						assert.property(config, 'mtime');
+						return {
+							'url': 'https://storage.zotero.org',
+							'contentType': 'text/plain',
+							'prefix': 'some prefix',
+							'suffix': 'some suffix',
+							'uploadKey': 'some key',
+						};
+					case 1:
+						assert.propertyVal(config, 'upload', 'some key');
+						return {
+							status: 204
+						};
+					default:
+						throw(new Error(`This is ${counter + 1} request to ${url}. Only expected 2 requests.`));
+				}
+			});
+			fetchMock.once('https://storage.zotero.org', (url, options) => {
+				assert.equal(counter, 1);
+				assert.equal(options.body.byteLength, 33);
+				return {
+					status: 201
+				};
+			});
+			return request({ ...fileUploadRequest }).then(response => {
+				assert.instanceOf(response, FileUploadResponse);
+			});
+		});
+		it('should detect invalid config', () => {
+			return request({
+				...fileUploadRequest,
+				body: 'should not be here'
+			}).then(() => {
+				throw new Error('fail');
+			}).catch(error => {
+				assert.instanceOf(error, Error);
+				assert.include(error.toString(), 'Cannot use both');
+			})
+		});
+		it('should handle error reponse in stage 1', () => {
+			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', {
+				status: 409,
+				body: 'The target library is locked.'
+			});
+			return request({ ...fileUploadRequest })
+				.then(() => {
+					throw new Error('fail');
+				}).catch(error => {
+					assert.instanceOf(error, ErrorResponse);
+					assert.equal(error.message, 'Upload stage 1: 409: Conflict');
+					assert.equal(error.reason, 'The target library is locked.');
+				});
+		});
+		it('should handle { exists: 1 } response in stage 1', () => {
+			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', {
+				exists: 1
+			});
+			return request({ ...fileUploadRequest })
+				.then(() => {
+					throw new Error('fail');
+				}).catch(error => {
+					assert.instanceOf(error, ErrorResponse);
+					assert.equal(error.message, 'Upload stage 1: File already exists');
+					assert.equal(error.reason, 'File already exists');
+				});
+		});
+		it('should handle error reponse in stage 2', () => {
+			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', {
+				'url': 'https://storage.zotero.org',
+				'contentType': 'text/plain',
+				'prefix': 'some prefix',
+				'suffix': 'some suffix',
+				'uploadKey': 'some key',
+			});
+			fetchMock.once('https://storage.zotero.org', {
+				status: 400,
+				body: 'Something wrong'
+			});
+			return request({ ...fileUploadRequest })
+				.then(() => {
+					throw new Error('fail');
+				}).catch(error => {
+					assert.instanceOf(error, ErrorResponse);
+					assert.equal(error.message, 'Upload stage 2: 400: Bad Request');
+					assert.equal(error.reason, 'Something wrong');
+				});
+		});
+		it('should handle error reponse in stage 3', () => {
+			let counter = 0;
+			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', () => {
+				return counter++ == 0 ? {
+					'url': 'https://storage.zotero.org',
+					'contentType': 'text/plain',
+					'prefix': 'some prefix',
+					'suffix': 'some suffix',
+					'uploadKey': 'some key',
+				} : {
+					status: 412,
+					body: 'The file has changed remotely since retrieval'
+				}
+			});
+			fetchMock.once('https://storage.zotero.org', {
+				status: 201
+			});
+			return request({ ...fileUploadRequest })
+				.then(() => {
+					throw new Error('fail');
+				}).catch(error => {
+					assert.instanceOf(error, ErrorResponse);
+					assert.equal(error.message, 'Upload stage 3: 412: Precondition Failed');
+					assert.equal(error.reason, 'The file has changed remotely since retrieval');
+				});
 		});
 	});
 });

@@ -9,6 +9,8 @@ const ITEM_KEY = 'IITTEEMM';
 const COLLECTION_KEY = 'CCOOLLEE';
 const SEARCH_KEY = 'SEARCH_KEY';
 const URL_ENCODED_TAGS = 'URL_ENCODED_TAGS';
+const FILE = Uint8ClampedArray.from('lorem ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
+const FILE_NAME = 'test.txt';
 
 describe('Zotero Api Client', () => {
 	var lrc;
@@ -352,6 +354,22 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.isNull(lrc.resource.tags);
 			assert.deepEqual(lrc.tag.sort(), keysToDelete.sort())
+		});
+	});
+
+	describe('Construct attachment requests', () => {
+		it('handles api.library.items(I).attachment(Fname, F).post()', () => {
+			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).attachment(FILE_NAME, FILE).post();
+			assert.equal(lrc.method, 'post');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.items, ITEM_KEY);
+			assert.isNull(lrc.resource.file);
+			assert.equal(lrc.file.byteLength, FILE.byteLength);
+			assert.equal(lrc.fileName, FILE_NAME);
+			assert.equal(lrc.ifNoneMatch, '*');
+			assert.equal(lrc.contentType, 'application/x-www-form-urlencoded');
+			assert.isNull(lrc.format);
+			assert.isUndefined(lrc.body);
 		});
 	});
 

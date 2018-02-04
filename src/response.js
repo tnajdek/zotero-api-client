@@ -20,6 +20,13 @@ class ApiResponse {
 		return this.raw;
 	}
 
+	getLinks() {
+		if('links' in this.raw) {
+			return this.raw.links;
+		}
+		return null;
+	}
+
 	getVersion() {
 		return this.response.headers.get('Last-Modified-Version');
 	}
@@ -48,6 +55,10 @@ class MultiReadResponse extends ApiResponse {
 	 */
 	getData() {
 		return this.raw.map(r => r.data);
+	}
+
+	getLinks() {
+		return this.raw.map(r => 'links' in r && r.links || null).filter(Object);
 	}
 }
 

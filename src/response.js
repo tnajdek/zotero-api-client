@@ -27,6 +27,13 @@ class ApiResponse {
 		return null;
 	}
 
+	getMeta() {
+		if('meta' in this.raw) {
+			return this.raw.meta;
+		}
+		return null;
+	}
+
 	getVersion() {
 		return this.response.headers.get('Last-Modified-Version');
 	}
@@ -58,7 +65,11 @@ class MultiReadResponse extends ApiResponse {
 	}
 
 	getLinks() {
-		return this.raw.map(r => 'links' in r && r.links || null).filter(Object);
+		return this.raw.map(r => 'links' in r && r.links || null);
+	}
+
+	getMeta() {
+		return this.raw.map(r => 'meta' in r && r.meta || null);
 	}
 }
 

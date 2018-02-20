@@ -57,6 +57,7 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(response, ApiResponse);
 				assert.equal(response.getData().length, 2);
 				assert.isNull(response.getLinks());
+				assert.isNull(response.getMeta());
 			});
 		});
 
@@ -97,6 +98,7 @@ describe('ZoteroJS request', () => {
 			}).then(response => {
 				assert.instanceOf(response, SingleReadResponse);
 				assert.equal(response.getLinks().self.href, 'https://api.zotero.org/users/475425/items/X42A7DEE');
+				assert.equal(response.getMeta().parsedDate, '1993');
 				assert.equal(Object.keys(response.getLinks()).length, 2);
 				assert.equal(response.getData().key, 'X42A7DEE');
 			});
@@ -118,6 +120,7 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(response, MultiReadResponse);
 				assert.equal(response.getData().length, 15);
 				assert.equal(response.getLinks().length, 15);
+				assert.equal(response.getMeta().length, 15);
 			});
 		});
 

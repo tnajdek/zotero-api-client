@@ -13,20 +13,6 @@
         }
       }
     },
-    "links": {
-      "self": {
-        "href": "https://api.zotero.org/users/475425/collections/N7W92H48",
-        "type": "application/json"
-      },
-      "alternate": {
-        "href": "https://www.zotero.org/z_public_library/collections/N7W92H48",
-        "type": "text/html"
-      }
-    },
-    "meta": {
-      "numCollections": 1,
-      "numItems": 16
-    },
     "data": {
       "key": "N7W92H48",
       "version": 1,

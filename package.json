@@ -6,6 +6,11 @@
   "main": "lib/api.js",
   "author": "Tom Najdek",
   "license": "AGPL-3.0",
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
   "scripts": {
     "readme": "jsdoc2md --template docs/README.md --no-cache --configure .jsdoc.json src/*.js > README.md",
     "test": "nyc mocha --compilers js:babel-register",

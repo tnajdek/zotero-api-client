@@ -90,7 +90,6 @@ const defaults = {
 	resource: {},
 	mode: 'cors',
 	cache: 'default',
-	body: null,
 	credentials: 'omit'
 };
 

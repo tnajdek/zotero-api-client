@@ -16,6 +16,10 @@ class ApiResponse {
 		this.response = response;
 	}
 
+	getResponseType() {
+		return 'ApiResponse';
+	}
+
 	getData() {
 		return this.raw;
 	}
@@ -44,6 +48,9 @@ class ApiResponse {
  * @extends ApiResponse
  */
 class SingleReadResponse extends ApiResponse {
+	getResponseType() {
+		return 'SingleReadResponse';
+	}
 	/**
 	 * @return {Object} entity returned in this response
 	 */
@@ -57,6 +64,9 @@ class SingleReadResponse extends ApiResponse {
  * @extends ApiResponse
  */
 class MultiReadResponse extends ApiResponse {
+	getResponseType() {
+		return 'MultiReadResponse';
+	}
 	/**
 	 * @return {Array} a list of entities returned in this response
 	 */
@@ -78,7 +88,9 @@ class MultiReadResponse extends ApiResponse {
  * @extends ApiResponse
  */
 class SingleWriteResponse extends ApiResponse {
-
+	getResponseType() {
+		return 'SingleWriteResponse';
+	}
 	/**
 	 * @return {Object} For put requests, this represents a complete, updated object.
 	 *                  For patch requests, this reprents only updated fields of the updated object.
@@ -96,6 +108,9 @@ class SingleWriteResponse extends ApiResponse {
  * @extends ApiResponse
  */
 class MultiWriteResponse extends ApiResponse {
+	getResponseType() {
+		return 'MultiWriteResponse';
+	}
 	/**
 	 * @return {Boolean} Indicates whether all write operations were successful
 	 */
@@ -191,7 +206,11 @@ class MultiWriteResponse extends ApiResponse {
  * @class represents a response to a DELETE request
  * @extends ApiResponse
  */
-class DeleteResponse extends ApiResponse {}
+class DeleteResponse extends ApiResponse {
+	getResponseType() {
+		return 'DeleteResponse';
+	}
+}
 
 /**
  * @class represents a response to a file upload request
@@ -208,6 +227,10 @@ class FileUploadResponse extends ApiResponse {
 		super({}, options, authResponse);
 		this.uploadResponse = uploadResponse;
 		this.registerResponse = registerResponse;
+	}
+
+	getResponseType() {
+		return 'FileUploadResponse';
 	}
 }
 
@@ -226,6 +249,10 @@ class ErrorResponse extends Error {
 		this.reason = reason;
 		this.message = message;
 		this.options = options;
+	}
+
+	getResponseType() {
+		return 'ErrorResponse';
 	}
 }
 

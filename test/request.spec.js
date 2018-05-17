@@ -55,6 +55,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
+				assert.equal(response.getResponseType(), 'ApiResponse');
 				assert.equal(response.getData().length, 2);
 				assert.isNull(response.getLinks());
 				assert.isNull(response.getMeta());
@@ -97,6 +98,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, SingleReadResponse);
+				assert.equal(response.getResponseType(), 'SingleReadResponse');
 				assert.equal(response.getLinks().self.href, 'https://api.zotero.org/users/475425/items/X42A7DEE');
 				assert.equal(response.getMeta().parsedDate, '1993');
 				assert.equal(Object.keys(response.getLinks()).length, 2);
@@ -118,6 +120,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
+				assert.equal(response.getResponseType(), 'MultiReadResponse');
 				assert.equal(response.getData().length, 15);
 				assert.equal(response.getLinks().length, 15);
 				assert.equal(response.getMeta().length, 15);
@@ -448,6 +451,7 @@ describe('ZoteroJS request', () => {
 				throw new Error('fail');
 			}).catch(async error => {
 				assert.instanceOf(error, ErrorResponse);
+				assert.equal(error.getResponseType(), 'ErrorResponse');
 				assert.equal(error.message, '404: Not Found');
 				assert.equal(error.reason, 'These aren\'t the droids You are looking for');
 				assert.equal(error.response.bodyUsed, false);
@@ -540,6 +544,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiWriteResponse);
+				assert.equal(response.getResponseType(), 'MultiWriteResponse');
 				assert.isOk(response.isSuccess());
 				assert.equal(response.getData()[0].key, 'AZBCAADA');
 				assert.equal(response.getData()[0].title, 'My Amazing Book');
@@ -651,6 +656,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, SingleWriteResponse);
+				assert.equal(response.getResponseType(), 'SingleWriteResponse');
 				assert.equal(response.getVersion(), 42);
 				assert.equal(response.getData().version, 42);
 				assert.equal(response.getData().key, 'ABCD1111');
@@ -714,6 +720,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, DeleteResponse);
+				assert.equal(response.getResponseType(), 'DeleteResponse');
 				assert.equal(response.getVersion(), 43);
 				assert.equal(response.response.status, 204);
 				assert.isNull(response.raw);
@@ -872,6 +879,7 @@ describe('ZoteroJS request', () => {
 				};
 			});
 			return request({ ...fileUploadRequest }).then(response => {
+				assert.equal(response.getResponseType(), 'FileUploadResponse');
 				assert.instanceOf(response, FileUploadResponse);
 			});
 		});

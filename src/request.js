@@ -94,7 +94,7 @@ const defaults = {
 };
 
 //@TODO implement validation
-const validateUrlPath = urlPath => {
+const validateUrlPath = urlPath => { //eslint-disable-line no-unused-vars
 	return true;
 };
 
@@ -146,9 +146,10 @@ const throwErrorResponse = async (rawResponse, options, requestDesc) => {
 	let reason = null;
 	try {
 		reason = await clonedRawResponse.text();
-	} finally {
-		throw new ErrorResponse(`${requestDesc}${rawResponse.status}: ${rawResponse.statusText}`, reason, rawResponse, options);
+	} catch(_) {
+		// unable to parse error from response but should still throw
 	}
+	throw new ErrorResponse(`${requestDesc}${rawResponse.status}: ${rawResponse.statusText}`, reason, rawResponse, options);
 }
 
 /**

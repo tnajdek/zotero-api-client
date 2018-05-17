@@ -1,9 +1,8 @@
 {
   "env": {
-    "browser": {
+    "production": {
       "presets": [
-        "es2015",
-        "babili"
+        "es2015", "stage-2"
       ],
       "plugins": [
         "transform-async-to-generator",
@@ -16,7 +15,8 @@
       ]
     }
   },
+  "presets": ["stage-2"],
   "plugins": [
-    "transform-object-rest-spread"
+    "transform-object-rest-spread",
   ]
 }

@@ -2,4 +2,5 @@ node_modules
 coverage
 .nyc_output
 /build
+/lib
 .DS_Store

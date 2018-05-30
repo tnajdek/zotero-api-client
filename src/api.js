@@ -283,7 +283,7 @@ module.exports = function() {
 
 	/**
 	 * Configure api to upload a file
-	 * Can be only used in conjuction with items() and post()
+	 * Can be only used in conjuction with items() and post()/get()
 	 * Use items() to select attachment item for which file is uploaded
 	 * Will populate Content-Type, If-None-Match headers
 	 * @param  {String} fileName  - name of the file, should match values in attachment
@@ -294,7 +294,7 @@ module.exports = function() {
 	 * @chainable
 	 */
 	const attachment = function(fileName, file, mtime) {
-		let resource = { 
+		let resource = {
 			...this.resource,
 			file: null
 		};

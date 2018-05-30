@@ -5,18 +5,20 @@
  * @module request
  */
 
-require('isomorphic-fetch');
+require('cross-fetch/polyfill');
 const md5 = require('js-md5');
 
 const {
 	ApiResponse,
 	DeleteResponse,
 	ErrorResponse,
+	FileDownloadResponse,
 	FileUploadResponse,
 	MultiReadResponse,
 	MultiWriteResponse,
 	SingleReadResponse,
 	SingleWriteResponse,
+	RawApiResponse,
 } = require('./response');
 
 const headerNames = {
@@ -200,6 +202,8 @@ const throwErrorResponse = async (rawResponse, options, requestDesc) => {
  * @throws {ErrorResponse} If API responds with a non-ok response
  */
 const request = async config => {
+	var response;
+
 	if('response' in config && config.response) {
 		return config;
 	}
@@ -249,7 +253,6 @@ const request = async config => {
 	fetchConfig.headers = headers;
 
 	let rawResponse = await fetch(url, fetchConfig);
-	var content;
 
 	if(hasDefinedKey(options, 'file') && hasDefinedKey(options, 'fileName')) {
 		if(rawResponse.ok) {
@@ -289,45 +292,52 @@ const request = async config => {
 		} else {
 			await throwErrorResponse(rawResponse, options, 'Upload stage 1: ');
 		}
-	} else if(options.format != 'json') {
-		response = rawResponse;
 	} else {
 		if(rawResponse.status < 200 || rawResponse.status >= 400) {
 			await throwErrorResponse(rawResponse, options, '');
 		}
-		try {
-			content = await rawResponse.json();
-		} catch(_) {
-			content = null;	
-		}
 
-		var response;
+		let content;
 
-		switch(options.method.toUpperCase()) {
-			case 'GET':
-			default:
-				if(dataResource.some(dataResource => dataResource in options.resource)) {
-					if(content && Array.isArray(content)) {
-						response = new MultiReadResponse(content, options, rawResponse);
+		if(options.format === 'json') {
+			try {
+				content = await rawResponse.json();
+			} catch(_) {
+				content = null;
+			}
+			switch(options.method.toUpperCase()) {
+				case 'GET':
+				default:
+					if(dataResource.some(dataResource => dataResource in options.resource)) {
+						if(content && Array.isArray(content)) {
+							response = new MultiReadResponse(content, options, rawResponse);
+						} else {
+							response = new SingleReadResponse(content, options, rawResponse);
+						}
 					} else {
-						response = new SingleReadResponse(content, options, rawResponse);
+						response = new ApiResponse(content, options, rawResponse);
 					}
-				} else {
-					response = new ApiResponse(content, options, rawResponse);
-				}
-			break;
-			case 'POST':
-			case 'PUT':
-			case 'PATCH':
-				if(content && 'success' in content) {
-					response = new MultiWriteResponse(content, options, rawResponse);
-				} else {
-					response = new SingleWriteResponse(content, options, rawResponse);
-				}
-			break
-			case 'DELETE':
-				response = new DeleteResponse(content, options, rawResponse);
-			break
+				break;
+				case 'POST':
+				case 'PUT':
+				case 'PATCH':
+					if(content && typeof content === 'object' && 'success' in content) {
+						response = new MultiWriteResponse(content, options, rawResponse);
+					} else {
+						response = new SingleWriteResponse(content, options, rawResponse);
+					}
+				break
+				case 'DELETE':
+					response = new DeleteResponse(content, options, rawResponse);
+				break
+			}
+		} else {
+			if('file' in options.resource && options.method.toUpperCase() === 'GET') {
+				let rawData = await rawResponse.arrayBuffer();
+				response = new FileDownloadResponse(rawData, options, rawResponse);
+			} else {
+				response = new RawApiResponse(rawResponse, options);
+			}
 		}
 	}
 

@@ -235,6 +235,30 @@ class FileUploadResponse extends ApiResponse {
 }
 
 /**
+ * @class represents a response to a file download request
+ * @extends ApiResponse
+ */
+class FileDownloadResponse extends ApiResponse {
+	getResponseType() {
+		return 'FileDownloadResponse';
+	}
+}
+
+/**
+ * @class represents a raw response, e.g. to data requests with format other than json
+ * @extends ApiResponse
+ */
+class RawApiResponse extends ApiResponse {
+	constructor(rawResponse, options) {
+		super(rawResponse, options, rawResponse);
+	}
+
+	getResponseType() {
+		return 'RawApiResponse';
+	}
+}
+
+/**
  * @class represents an error response from the api
  * @extends Error
  * @property {Object} response - Response object for the request, with untouched body
@@ -260,9 +284,11 @@ module.exports = {
 	ApiResponse,
 	DeleteResponse,
 	ErrorResponse,
+	FileDownloadResponse,
 	FileUploadResponse,
 	MultiReadResponse,
 	MultiWriteResponse,
+	RawApiResponse,
 	SingleReadResponse,
 	SingleWriteResponse,
 };

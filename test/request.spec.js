@@ -14,9 +14,11 @@ const {
 	ApiResponse,
 	DeleteResponse,
 	ErrorResponse,
+	FileDownloadResponse,
 	FileUploadResponse,
 	MultiReadResponse,
 	MultiWriteResponse,
+	RawApiResponse,
 	SingleReadResponse,
 	SingleWriteResponse,
 } = require('../src/response.js');
@@ -490,9 +492,10 @@ describe('ZoteroJS request', () => {
 				},
 				format: 'atom'
 			}).then(response => {
-				assert.instanceOf(response, Response);
-				assert.equal(response.status, 200);
-				assert.equal(response.bodyUsed, false);
+				assert.instanceOf(response, RawApiResponse);
+				assert.equal(response.getResponseType(), 'RawApiResponse');
+				assert.equal(response.raw.status, 200);
+				assert.equal(response.raw.bodyUsed, false);
 			});
 		});
 
@@ -506,11 +509,11 @@ describe('ZoteroJS request', () => {
 				resource: {},
 				format: null
 			}).then(response => {
-				assert.instanceOf(response, Response);
-				assert.equal(response.status, 200);
-				assert.equal(response.url, 'https://api.zotero.org/');
-				assert.equal(response.body, 'Nothing to see here.');
-				assert.equal(response.bodyUsed, false);
+				assert.instanceOf(response, RawApiResponse);
+				assert.equal(response.raw.status, 200);
+				assert.equal(response.raw.url, 'https://api.zotero.org/');
+				assert.equal(response.raw.body, 'Nothing to see here.');
+				assert.equal(response.raw.bodyUsed, false);
 			});
 		});
 	});
@@ -969,4 +972,34 @@ describe('ZoteroJS request', () => {
 				});
 		});
 	});
+	describe("File download", () => {
+		it('should download a file', () => {
+			fetchMock.get('https://api.zotero.org/users/475425/items/ABCD1111/file', {
+				headers: {
+					contentType: 'text/plain'
+				},
+				body: 'lorem ipsum'
+			});
+			return request({
+				method: 'get',
+				format: null,
+				resource: {
+					library: 'u475425',
+					items: 'ABCD1111',
+					file: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, FileDownloadResponse);
+				assert.equal(response.getResponseType(), 'FileDownloadResponse');
+				assert.equal(response.getData().byteLength, 11);
+				assert.equal(
+					Array.from(
+						(new Uint8ClampedArray(response.getData())))
+							.map(b => String.fromCharCode(b))
+							.join(''),
+					'lorem ipsum'
+				);
+			});
+		});
+	})
 });

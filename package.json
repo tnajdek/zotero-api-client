@@ -31,7 +31,7 @@
     "lib/*.js"
   ],
   "dependencies": {
-    "isomorphic-fetch": "^2.2.1",
+    "cross-fetch": "^2.2.0",
     "js-md5": "^0.7.3"
   },
   "devDependencies": {

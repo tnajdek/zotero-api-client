@@ -34,14 +34,14 @@ describe('Zotero Api Client', () => {
 	describe('Accepts request parameters', () => {
 		it('accepts api key', () => {
 			const request = api(KEY).getConfig();
-			assert.equal(request.authorization, `Bearer ${KEY}`);
+			assert.equal(request.zoteroApiKey, KEY);
 		});
 
 		it('accepts api key and optional config', () => {
 			const request = api(KEY, {
 				apiAuthorityPart: 'some-other-api.zotero.org'
 			}).getConfig();
-			assert.equal(request.authorization, `Bearer ${KEY}`);
+			assert.equal(request.zoteroApiKey, KEY);
 			assert.equal(request.apiAuthorityPart, 'some-other-api.zotero.org');
 		});
 
@@ -49,7 +49,7 @@ describe('Zotero Api Client', () => {
 			const request = api(KEY).api(null, {
 				apiAuthorityPart: 'some-other-api.zotero.org'
 			}).api().api().getConfig();
-			assert.equal(request.authorization, `Bearer ${KEY}`);
+			assert.equal(request.zoteroApiKey, KEY);
 			assert.equal(request.apiAuthorityPart, 'some-other-api.zotero.org');
 		});
 
@@ -57,15 +57,16 @@ describe('Zotero Api Client', () => {
 			const myapi = api(KEY).api;
 			const request1 = myapi().library('user', '1');
 			const request2 = myapi().library('user', '2');
-			assert.equal(request1.getConfig().authorization, `Bearer ${KEY}`);
+			assert.equal(request1.getConfig().zoteroApiKey, KEY);
 			assert.equal(request1.getConfig().resource.library, 'u1');
-			assert.equal(request2.getConfig().authorization, `Bearer ${KEY}`);
+			assert.equal(request2.getConfig().zoteroApiKey, KEY);
 			assert.equal(request2.getConfig().resource.library, 'u2');
 		});
 
 		it('allows unauthorised requests', () => {
 			const request = api().getConfig();
 			assert.notProperty(request, 'authorization');
+			assert.notProperty(request, 'zoteroApiKey');
 		});
 
 		it('constructs user library key', () => {
@@ -100,7 +101,7 @@ describe('Zotero Api Client', () => {
 	describe('Construct get requests', () => {
 		it('accepts api key', () => {
 			const request = api(KEY).getConfig();
-			assert.equal(request.authorization, `Bearer ${KEY}`);
+			assert.equal(request.zoteroApiKey, KEY);
 		});
 		
 		it('handles api.library.items.get', () => {
@@ -507,7 +508,7 @@ describe('Zotero Api Client', () => {
 			const configWithFoo = await partial.foo().library(LIBRARY_KEY).items('AABBCCDD').getConfig();
 			assert.property(configWithFoo, 'isFoo');
 			assert.equal(configWithFoo.isFoo, true);
-			assert.equal(configWithFoo.authorization, `Bearer ${KEY}`);
+			assert.equal(configWithFoo.zoteroApiKey, KEY);
 		});
 	});
 });

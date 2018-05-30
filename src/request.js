@@ -23,12 +23,13 @@ const {
 
 const headerNames = {
 	authorization: 'Authorization',
-	zoteroWriteToken: 'Zotero-Write-Token',
-	ifModifiedSinceVersion: 'If-Modified-Since-Version',
-	ifUnmodifiedSinceVersion: 'If-Unmodified-Since-Version',
 	contentType: 'Content-Type',
+	ifMatch: 'If-Match',
+	ifModifiedSinceVersion: 'If-Modified-Since-Version',
 	ifNoneMatch: 'If-None-Match',
-	ifMatch: 'If-Match'
+	ifUnmodifiedSinceVersion: 'If-Unmodified-Since-Version',
+	zoteroApiKey: 'Zotero-API-Key',
+	zoteroWriteToken: 'Zotero-Write-Token',
 };
 
 const queryParamNames = [
@@ -216,7 +217,6 @@ const request = async config => {
 			headers[headerNames[header]] = options[header];
 		}
 	}
-
 	const path = makeUrlPath(options.resource);
 	const query = makeUrlQuery(options);
 	const url = `https://${options.apiAuthorityPart}/${path}${query}`;
@@ -252,8 +252,8 @@ const request = async config => {
 	fetchConfig.method = fetchConfig.method.toUpperCase();
 	fetchConfig.headers = headers;
 
-	let rawResponse = await fetch(url, fetchConfig);
 
+	let rawResponse = await fetch(url, fetchConfig);
 	if(hasDefinedKey(options, 'file') && hasDefinedKey(options, 'fileName')) {
 		if(rawResponse.ok) {
 			let authData = await rawResponse.json();

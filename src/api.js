@@ -32,7 +32,7 @@ module.exports = function() {
 		}
 
 		if(key) {
-			props.authorization =  `Bearer ${key}`;
+			props.zoteroApiKey =  key;
 		}
 		
 		return ef.bind(this)(props)
@@ -298,15 +298,19 @@ module.exports = function() {
 			...this.resource,
 			file: null
 		};
-		return ef.bind(this)({
-			format: null,
-			ifNoneMatch: '*',
-			contentType: 'application/x-www-form-urlencoded',
-			fileName,
-			file,
-			resource,
-			mtime
-		})
+		if(fileName && file) {
+			return ef.bind(this)({
+				format: null,
+				ifNoneMatch: '*',
+				contentType: 'application/x-www-form-urlencoded',
+				fileName,
+				file,
+				resource,
+				mtime
+			})	
+		} else {
+			return ef.bind(this)({ format: null, resource });
+		}
 	}
 
 	/**

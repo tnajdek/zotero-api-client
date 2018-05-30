@@ -392,7 +392,7 @@ populate the If-Unmodified-Since-Version header.
 
 #### module.exports~attachment(fileName, file, mtime) ⇒ <code>Object</code>
 Configure api to upload a file
-Can be only used in conjuction with items() and post()
+Can be only used in conjuction with items() and post()/get()
 Use items() to select attachment item for which file is uploaded
 Will populate Content-Type, If-None-Match headers
 
@@ -583,6 +583,8 @@ Module contains classes that offer abstraction over Zotero API responses
         * [.getEntityByIndex(index)](#module_response..MultiWriteResponse+getEntityByIndex) ⇒ <code>Object</code>
     * [~DeleteResponse](#module_response..DeleteResponse) ⇐ <code>ApiResponse</code>
     * [~FileUploadResponse](#module_response..FileUploadResponse) ⇐ <code>ApiResponse</code>
+    * [~FileDownloadResponse](#module_response..FileDownloadResponse) ⇐ <code>ApiResponse</code>
+    * [~RawApiResponse](#module_response..RawApiResponse) ⇐ <code>ApiResponse</code>
     * [~ErrorResponse](#module_response..ErrorResponse) ⇐ <code>Error</code>
 
 <a name="module_response..SingleReadResponse"></a>
@@ -713,6 +715,20 @@ represents a response to a file upload request
 | uploadResponse | <code>Object</code> | Response object for the stage 2 (file upload) request |
 | registerResponse | <code>Objext</code> | Response object for the stage 3 (upload registration)                                       request |
 
+<a name="module_response..FileDownloadResponse"></a>
+
+### response~FileDownloadResponse ⇐ <code>ApiResponse</code>
+represents a response to a file download request
+
+**Kind**: inner class of [<code>response</code>](#module_response)  
+**Extends**: <code>ApiResponse</code>  
+<a name="module_response..RawApiResponse"></a>
+
+### response~RawApiResponse ⇐ <code>ApiResponse</code>
+represents a raw response, e.g. to data requests with format other than json
+
+**Kind**: inner class of [<code>response</code>](#module_response)  
+**Extends**: <code>ApiResponse</code>  
 <a name="module_response..ErrorResponse"></a>
 
 ### response~ErrorResponse ⇐ <code>Error</code>

@@ -16,6 +16,7 @@ const {
 	ErrorResponse,
 	FileDownloadResponse,
 	FileUploadResponse,
+	FileUrlResponse,
 	MultiReadResponse,
 	MultiWriteResponse,
 	RawApiResponse,
@@ -999,6 +1000,28 @@ describe('ZoteroJS request', () => {
 							.join(''),
 					'lorem ipsum'
 				);
+			});
+		});
+		it('should obtain a temporary, authorised file url', () => {
+			fetchMock.get('https://api.zotero.org/users/475425/items/ABCD1111/file/view', {
+				status: 302,
+				headers: {
+					'Location': 'https://files.zotero.org/some-file'
+				}
+			});
+			return request({
+				method: 'get',
+				format: null,
+				redirect: 'manual',
+				resource: {
+					library: 'u475425',
+					items: 'ABCD1111',
+					fileUrl: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, FileUrlResponse);
+				assert.equal(response.getResponseType(), 'FileUrlResponse');
+				assert.equal(response.getData(), 'https://files.zotero.org/some-file');
 			});
 		});
 	})

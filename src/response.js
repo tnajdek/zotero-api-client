@@ -245,6 +245,16 @@ class FileDownloadResponse extends ApiResponse {
 }
 
 /**
+ * @class represents a response containing temporary url for file download
+ * @extends ApiResponse
+ */
+class FileUrlResponse extends ApiResponse {
+	getResponseType() {
+		return 'FileUrlResponse';
+	}
+}
+
+/**
  * @class represents a raw response, e.g. to data requests with format other than json
  * @extends ApiResponse
  */
@@ -286,6 +296,7 @@ module.exports = {
 	ErrorResponse,
 	FileDownloadResponse,
 	FileUploadResponse,
+	FileUrlResponse,
 	MultiReadResponse,
 	MultiWriteResponse,
 	RawApiResponse,

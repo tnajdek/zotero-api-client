@@ -14,11 +14,12 @@ const {
 	ErrorResponse,
 	FileDownloadResponse,
 	FileUploadResponse,
+	FileUrlResponse,
 	MultiReadResponse,
 	MultiWriteResponse,
+	RawApiResponse,
 	SingleReadResponse,
 	SingleWriteResponse,
-	RawApiResponse,
 } = require('./response');
 
 const headerNames = {
@@ -56,7 +57,8 @@ const fetchParamNames = [
 	'body',
 	'mode',
 	'cache',
-	'credentials'
+	'credentials',
+	'redirect'
 ];
 
 const nonKeyResource = {
@@ -72,7 +74,8 @@ const nonKeyResource = {
 	'itemTypeFields': 'itemTypeFields',
 	'itemTypeCreatorTypes': 'itemTypeCreatorTypes',
 	'template': 'items/new',
-	'file': 'file'
+	'file': 'file',
+	'fileUrl': 'file/view',
 };
 
 const dataResource = [
@@ -93,7 +96,8 @@ const defaults = {
 	resource: {},
 	mode: 'cors',
 	cache: 'default',
-	credentials: 'omit'
+	credentials: 'omit',
+	redirect: 'follow'
 };
 
 //@TODO implement validation
@@ -335,6 +339,9 @@ const request = async config => {
 			if('file' in options.resource && options.method.toUpperCase() === 'GET') {
 				let rawData = await rawResponse.arrayBuffer();
 				response = new FileDownloadResponse(rawData, options, rawResponse);
+			} else if('fileUrl' in options.resource && options.method.toUpperCase() === 'GET') {
+				let location = rawResponse.headers.get('Location');
+				response = new FileUrlResponse(location, options, rawResponse);
 			} else {
 				response = new RawApiResponse(rawResponse, options);
 			}

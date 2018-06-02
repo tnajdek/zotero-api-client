@@ -383,6 +383,18 @@ describe('Zotero Api Client', () => {
 			assert.isUndefined(lrc.fileName);
 			assert.isUndefined(lrc.file);
 		});
+
+		it('handles api.library.items(I).attachmentUrl().get()', () => {
+			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).attachmentUrl().get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.items, ITEM_KEY);
+			assert.isNull(lrc.resource.fileUrl);
+			assert.isNull(lrc.format);
+			assert.equal(lrc.redirect, 'manual');
+			assert.isUndefined(lrc.fileName);
+			assert.isUndefined(lrc.file);
+		});
 	});
 
 	describe('Construct meta requests', () => {

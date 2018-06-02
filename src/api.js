@@ -282,10 +282,12 @@ module.exports = function() {
 	};
 
 	/**
-	 * Configure api to upload a file
+	 * Configure api to upload or download an attachment file
 	 * Can be only used in conjuction with items() and post()/get()
-	 * Use items() to select attachment item for which file is uploaded
-	 * Will populate Content-Type, If-None-Match headers
+	 * Use items() to select attachment item for which file is uploaded/downloaded
+	 * This will not work in browser-environment due to CORS limitation
+	 * Will populate format on download as well as Content-Type, If-None-Match headers
+	 * in case of an upload
 	 * @param  {String} fileName  - name of the file, should match values in attachment
 	 *                              item entry
 	 * @param  {ArrayBuffer} file - file to be uploaded
@@ -311,6 +313,26 @@ module.exports = function() {
 		} else {
 			return ef.bind(this)({ format: null, resource });
 		}
+	}
+
+	/**
+	 * Configure api to request a temporary attachment file url
+	 * Can be only used in conjuction with items() and get()
+	 * Use items() to select attachment item for which file is url is requested
+	 * Will populate format, redirect
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const attachmentUrl = function() {
+		let resource = {
+			...this.resource,
+			fileUrl: null
+		};
+		return ef.bind(this)({ 
+			format: null,
+			redirect: 'manual',
+			resource
+		});
 	}
 
 	/**
@@ -508,6 +530,7 @@ module.exports = function() {
 	const functions = {
 		api,
 		attachment,
+		attachmentUrl,
 		children,
 		collections,
 		creatorFields,

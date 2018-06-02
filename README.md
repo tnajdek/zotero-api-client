@@ -152,6 +152,7 @@ Module contains api() function, a Zotero API client
         * [~children()](#module_api--module.exports..children) ⇒ <code>Object</code>
         * [~version(version)](#module_api--module.exports..version) ⇒ <code>Object</code>
         * [~attachment(fileName, file, mtime)](#module_api--module.exports..attachment) ⇒ <code>Object</code>
+        * [~attachmentUrl()](#module_api--module.exports..attachmentUrl) ⇒ <code>Object</code>
         * [~get(opts)](#module_api--module.exports..get) ⇒ <code>Promise</code>
         * [~post(data, opts)](#module_api--module.exports..post) ⇒ <code>Promise</code>
         * [~put(data, opts)](#module_api--module.exports..put) ⇒ <code>Promise</code>
@@ -391,10 +392,12 @@ populate the If-Unmodified-Since-Version header.
 <a name="module_api--module.exports..attachment"></a>
 
 #### module.exports~attachment(fileName, file, mtime) ⇒ <code>Object</code>
-Configure api to upload a file
+Configure api to upload or download an attachment file
 Can be only used in conjuction with items() and post()/get()
-Use items() to select attachment item for which file is uploaded
-Will populate Content-Type, If-None-Match headers
+Use items() to select attachment item for which file is uploaded/downloaded
+This will not work in browser-environment due to CORS limitation
+Will populate format on download as well as Content-Type, If-None-Match headers
+in case of an upload
 
 **Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  
@@ -406,6 +409,17 @@ Will populate Content-Type, If-None-Match headers
 | file | <code>ArrayBuffer</code> | file to be uploaded |
 | mtime | <code>Number</code> | file's mtime, if not provided current time is used |
 
+<a name="module_api--module.exports..attachmentUrl"></a>
+
+#### module.exports~attachmentUrl() ⇒ <code>Object</code>
+Configure api to request a temporary attachment file url
+Can be only used in conjuction with items() and get()
+Use items() to select attachment item for which file is url is requested
+Will populate format, redirect
+
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
 <a name="module_api--module.exports..get"></a>
 
 #### module.exports~get(opts) ⇒ <code>Promise</code>
@@ -584,6 +598,7 @@ Module contains classes that offer abstraction over Zotero API responses
     * [~DeleteResponse](#module_response..DeleteResponse) ⇐ <code>ApiResponse</code>
     * [~FileUploadResponse](#module_response..FileUploadResponse) ⇐ <code>ApiResponse</code>
     * [~FileDownloadResponse](#module_response..FileDownloadResponse) ⇐ <code>ApiResponse</code>
+    * [~FileUrlResponse](#module_response..FileUrlResponse) ⇐ <code>ApiResponse</code>
     * [~RawApiResponse](#module_response..RawApiResponse) ⇐ <code>ApiResponse</code>
     * [~ErrorResponse](#module_response..ErrorResponse) ⇐ <code>Error</code>
 
@@ -719,6 +734,13 @@ represents a response to a file upload request
 
 ### response~FileDownloadResponse ⇐ <code>ApiResponse</code>
 represents a response to a file download request
+
+**Kind**: inner class of [<code>response</code>](#module_response)  
+**Extends**: <code>ApiResponse</code>  
+<a name="module_response..FileUrlResponse"></a>
+
+### response~FileUrlResponse ⇐ <code>ApiResponse</code>
+represents a response containing temporary url for file download
 
 **Kind**: inner class of [<code>response</code>](#module_response)  
 **Extends**: <code>ApiResponse</code>  

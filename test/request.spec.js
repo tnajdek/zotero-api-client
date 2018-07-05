@@ -584,8 +584,14 @@ describe('ZoteroJS request', () => {
 								tags: [],
 								relations: {}
 							},
-							meta: {},
-							links:{},
+							meta: {
+								parsedDate: "1987"
+							},
+							links: {
+								self: {
+									href: 'https://api.zotero.org/users/475425/items/AZBCAADA'
+								}
+							},
 						}
 					}
 				}
@@ -608,6 +614,8 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getData()[0].dateModified, '2018-07-05T09:24:36Z');
 				assert.strictEqual(response.getData()[0].version, 1337);
 				assert.notProperty(response.getData()[0], 'meta');
+				assert.strictEqual(response.getMeta()[0].parsedDate, "1987");
+				assert.strictEqual(response.getLinks()[0].self.href, "https://api.zotero.org/users/475425/items/AZBCAADA");
 			});
 		});
 
@@ -666,7 +674,9 @@ describe('ZoteroJS request', () => {
 							data: {
 							...book, ...serverSideData
 							},
-							meta: {},
+							meta: {
+								parsedDate: "1987"
+							},
 							links: {},
 						}
 					}
@@ -699,6 +709,11 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getEntityByIndex(2).version, 1337);
 				assert.strictEqual(response.getEntityByIndex(4).key, 'ABCD3333');
 				assert.strictEqual(response.getEntityByIndex(4).version, 0);
+
+				assert.strictEqual(response.getMeta()[0].parsedDate, "1987");
+				assert.strictEqual(response.getMeta()[2], null);
+				assert.deepEqual(response.getLinks()[0], {});
+				assert.strictEqual(response.getLinks()[2], null);
 
 				assert.throws(response.getEntityByIndex.bind(response, 1), /400: Bad input/);
 				assert.throws(response.getEntityByIndex.bind(response, 10), /Index 10 is not present in the reponse/);

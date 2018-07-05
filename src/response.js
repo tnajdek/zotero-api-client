@@ -141,6 +141,30 @@ class MultiWriteResponse extends ApiResponse {
 		});
 	}
 
+	getLinks() {
+		return this.options.body.map((_, index) => {
+			if("successful" in this.raw) {
+				const entry = this.raw.successful[index.toString()];
+				if(entry) {
+					return entry.links || {}
+				}
+			}
+			return null;
+		});
+	}
+
+	getMeta() {
+		return this.options.body.map((_, index) => {
+			if("successful" in this.raw) {
+				const entry = this.raw.successful[index.toString()];
+				if(entry) {
+					return entry.meta || {}
+				}
+			}
+			return null;
+		});
+	}
+
 	/**
 	 * Returns all errors that have occurred.
 	 * @return {Object} Errors object where keys are indexes of the array of the original request and values are the erorrs occurred.

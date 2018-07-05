@@ -128,8 +128,10 @@ class MultiWriteResponse extends ApiResponse {
 		return this.options.body.map((item, index) => {
 			index = index.toString();
 			if(index in this.raw.success) {
+				const remoteItem = this.raw.successful && this.raw.successful[index] || {};
 				return {
 					...item,
+					...remoteItem,
 					key: this.raw.success[index],
 					version: this.response.headers.get('Last-Modified-Version')
 				};
@@ -183,8 +185,10 @@ class MultiWriteResponse extends ApiResponse {
 		}
 
 		if(index.toString() in this.raw.success) {
+			const remoteItem = this.raw.successful && this.raw.successful[index.toString()] || {};
 			return {
 				...this.options.body[index],
+				...remoteItem,
 				key: this.raw.success[index],
 				version: this.response.headers.get('Last-Modified-Version')
 			}	

@@ -557,18 +557,55 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
-		it('should post multiple items and handle mixed response', () => {
-			fetchMock.mock( (url, opts) => {
+		it('should use new data from successful write response', () => {
+			const item ={
+				'version': 0,
+				'itemType': 'book',
+				'title': 'My Amazing Book'
+			};
+
+			fetchMock.post( (url) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
-					assert.equal(opts.method, 'POST');
 					return true;
 				}, {
 				headers: {
 					'Last-Modified-Version': 1337
 				},
-				body: multiMixedWriteResponseFixture
+				body: {
+					...multiSuccessWriteResponseFixture,
+					successful: {
+						"0": {
+							...item,
+							version: 1337,
+							key: 'AZBCAADA',
+							dateAdded: "2018-07-05T09:24:36Z",
+							dateModified: "2018-07-05T09:24:36Z",
+							tags: [],
+							relations: {}
+						}
+					}
+				}
 			});
+			
+			return request({
+				method: 'post',
+				body: [item],
+				resource: {
+					library: 'u475425',
+					items: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiWriteResponse);
+				assert.equal(response.getResponseType(), 'MultiWriteResponse');
+				assert.isOk(response.isSuccess());
+				assert.equal(response.getData()[0].key, 'AZBCAADA');
+				assert.equal(response.getData()[0].title, 'My Amazing Book');
+				assert.equal(response.getData()[0].dateAdded, "2018-07-05T09:24:36Z");
+				assert.equal(response.getData()[0].dateModified, "2018-07-05T09:24:36Z");
+			});
+		});
 
+		it('should post multiple items and handle mixed response', () => {
 			const book = {
 				'key': 'ABCD1111',
 				'version': 0,
@@ -600,6 +637,30 @@ describe('ZoteroJS request', () => {
 				'title': 'My super paper'
 			};
 
+			const serverSideData = { 
+				dateAdded: "2018-07-05T09:24:36Z",
+				dateModified: "2018-07-05T09:24:36Z",
+				tags: [],
+				relations: {}
+			};
+
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
+					assert.equal(opts.method, 'POST');
+					return true;
+				}, {
+				headers: {
+					'Last-Modified-Version': 1337
+				},
+				body: {
+					...multiMixedWriteResponseFixture,
+					"successful": {
+						// add server side data to one of the responses
+						"0": {...book, ...serverSideData }
+					}
+				}
+			});
+
 			return request({
 				method: 'post',
 				body: [book, bug1, paper, bug2, unchanged],
@@ -620,6 +681,7 @@ describe('ZoteroJS request', () => {
 				assert.equal(response.getErrors()[1].message, 'Bad input');
 				assert.equal(response.getErrors()[3].message, 'Bad input');
 
+				assert.equal(response.getEntityByIndex(0).dateModified, serverSideData.dateModified);
 				assert.equal(response.getEntityByIndex('2').key, 'ABCD2222');
 				assert.equal(response.getEntityByIndex(2).version, 1337);
 				assert.equal(response.getEntityByIndex(4).key, 'ABCD3333');

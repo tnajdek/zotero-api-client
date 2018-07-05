@@ -131,7 +131,7 @@ class MultiWriteResponse extends ApiResponse {
 				const remoteItem = this.raw.successful && this.raw.successful[index] || {};
 				return {
 					...item,
-					...remoteItem,
+					...remoteItem.data,
 					key: this.raw.success[index],
 					version: this.response.headers.get('Last-Modified-Version')
 				};
@@ -188,7 +188,7 @@ class MultiWriteResponse extends ApiResponse {
 			const remoteItem = this.raw.successful && this.raw.successful[index.toString()] || {};
 			return {
 				...this.options.body[index],
-				...remoteItem,
+				...remoteItem.data,
 				key: this.raw.success[index],
 				version: this.response.headers.get('Last-Modified-Version')
 			}	

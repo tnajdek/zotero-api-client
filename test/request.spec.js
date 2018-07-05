@@ -575,13 +575,17 @@ describe('ZoteroJS request', () => {
 					...multiSuccessWriteResponseFixture,
 					successful: {
 						"0": {
-							...item,
-							version: 1337,
-							key: 'AZBCAADA',
-							dateAdded: "2018-07-05T09:24:36Z",
-							dateModified: "2018-07-05T09:24:36Z",
-							tags: [],
-							relations: {}
+							data: {
+								...item,
+								version: 1337,
+								key: 'AZBCAADA',
+								dateAdded: "2018-07-05T09:24:36Z",
+								dateModified: "2018-07-05T09:24:36Z",
+								tags: [],
+								relations: {}
+							},
+							meta: {},
+							links:{},
 						}
 					}
 				}
@@ -600,8 +604,9 @@ describe('ZoteroJS request', () => {
 				assert.isOk(response.isSuccess());
 				assert.equal(response.getData()[0].key, 'AZBCAADA');
 				assert.equal(response.getData()[0].title, 'My Amazing Book');
-				assert.equal(response.getData()[0].dateAdded, "2018-07-05T09:24:36Z");
-				assert.equal(response.getData()[0].dateModified, "2018-07-05T09:24:36Z");
+				assert.equal(response.getData()[0].dateAdded, '2018-07-05T09:24:36Z');
+				assert.equal(response.getData()[0].dateModified, '2018-07-05T09:24:36Z');
+				assert.notProperty(response.getData()[0], 'meta');
 			});
 		});
 
@@ -656,7 +661,13 @@ describe('ZoteroJS request', () => {
 					...multiMixedWriteResponseFixture,
 					"successful": {
 						// add server side data to one of the responses
-						"0": {...book, ...serverSideData }
+						"0": { 
+							data: {
+							...book, ...serverSideData
+							},
+							meta: {},
+							links: {},
+						}
 					}
 				}
 			});
@@ -682,6 +693,7 @@ describe('ZoteroJS request', () => {
 				assert.equal(response.getErrors()[3].message, 'Bad input');
 
 				assert.equal(response.getEntityByIndex(0).dateModified, serverSideData.dateModified);
+				assert.notProperty(response.getEntityByIndex(0), 'meta');
 				assert.equal(response.getEntityByIndex('2').key, 'ABCD2222');
 				assert.equal(response.getEntityByIndex(2).version, 1337);
 				assert.equal(response.getEntityByIndex(4).key, 'ABCD3333');

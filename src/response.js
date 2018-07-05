@@ -39,7 +39,7 @@ class ApiResponse {
 	}
 
 	getVersion() {
-		return this.response.headers.get('Last-Modified-Version');
+		return parseInt(this.response.headers.get('Last-Modified-Version'), 10);
 	}
 }
 
@@ -133,7 +133,7 @@ class MultiWriteResponse extends ApiResponse {
 					...item,
 					...remoteItem.data,
 					key: this.raw.success[index],
-					version: this.response.headers.get('Last-Modified-Version')
+					version: parseInt(this.response.headers.get('Last-Modified-Version'), 10)
 				};
 			} else {
 				return item;
@@ -190,7 +190,7 @@ class MultiWriteResponse extends ApiResponse {
 				...this.options.body[index],
 				...remoteItem.data,
 				key: this.raw.success[index],
-				version: this.response.headers.get('Last-Modified-Version')
+				version: parseInt(this.response.headers.get('Last-Modified-Version'), 10)
 			}	
 		}
 

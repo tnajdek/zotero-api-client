@@ -58,8 +58,8 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
-				assert.equal(response.getResponseType(), 'ApiResponse');
-				assert.equal(response.getData().length, 2);
+				assert.strictEqual(response.getResponseType(), 'ApiResponse');
+				assert.strictEqual(response.getData().length, 2);
 				assert.isNull(response.getLinks());
 				assert.isNull(response.getMeta());
 			});
@@ -81,8 +81,8 @@ describe('ZoteroJS request', () => {
 				itemType: 'book'
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
-				assert.equal(response.getData().itemType, 'book');
-				assert.equal(Object.keys(response.getData()).length, 2);
+				assert.strictEqual(response.getData().itemType, 'book');
+				assert.strictEqual(Object.keys(response.getData()).length, 2);
 			});
 		});
 	});
@@ -101,11 +101,11 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, SingleReadResponse);
-				assert.equal(response.getResponseType(), 'SingleReadResponse');
-				assert.equal(response.getLinks().self.href, 'https://api.zotero.org/users/475425/items/X42A7DEE');
-				assert.equal(response.getMeta().parsedDate, '1993');
-				assert.equal(Object.keys(response.getLinks()).length, 2);
-				assert.equal(response.getData().key, 'X42A7DEE');
+				assert.strictEqual(response.getResponseType(), 'SingleReadResponse');
+				assert.strictEqual(response.getLinks().self.href, 'https://api.zotero.org/users/475425/items/X42A7DEE');
+				assert.strictEqual(response.getMeta().parsedDate, '1993');
+				assert.strictEqual(Object.keys(response.getLinks()).length, 2);
+				assert.strictEqual(response.getData().key, 'X42A7DEE');
 			});
 		});
 
@@ -123,10 +123,10 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
-				assert.equal(response.getResponseType(), 'MultiReadResponse');
-				assert.equal(response.getData().length, 15);
-				assert.equal(response.getLinks().length, 15);
-				assert.equal(response.getMeta().length, 15);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
+				assert.strictEqual(response.getData().length, 15);
+				assert.strictEqual(response.getLinks().length, 15);
+				assert.strictEqual(response.getMeta().length, 15);
 			});
 		});
 
@@ -144,7 +144,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
-				assert.equal(response.getData().length, 15);
+				assert.strictEqual(response.getData().length, 15);
 			});
 		});
 
@@ -162,7 +162,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
-				assert.equal(response.getData().length, 15);
+				assert.strictEqual(response.getData().length, 15);
 			});
 		});
 
@@ -180,7 +180,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
-				assert.equal(response.getData().length, 15);
+				assert.strictEqual(response.getData().length, 15);
 			});
 		});
 
@@ -198,7 +198,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
-				assert.equal(response.getData().length, 15);
+				assert.strictEqual(response.getData().length, 15);
 			});
 		});
 
@@ -217,7 +217,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
-				assert.equal(response.getData().length, 15);
+				assert.strictEqual(response.getData().length, 15);
 			});
 		});
 
@@ -235,7 +235,7 @@ describe('ZoteroJS request', () => {
 				tag: 'Fiction'
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
-				assert.equal(response.getData().length, 1);
+				assert.strictEqual(response.getData().length, 1);
 			});
 		});
 
@@ -253,7 +253,7 @@ describe('ZoteroJS request', () => {
 				searchKey: 'HHF7BB4C'
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
-				assert.equal(response.getData().length, 1);
+				assert.strictEqual(response.getData().length, 1);
 			});
 		});
 
@@ -291,7 +291,7 @@ describe('ZoteroJS request', () => {
 				start: 25
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
-				assert.equal(response.getData().length, 15);
+				assert.strictEqual(response.getData().length, 15);
 			});
 		});
 
@@ -317,7 +317,7 @@ describe('ZoteroJS request', () => {
 				itemKey: 'N7W92H48'
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
-				assert.equal(response.getData().length, 1);
+				assert.strictEqual(response.getData().length, 1);
 			});
 		});
 	});
@@ -337,7 +337,7 @@ describe('ZoteroJS request', () => {
 				searchKey: 'HHF7BB4C'
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
-				assert.equal(response.getData().length, 1);
+				assert.strictEqual(response.getData().length, 1);
 			});
 		});
 
@@ -354,7 +354,7 @@ describe('ZoteroJS request', () => {
 					}
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
-				assert.equal(response.getData().length, 1);
+				assert.strictEqual(response.getData().length, 1);
 			});
 		});
 
@@ -371,7 +371,7 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
-				assert.equal(response.getData().length, 25);
+				assert.strictEqual(response.getData().length, 25);
 			});
 		});
 	});
@@ -381,11 +381,11 @@ describe('ZoteroJS request', () => {
 			fetchMock.mock(
 				(url, opts) => {
 					assert.property(opts, 'headers');
-					assert.equal(opts.headers['Authorization'], 'a');
-					assert.equal(opts.headers['Zotero-Write-Token'], 'b');
-					assert.equal(opts.headers['If-Modified-Since-Version'], 1);
-					assert.equal(opts.headers['If-Unmodified-Since-Version'], 1);
-					assert.equal(opts.headers['Content-Type'], 'c');
+					assert.strictEqual(opts.headers['Authorization'], 'a');
+					assert.strictEqual(opts.headers['Zotero-Write-Token'], 'b');
+					assert.strictEqual(opts.headers['If-Modified-Since-Version'], 1);
+					assert.strictEqual(opts.headers['If-Unmodified-Since-Version'], 1);
+					assert.strictEqual(opts.headers['Content-Type'], 'c');
 					return true;
 				}, {}
 			);
@@ -454,10 +454,10 @@ describe('ZoteroJS request', () => {
 				throw new Error('fail');
 			}).catch(async error => {
 				assert.instanceOf(error, ErrorResponse);
-				assert.equal(error.getResponseType(), 'ErrorResponse');
-				assert.equal(error.message, '404: Not Found');
-				assert.equal(error.reason, 'These aren\'t the droids You are looking for');
-				assert.equal(error.response.bodyUsed, false);
+				assert.strictEqual(error.getResponseType(), 'ErrorResponse');
+				assert.strictEqual(error.message, '404: Not Found');
+				assert.strictEqual(error.reason, 'These aren\'t the droids You are looking for');
+				assert.strictEqual(error.response.bodyUsed, false);
 			});
 		});
 
@@ -476,7 +476,7 @@ describe('ZoteroJS request', () => {
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
 				assert.isNull(response.getData());
-				assert.equal(response.response.status, 304);
+				assert.strictEqual(response.response.status, 304);
 			});
 		});
 
@@ -494,9 +494,9 @@ describe('ZoteroJS request', () => {
 				format: 'atom'
 			}).then(response => {
 				assert.instanceOf(response, RawApiResponse);
-				assert.equal(response.getResponseType(), 'RawApiResponse');
-				assert.equal(response.raw.status, 200);
-				assert.equal(response.raw.bodyUsed, false);
+				assert.strictEqual(response.getResponseType(), 'RawApiResponse');
+				assert.strictEqual(response.raw.status, 200);
+				assert.strictEqual(response.raw.bodyUsed, false);
 			});
 		});
 
@@ -511,10 +511,10 @@ describe('ZoteroJS request', () => {
 				format: null
 			}).then(response => {
 				assert.instanceOf(response, RawApiResponse);
-				assert.equal(response.raw.status, 200);
-				assert.equal(response.raw.url, 'https://api.zotero.org/');
-				assert.equal(response.raw.body, 'Nothing to see here.');
-				assert.equal(response.raw.bodyUsed, false);
+				assert.strictEqual(response.raw.status, 200);
+				assert.strictEqual(response.raw.url, 'https://api.zotero.org/');
+				assert.strictEqual(response.raw.body, 'Nothing to see here.');
+				assert.strictEqual(response.raw.bodyUsed, false);
 			});
 		});
 	});
@@ -523,7 +523,7 @@ describe('ZoteroJS request', () => {
 		it('should post a single item', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
-					assert.equal(opts.method, 'POST');
+					assert.strictEqual(opts.method, 'POST');
 					return true;
 				}, {
 				headers: {
@@ -548,12 +548,12 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiWriteResponse);
-				assert.equal(response.getResponseType(), 'MultiWriteResponse');
+				assert.strictEqual(response.getResponseType(), 'MultiWriteResponse');
 				assert.isOk(response.isSuccess());
-				assert.equal(response.getData()[0].key, 'AZBCAADA');
-				assert.equal(response.getData()[0].title, 'My Amazing Book');
-				assert.equal(response.getData()[0].itemType, 'book');
-				assert.equal(response.getData()[0].version, 1337);
+				assert.strictEqual(response.getData()[0].key, 'AZBCAADA');
+				assert.strictEqual(response.getData()[0].title, 'My Amazing Book');
+				assert.strictEqual(response.getData()[0].itemType, 'book');
+				assert.strictEqual(response.getData()[0].version, 1337);
 			});
 		});
 
@@ -600,12 +600,13 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiWriteResponse);
-				assert.equal(response.getResponseType(), 'MultiWriteResponse');
+				assert.strictEqual(response.getResponseType(), 'MultiWriteResponse');
 				assert.isOk(response.isSuccess());
-				assert.equal(response.getData()[0].key, 'AZBCAADA');
-				assert.equal(response.getData()[0].title, 'My Amazing Book');
-				assert.equal(response.getData()[0].dateAdded, '2018-07-05T09:24:36Z');
-				assert.equal(response.getData()[0].dateModified, '2018-07-05T09:24:36Z');
+				assert.strictEqual(response.getData()[0].key, 'AZBCAADA');
+				assert.strictEqual(response.getData()[0].title, 'My Amazing Book');
+				assert.strictEqual(response.getData()[0].dateAdded, '2018-07-05T09:24:36Z');
+				assert.strictEqual(response.getData()[0].dateModified, '2018-07-05T09:24:36Z');
+				assert.strictEqual(response.getData()[0].version, 1337);
 				assert.notProperty(response.getData()[0], 'meta');
 			});
 		});
@@ -651,7 +652,7 @@ describe('ZoteroJS request', () => {
 
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
-					assert.equal(opts.method, 'POST');
+					assert.strictEqual(opts.method, 'POST');
 					return true;
 				}, {
 				headers: {
@@ -681,23 +682,23 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, MultiWriteResponse);
-				assert.equal(response.getVersion(), 1337);
+				assert.strictEqual(response.getVersion(), 1337);
 				assert.isNotOk(response.isSuccess());
 
-				assert.equal(response.getData().length, 5);
-				assert.equal(response.getData()[0].version, 1337); // successful
-				assert.equal(response.getData()[1].version, 0); // failed
-				assert.equal(response.getData()[4].version, 0); // unchanged
+				assert.strictEqual(response.getData().length, 5);
+				assert.strictEqual(response.getData()[0].version, 1337); // successful
+				assert.strictEqual(response.getData()[1].version, 0); // failed
+				assert.strictEqual(response.getData()[4].version, 0); // unchanged
 
-				assert.equal(response.getErrors()[1].message, 'Bad input');
-				assert.equal(response.getErrors()[3].message, 'Bad input');
+				assert.strictEqual(response.getErrors()[1].message, 'Bad input');
+				assert.strictEqual(response.getErrors()[3].message, 'Bad input');
 
-				assert.equal(response.getEntityByIndex(0).dateModified, serverSideData.dateModified);
+				assert.strictEqual(response.getEntityByIndex(0).dateModified, serverSideData.dateModified);
 				assert.notProperty(response.getEntityByIndex(0), 'meta');
-				assert.equal(response.getEntityByIndex('2').key, 'ABCD2222');
-				assert.equal(response.getEntityByIndex(2).version, 1337);
-				assert.equal(response.getEntityByIndex(4).key, 'ABCD3333');
-				assert.equal(response.getEntityByIndex(4).version, 0);
+				assert.strictEqual(response.getEntityByIndex('2').key, 'ABCD2222');
+				assert.strictEqual(response.getEntityByIndex(2).version, 1337);
+				assert.strictEqual(response.getEntityByIndex(4).key, 'ABCD3333');
+				assert.strictEqual(response.getEntityByIndex(4).version, 0);
 
 				assert.throws(response.getEntityByIndex.bind(response, 1), /400: Bad input/);
 				assert.throws(response.getEntityByIndex.bind(response, 10), /Index 10 is not present in the reponse/);
@@ -709,7 +710,7 @@ describe('ZoteroJS request', () => {
 		it('should update put a single, complete item', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.equal(opts.method, 'PUT');
+					assert.strictEqual(opts.method, 'PUT');
 					return true;
 				}, {
 				status: 204,
@@ -734,11 +735,11 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, SingleWriteResponse);
-				assert.equal(response.getResponseType(), 'SingleWriteResponse');
-				assert.equal(response.getVersion(), 42);
-				assert.equal(response.getData().version, 42);
-				assert.equal(response.getData().key, 'ABCD1111');
-				assert.equal(response.response.status, 204);
+				assert.strictEqual(response.getResponseType(), 'SingleWriteResponse');
+				assert.strictEqual(response.getVersion(), 42);
+				assert.strictEqual(response.getData().version, 42);
+				assert.strictEqual(response.getData().key, 'ABCD1111');
+				assert.strictEqual(response.response.status, 204);
 				assert.isNull(response.raw);
 			});
 		});
@@ -746,7 +747,7 @@ describe('ZoteroJS request', () => {
 		it('should patch a single item', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.equal(opts.method, 'PATCH');
+					assert.strictEqual(opts.method, 'PATCH');
 					return true;
 				}, {
 				status: 204,
@@ -769,10 +770,10 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, SingleWriteResponse);
-				assert.equal(response.getVersion(), 42);
-				assert.equal(response.getData().version, 42);
-				assert.equal(response.getData().title, 'My Amazing Book');
-				assert.equal(response.response.status, 204);
+				assert.strictEqual(response.getVersion(), 42);
+				assert.strictEqual(response.getData().version, 42);
+				assert.strictEqual(response.getData().title, 'My Amazing Book');
+				assert.strictEqual(response.response.status, 204);
 				assert.isNull(response.raw);
 			});
 		});
@@ -780,7 +781,7 @@ describe('ZoteroJS request', () => {
 		it('should delete a single item', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.equal(opts.method, 'DELETE');
+					assert.strictEqual(opts.method, 'DELETE');
 					return true;
 				}, {
 				status: 204,
@@ -798,16 +799,16 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, DeleteResponse);
-				assert.equal(response.getResponseType(), 'DeleteResponse');
-				assert.equal(response.getVersion(), 43);
-				assert.equal(response.response.status, 204);
+				assert.strictEqual(response.getResponseType(), 'DeleteResponse');
+				assert.strictEqual(response.getVersion(), 43);
+				assert.strictEqual(response.response.status, 204);
 				assert.isNull(response.raw);
 			});
 		});
 
 		it('should delete multiple items', () => {
 			fetchMock.mock( (url, opts) => {
-					assert.equal(opts.method, 'DELETE');
+					assert.strictEqual(opts.method, 'DELETE');
 					let parsedUrl = URL.parse(url);
 					parsedUrl = parsedUrl.search.slice(1);
 					parsedUrl = parsedUrl.split('&');
@@ -829,8 +830,8 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, DeleteResponse);
-				assert.equal(response.getVersion(), 100);
-				assert.equal(response.response.status, 204);
+				assert.strictEqual(response.getVersion(), 100);
+				assert.strictEqual(response.response.status, 204);
 				assert.isNull(response.raw);
 			});
 		});
@@ -840,7 +841,7 @@ describe('ZoteroJS request', () => {
 		it('should throw ErrorResponse for error post responses', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.equal(opts.method, 'PUT');
+					assert.strictEqual(opts.method, 'PUT');
 					return true;
 				}, {
 				status: 400,
@@ -858,15 +859,15 @@ describe('ZoteroJS request', () => {
 				throw new Error('fail');
 			}).catch(error => {
 				assert.instanceOf(error, ErrorResponse);
-				assert.equal(error.message, '400: Bad Request');
-				assert.equal(error.reason, 'Uploaded data must be a JSON array');
+				assert.strictEqual(error.message, '400: Bad Request');
+				assert.strictEqual(error.reason, 'Uploaded data must be a JSON array');
 			})
 		});
 
 		it('should throw ErrorResponse for error put responses', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.equal(opts.method, 'PUT');
+					assert.strictEqual(opts.method, 'PUT');
 					return true;
 				}, {
 				status: 412,
@@ -884,8 +885,8 @@ describe('ZoteroJS request', () => {
 				throw new Error('fail');
 			}).catch(error => {
 				assert.instanceOf(error, ErrorResponse);
-				assert.equal(error.message, '412: Precondition Failed');
-				assert.equal(error.reason, 'Item has been modified since specified version (expected 42, found 41)');
+				assert.strictEqual(error.message, '412: Precondition Failed');
+				assert.strictEqual(error.reason, 'Item has been modified since specified version (expected 42, found 41)');
 			})
 		});
 
@@ -899,7 +900,7 @@ describe('ZoteroJS request', () => {
 				},
 				response: previousResponse
 			}).then(response => {
-				assert.equal(response.getData().foo, 'bar');
+				assert.strictEqual(response.getData().foo, 'bar');
 			});
 		});
 	});
@@ -950,14 +951,14 @@ describe('ZoteroJS request', () => {
 				}
 			});
 			fetchMock.once('https://storage.zotero.org', (url, options) => {
-				assert.equal(counter, 1);
-				assert.equal(options.body.byteLength, 33);
+				assert.strictEqual(counter, 1);
+				assert.strictEqual(options.body.byteLength, 33);
 				return {
 					status: 201
 				};
 			});
 			return request({ ...fileUploadRequest }).then(response => {
-				assert.equal(response.getResponseType(), 'FileUploadResponse');
+				assert.strictEqual(response.getResponseType(), 'FileUploadResponse');
 				assert.instanceOf(response, FileUploadResponse);
 			});
 		});
@@ -982,8 +983,8 @@ describe('ZoteroJS request', () => {
 					throw new Error('fail');
 				}).catch(error => {
 					assert.instanceOf(error, ErrorResponse);
-					assert.equal(error.message, 'Upload stage 1: 409: Conflict');
-					assert.equal(error.reason, 'The target library is locked.');
+					assert.strictEqual(error.message, 'Upload stage 1: 409: Conflict');
+					assert.strictEqual(error.reason, 'The target library is locked.');
 				});
 		});
 		it('should handle { exists: 1 } response in stage 1', () => {
@@ -995,8 +996,8 @@ describe('ZoteroJS request', () => {
 					throw new Error('fail');
 				}).catch(error => {
 					assert.instanceOf(error, ErrorResponse);
-					assert.equal(error.message, 'Upload stage 1: File already exists');
-					assert.equal(error.reason, 'File already exists');
+					assert.strictEqual(error.message, 'Upload stage 1: File already exists');
+					assert.strictEqual(error.reason, 'File already exists');
 				});
 		});
 		it('should handle error reponse in stage 2', () => {
@@ -1016,8 +1017,8 @@ describe('ZoteroJS request', () => {
 					throw new Error('fail');
 				}).catch(error => {
 					assert.instanceOf(error, ErrorResponse);
-					assert.equal(error.message, 'Upload stage 2: 400: Bad Request');
-					assert.equal(error.reason, 'Something wrong');
+					assert.strictEqual(error.message, 'Upload stage 2: 400: Bad Request');
+					assert.strictEqual(error.reason, 'Something wrong');
 				});
 		});
 		it('should handle error reponse in stage 3', () => {
@@ -1042,8 +1043,8 @@ describe('ZoteroJS request', () => {
 					throw new Error('fail');
 				}).catch(error => {
 					assert.instanceOf(error, ErrorResponse);
-					assert.equal(error.message, 'Upload stage 3: 412: Precondition Failed');
-					assert.equal(error.reason, 'The file has changed remotely since retrieval');
+					assert.strictEqual(error.message, 'Upload stage 3: 412: Precondition Failed');
+					assert.strictEqual(error.reason, 'The file has changed remotely since retrieval');
 				});
 		});
 	});
@@ -1065,9 +1066,9 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, FileDownloadResponse);
-				assert.equal(response.getResponseType(), 'FileDownloadResponse');
-				assert.equal(response.getData().byteLength, 11);
-				assert.equal(
+				assert.strictEqual(response.getResponseType(), 'FileDownloadResponse');
+				assert.strictEqual(response.getData().byteLength, 11);
+				assert.strictEqual(
 					Array.from(
 						(new Uint8ClampedArray(response.getData())))
 							.map(b => String.fromCharCode(b))
@@ -1094,8 +1095,8 @@ describe('ZoteroJS request', () => {
 				}
 			}).then(response => {
 				assert.instanceOf(response, FileUrlResponse);
-				assert.equal(response.getResponseType(), 'FileUrlResponse');
-				assert.equal(response.getData(), 'https://files.zotero.org/some-file');
+				assert.strictEqual(response.getResponseType(), 'FileUrlResponse');
+				assert.strictEqual(response.getData(), 'https://files.zotero.org/some-file');
 			});
 		});
 	})

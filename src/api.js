@@ -266,6 +266,18 @@ module.exports = function() {
 	};
 
 	/**
+	 * Configure api to request settings
+	 * Can only be used in conjuction with get()
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const settings = function() {
+		return efr.bind(this)({
+			settings: null
+		});
+	};
+
+	/**
 	 * Configure api to specify local version of given entity.
 	 * When used in conjuction with get() exec function, it will populate the
 	 * If-Modified-Since-Version header.
@@ -547,6 +559,7 @@ module.exports = function() {
 		post,
 		put,
 		searches,
+		settings,
 		subcollections,
 		tags,
 		template,

@@ -30,6 +30,7 @@ const searchesResponseFixture = require('./fixtures/searches-data-response.json'
 const itemTypesDataFixture = require('./fixtures/item-types-data.json');
 const multiMixedWriteResponseFixture = require('./fixtures/multi-mixed-write-response.json');
 const multiSuccessWriteResponseFixture = require('./fixtures/multi-success-write-response.json');
+const settingsReponseFixture = require('./fixtures/settings-response.json');
 
 const request = async (opts) => {
 	var config = await _request(opts);
@@ -372,6 +373,23 @@ describe('ZoteroJS request', () => {
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
 				assert.strictEqual(response.getData().length, 25);
+			});
+		});
+
+		it('should get settings', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/settings',
+				settingsReponseFixture
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					settings: null,
+				}
+			}).then(response => {
+				assert.instanceOf(response, ApiResponse);
+				assert.lengthOf(response.getData().tagColors.value, 2);
 			});
 		});
 	});

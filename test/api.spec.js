@@ -249,6 +249,13 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.equal(lrc.resource.tags, URL_ENCODED_TAGS);
 		});
+
+		it('handles api.library.settings().get', () => {
+			api(KEY).library(LIBRARY_KEY).settings().get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.isNull(lrc.resource.settings);
+		});
 	});
 
 	describe('Construct write requests', () => {

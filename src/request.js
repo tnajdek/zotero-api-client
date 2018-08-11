@@ -76,6 +76,7 @@ const nonKeyResource = {
 	'template': 'items/new',
 	'file': 'file',
 	'fileUrl': 'file/view',
+	'settings': 'settings',
 };
 
 const dataResource = [

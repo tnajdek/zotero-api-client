@@ -150,6 +150,7 @@ Module contains api() function, a Zotero API client
         * [~top()](#module_api--module.exports..top) ⇒ <code>Object</code>
         * [~trash()](#module_api--module.exports..trash) ⇒ <code>Object</code>
         * [~children()](#module_api--module.exports..children) ⇒ <code>Object</code>
+        * [~settings()](#module_api--module.exports..settings) ⇒ <code>Object</code>
         * [~version(version)](#module_api--module.exports..version) ⇒ <code>Object</code>
         * [~attachment(fileName, file, mtime)](#module_api--module.exports..attachment) ⇒ <code>Object</code>
         * [~attachmentUrl()](#module_api--module.exports..attachmentUrl) ⇒ <code>Object</code>
@@ -368,6 +369,15 @@ Configure api to narrow the request only to the children of given
 item
 Can be only used in conjuction with items() and get() execution
 function
+
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+<a name="module_api--module.exports..settings"></a>
+
+#### module.exports~settings() ⇒ <code>Object</code>
+Configure api to request settings
+Can only be used in conjuction with get()
 
 **Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  

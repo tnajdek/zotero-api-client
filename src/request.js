@@ -313,7 +313,7 @@ const request = async config => {
 			switch(options.method.toUpperCase()) {
 				case 'GET':
 				default:
-					if(dataResource.some(dataResource => dataResource in options.resource)) {
+					if('library' in options.resource) {
 						if(content && Array.isArray(content)) {
 							response = new MultiReadResponse(content, options, rawResponse);
 						} else {

@@ -55,7 +55,7 @@ class SingleReadResponse extends ApiResponse {
 	 * @return {Object} entity returned in this response
 	 */
 	getData() {
-		return this.raw ? this.raw.data : this.raw;
+		return this.raw && 'data' in this.raw ? this.raw.data : this.raw;
 	}
 }
 
@@ -71,7 +71,7 @@ class MultiReadResponse extends ApiResponse {
 	 * @return {Array} a list of entities returned in this response
 	 */
 	getData() {
-		return this.raw.map(r => r.data);
+		return this.raw.map(r => 'data' in r ? r.data : 'tag' in r ? { tag: r.tag } : r);
 	}
 
 	getLinks() {

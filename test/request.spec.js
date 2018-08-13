@@ -371,7 +371,8 @@ describe('ZoteroJS request', () => {
 					tags: null
 				}
 			}).then(response => {
-				assert.instanceOf(response, ApiResponse);
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
 				assert.strictEqual(response.getData().length, 25);
 			});
 		});
@@ -388,7 +389,8 @@ describe('ZoteroJS request', () => {
 					settings: null,
 				}
 			}).then(response => {
-				assert.instanceOf(response, ApiResponse);
+				assert.instanceOf(response, SingleReadResponse);
+				assert.strictEqual(response.getResponseType(), 'SingleReadResponse');
 				assert.lengthOf(response.getData().tagColors.value, 2);
 			});
 		});
@@ -492,7 +494,8 @@ describe('ZoteroJS request', () => {
 				},
 				ifModifiedSinceVersion: 42
 			}).then(response => {
-				assert.instanceOf(response, ApiResponse);
+				assert.instanceOf(response, SingleReadResponse);
+				assert.strictEqual(response.getResponseType(), 'SingleReadResponse');
 				assert.isNull(response.getData());
 				assert.strictEqual(response.response.status, 304);
 			});

@@ -33,6 +33,8 @@ const headerNames = {
 	zoteroWriteToken: 'Zotero-Write-Token',
 };
 
+const queryParamsWithArraySupport = [ "tag" ];
+
 const queryParamNames = [
 	'format',
 	'include',
@@ -139,7 +141,7 @@ const makeUrlQuery = options => {
 	let params = [];
 	for(let name of queryParamNames) {
 		if(options[name]) {
-			if(Array.isArray(options[name])) {
+			if(queryParamsWithArraySupport.includes(name) && Array.isArray(options[name])) {
 				params.push(...options[name].map(k => `${name}=${k}`));
 			} else {
 				params.push(`${name}=${options[name]}`);

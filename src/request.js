@@ -139,7 +139,11 @@ const makeUrlQuery = options => {
 	let params = [];
 	for(let name of queryParamNames) {
 		if(options[name]) {
-			params.push(`${name}=${options[name]}`);
+			if(Array.isArray(options[name])) {
+				params.push(...options[name].map(k => `${name}=${k}`));
+			} else {
+				params.push(`${name}=${options[name]}`);
+			}
 		}
 	}
 	return params.length ? '?' + params.join('&') : '';

@@ -456,6 +456,21 @@ describe('ZoteroJS request', () => {
 				start: 'foo'
 			});
 		});
+
+		it('should handle arrays as query params', () => {
+			fetchMock.get(
+				'https://api.zotero.org/users/475425/items?format=json&tag=aaa&tag=bbb',
+				multiGetResponseFixture
+			);
+			
+			return request({
+				resource: {
+					library: 'u475425',
+					items: null
+				},
+				tag: ['aaa', 'bbb'],
+			});
+		});
 	});
 
 	describe('Failing, empty & raw response get requests', () => {

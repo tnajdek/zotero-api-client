@@ -36,22 +36,23 @@ const headerNames = {
 const queryParamsWithArraySupport = [ "tag" ];
 
 const queryParamNames = [
+	'collectionKey',
+	'content',
+	'direction',
 	'format',
 	'include',
-	'content',
-	'style',
 	'itemKey',
-	'collectionKey',
-	'searchKey',
 	'itemType',
-	'qmode',
-	'since',
-	'tag',
-	'sort',
-	'direction',
 	'limit',
+	'linkMode',
+	'q',
+	'qmode',
+	'searchKey',
+	'since',
+	'sort',
 	'start',
-	'linkMode'
+	'style',
+	'tag',
 ];
 
 const fetchParamNames = [

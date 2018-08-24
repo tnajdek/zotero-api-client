@@ -429,7 +429,7 @@ describe('ZoteroJS request', () => {
 					return [
 						'format', 'include', 'content', 'style', 'itemKey',
 						'collectionKey', 'searchKey', 'itemType', 'qmode',
-						'since', 'tag', 'sort', 'direction', 'limit', 'start'
+						'since', 'tag', 'sort', 'direction', 'limit', 'start', 'q'
 					].every(qp => url.includes(`${qp}=`));
 				}, {}
 			);
@@ -453,7 +453,8 @@ describe('ZoteroJS request', () => {
 				sort: 'foo',
 				direction: 'foo',
 				limit: 'foo',
-				start: 'foo'
+				start: 'foo',
+				q: 'foo',
 			});
 		});
 

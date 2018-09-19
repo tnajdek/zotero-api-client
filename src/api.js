@@ -278,6 +278,20 @@ module.exports = function() {
 	};
 
 	/**
+	 * Configure api to request user-accessible groups (i.e. The set of groups 
+	 * the current API key has access to, including public groups the key owner
+	 * belongs to even if the key doesn't have explicit permissions for them.)
+	 * Can only be used in conjuction with get()
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const groups = function() {
+		return efr.bind(this)({
+			groups: null
+		});
+	};
+
+	/**
 	 * Configure api to specify local version of given entity.
 	 * When used in conjuction with get() exec function, it will populate the
 	 * If-Modified-Since-Version header.
@@ -549,6 +563,7 @@ module.exports = function() {
 		delete: del, //delete is a keyword
 		get,
 		getConfig,
+		groups,
 		itemFields,
 		items,
 		itemTypeCreatorTypes,

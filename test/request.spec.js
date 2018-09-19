@@ -31,6 +31,7 @@ const itemTypesDataFixture = require('./fixtures/item-types-data.json');
 const multiMixedWriteResponseFixture = require('./fixtures/multi-mixed-write-response.json');
 const multiSuccessWriteResponseFixture = require('./fixtures/multi-success-write-response.json');
 const settingsReponseFixture = require('./fixtures/settings-response.json');
+const userGroupsFixture = require('./fixtures/user-groups-response.json');
 
 const request = async (opts) => {
 	var config = await _request(opts);
@@ -392,6 +393,24 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(response, SingleReadResponse);
 				assert.strictEqual(response.getResponseType(), 'SingleReadResponse');
 				assert.lengthOf(response.getData().tagColors.value, 2);
+			});
+		});
+
+		it('should get user-accessible groups', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/groups',
+				userGroupsFixture
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					groups: null,
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
+				assert.strictEqual(response.getData()[0].id, 51240);
 			});
 		});
 	});

@@ -256,6 +256,13 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.isNull(lrc.resource.settings);
 		});
+
+		it('handles api.library.groups().get', () => {
+			api(KEY).library(LIBRARY_KEY).groups().get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.isNull(lrc.resource.groups);
+		});
 	});
 
 	describe('Construct write requests', () => {

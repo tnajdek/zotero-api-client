@@ -145,6 +145,7 @@ Module contains api() function, a Zotero API client
         * [~template(itemType)](#module_api--module.exports..template) ⇒ <code>Object</code>
         * [~collections(items)](#module_api--module.exports..collections) ⇒ <code>Object</code>
         * [~subcollections()](#module_api--module.exports..subcollections) ⇒ <code>Object</code>
+        * [~publications()](#module_api--module.exports..publications) ⇒ <code>Object</code>
         * [~tags(tags)](#module_api--module.exports..tags) ⇒ <code>Object</code>
         * [~searches(searches)](#module_api--module.exports..searches) ⇒ <code>Object</code>
         * [~top()](#module_api--module.exports..top) ⇒ <code>Object</code>
@@ -306,6 +307,17 @@ any of the execution function (e.g. get(), post())
 Configure api to use subcollections that reside underneath the specified
 collection.
 Should only be used in conjuction with both library() and collection()
+and any of the execution function (e.g. get(), post())
+
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+<a name="module_api--module.exports..publications"></a>
+
+#### module.exports~publications() ⇒ <code>Object</code>
+Configure api to narrow the request to only consider items filled under
+"My Publications"
+Should only be used in conjuction with both library() and items()
 and any of the execution function (e.g. get(), post())
 
 **Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  

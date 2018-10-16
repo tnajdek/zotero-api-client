@@ -223,6 +223,24 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
+		it('should get items from My Publications', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/publications/items',
+				multiGetResponseFixture
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					publications: null,
+					items: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getData().length, 15);
+			});
+		});
+
 		it('should get a single tag by name', () => {
 			fetchMock.mock(
 				/https:\/\/api\.zotero\.org\/users\/475425\/tags\?.*?tag=Fiction.*?/,

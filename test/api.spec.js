@@ -134,6 +134,14 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.resource.items, ITEM_KEY);
 		});
 
+		it('handles api.library.publications().items().get', () => {
+			api(KEY).library(LIBRARY_KEY).publications().items().get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.isNull(lrc.resource.items);
+			assert.isNull(lrc.resource.publications);
+		});
+
 		it('handles api.library.items(I).children.get', () => {
 			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).children().get();
 			assert.equal(lrc.method, 'get');

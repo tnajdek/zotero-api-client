@@ -194,6 +194,19 @@ module.exports = function() {
 	};
 
 	/**
+	 * Configure api to narrow the request to only consider items filled under
+	 * "My Publications"
+	 * Should only be used in conjuction with both library() and items()
+	 * and any of the execution function (e.g. get(), post())
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const publications = function() {
+		return efr.bind(this)({
+			publications: null
+		})
+	};
+	/**
 	 * Configure api to request or delete tags or request a specific tag
 	 * Can be used in conjuction with library(), items(), collections() and
 	 * any of the following execution functions: get(), delete() but only
@@ -572,6 +585,7 @@ module.exports = function() {
 		library,
 		patch,
 		post,
+		publications,
 		put,
 		searches,
 		settings,

@@ -64,32 +64,28 @@ const fetchParamNames = [
 	'redirect'
 ];
 
-const nonKeyResource = {
-	//name in resource: name in the url (usually the same but there are exceptions)
-	'top': 'top',
-	'trash': 'trash',
-	'children': 'children',
-	'groups': 'groups',
-	'subcollections': 'collections',
-	'itemTypes': 'itemTypes',
-	'itemFields': 'itemFields',
-	'creatorFields': 'creatorFields',
-	'itemTypeFields': 'itemTypeFields',
-	'itemTypeCreatorTypes': 'itemTypeCreatorTypes',
-	'template': 'items/new',
-	'file': 'file',
-	'fileUrl': 'file/view',
-	'settings': 'settings',
-};
-
-const dataResource = [
-	'collections',
-	'items',
-	'searches'
-];
-
-const keyResource = [
-	'library', 'collections', 'items', 'searches', 'tags'
+const resourcesSpecs = [
+	//name in resource, name in the url (usually the same but there are exceptions)
+	{ 'name': 'library', urlPart: 'library', isKeyResource: true },
+	{ 'name': 'collections', urlPart: 'collections', isKeyResource: true },
+	{ 'name': 'publications', urlPart: 'publications', isKeyResource: false },
+	{ 'name': 'items', urlPart: 'items', isKeyResource: true },
+	{ 'name': 'searches', urlPart: 'searches', isKeyResource: true },
+	{ 'name': 'tags', urlPart: 'tags', isKeyResource: true },
+	{ 'name': 'top', urlPart: 'top', isKeyResource: false },
+	{ 'name': 'trash', urlPart: 'trash', isKeyResource: false },
+	{ 'name': 'children', urlPart: 'children', isKeyResource: false },
+	{ 'name': 'groups', urlPart: 'groups', isKeyResource: false },
+	{ 'name': 'subcollections', urlPart: 'collections', isKeyResource: false },
+	{ 'name': 'itemTypes', urlPart: 'itemTypes', isKeyResource: false },
+	{ 'name': 'itemFields', urlPart: 'itemFields', isKeyResource: false },
+	{ 'name': 'creatorFields', urlPart: 'creatorFields', isKeyResource: false },
+	{ 'name': 'itemTypeFields', urlPart: 'itemTypeFields', isKeyResource: false },
+	{ 'name': 'itemTypeCreatorTypes', urlPart: 'itemTypeCreatorTypes', isKeyResource: false },
+	{ 'name': 'template', urlPart: 'items/new', isKeyResource: false },
+	{ 'name': 'file', urlPart: 'file', isKeyResource: false },
+	{ 'name': 'fileUrl', urlPart: 'file/view', isKeyResource: false },
+	{ 'name': 'settings', urlPart: 'settings', isKeyResource: false },
 ];
 
 const defaults = {
@@ -112,29 +108,23 @@ const validateUrlPath = urlPath => { //eslint-disable-line no-unused-vars
 const makeUrlPath = resource => {
 	let path = [];
 
-	for(let i of keyResource) {
-		if(i in resource) {
-			if(i === 'library') {
-				if(resource[i].charAt(0) === 'u') {
-					path.push('users', resource[i].slice(1));
-				} else if(resource[i].charAt(0) === 'g') {
-					path.push('groups', resource[i].slice(1));
+	for(let resourcesSpec of resourcesSpecs) {
+		let resourceValue = resource[resourcesSpec.name];
+		if(resourcesSpec.name in resource) {
+			if(resourcesSpec.name === 'library') {
+				if(resourceValue.charAt(0) === 'u') {
+					path.push('users', resourceValue.slice(1));
+				} else if(resourceValue.charAt(0) === 'g') {
+					path.push('groups', resourceValue.slice(1));
 				}
 			} else {
-				path.push(i);
-				if(resource[i]) {
-					path.push(resource[i]);
+				path.push(resourcesSpec.urlPart);
+				if(resourcesSpec.isKeyResource && resource[resourcesSpec.name]) {
+					path.push(resourceValue);
 				}
 			}
 		}	
 	}
-
-	for(let i in nonKeyResource) {
-		if(i in resource) {
-			path.push(nonKeyResource[i]);
-		}
-	}
-
 	return path.join('/');
 };
 

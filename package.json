@@ -11,12 +11,13 @@
       "babelify"
     ]
   },
+  "browserslist": ["last 2 versions", "maintained node versions"],
   "scripts": {
     "readme": "jsdoc2md --template docs/README.md --no-cache --configure .jsdoc.json src/*.js > README.md",
-    "test": "nyc mocha --require babel-core/register",
-    "coverage": "nyc --reporter=html --reporter=text mocha --require babel-core/register",
+    "test": "nyc mocha",
+    "coverage": "nyc --reporter=html --reporter=text mocha",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "test-watch": "mocha -w --require babel-core/register",
+    "test-watch": "mocha -w",
     "prepack": "npm run build",
     "postpack": "rimraf lib && rimraf build",
     "lint": "eslint \"src/*.js\" || true",
@@ -24,7 +25,7 @@
     "build": "rimraf lib/* && rimraf build/* && run-p browserify build:node",
     "build:node": "mkdir -p lib/ && cd src && babel *.js -d ../lib",
     "browserify": "mkdir -p build/ && NODE_ENV=production browserify -s zoteroApiClient -d src/api.js -t [babelify] -g [ envify --NODE_ENV production ] -g uglifyify | uglifyjs --compress --mangle > build/zotero-api-client.js",
-    "start": "mocha -w --require babel-core/register"
+    "start": "mocha -w"
   },
   "files": [
     "build/*.js",
@@ -35,15 +36,13 @@
     "js-md5": "^0.7.3"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-plugin-transform-regenerator": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "babel-runtime": "^6.26.0",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
+    "@babel/plugin-syntax-async-generators": "^7.2.0",
+    "@babel/plugin-transform-async-to-generator": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.2.3",
     "babelify": "^10.0.0",
     "browserify": "^16.2.3",
     "chai": "^4.2.0",

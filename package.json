@@ -1,6 +1,6 @@
 {
   "name": "zotero-api-client",
-  "version": "0.21.1",
+  "version": "0.21.2",
   "description": "A lightweight, minimalistic Zotero API client",
   "repository": "https://github.com/tnajdek/zotero-api-client.git",
   "main": "lib/api.js",
@@ -11,7 +11,10 @@
       "babelify"
     ]
   },
-  "browserslist": ["last 2 versions", "maintained node versions"],
+  "browserslist": [
+    "last 2 versions",
+    "maintained node versions"
+  ],
   "scripts": {
     "readme": "jsdoc2md --template docs/README.md --no-cache --configure .jsdoc.json src/*.js > README.md",
     "test": "nyc mocha",

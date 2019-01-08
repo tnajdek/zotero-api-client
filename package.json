@@ -1,6 +1,6 @@
 {
   "name": "zotero-api-client",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "description": "A lightweight, minimalistic Zotero API client",
   "repository": "https://github.com/tnajdek/zotero-api-client.git",
   "main": "lib/api.js",

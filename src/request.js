@@ -260,36 +260,36 @@ const request = async config => {
 		if(rawResponse.ok) {
 			let authData = await rawResponse.json();
 			if('exists' in authData && authData.exists) {
-				let reason = 'File already exists';
-				throw new ErrorResponse(`Upload stage 1: ${reason}`, reason, rawResponse, options);
-			}
-			let prefix = new Uint8ClampedArray(authData.prefix.split('').map(e => e.charCodeAt(0)));
-			let suffix = new Uint8ClampedArray(authData.suffix.split('').map(e => e.charCodeAt(0)));
-			let body = new Uint8ClampedArray(prefix.byteLength + options.file.byteLength + suffix.byteLength);
-			body.set(prefix, 0);
-			body.set(new Uint8ClampedArray(options.file), prefix.byteLength);
-			body.set(suffix, prefix.byteLength + options.file.byteLength);
-			
-			// follow-up request
-			let uploadResponse = await fetch(authData.url, {
-				headers: {
-					[headerNames['contentType']]: authData.contentType,
-				},
-				method: 'post',
-				body: body.buffer
-			});
-
-			if(uploadResponse.status === 201) {
-				let registerResponse = await fetch(url, {
-					...fetchConfig,
-					body: `upload=${authData.uploadKey}`
-				});
-				if(!registerResponse.ok) {
-					await throwErrorResponse(registerResponse, options, 'Upload stage 3: ');	
-				}
-				response = new FileUploadResponse({}, options, rawResponse, uploadResponse, registerResponse);
+				response = new FileUploadResponse(authData, options, rawResponse);
 			} else {
-				await throwErrorResponse(uploadResponse, options, 'Upload stage 2: ');
+				let prefix = new Uint8ClampedArray(authData.prefix.split('').map(e => e.charCodeAt(0)));
+				let suffix = new Uint8ClampedArray(authData.suffix.split('').map(e => e.charCodeAt(0)));
+				let body = new Uint8ClampedArray(prefix.byteLength + options.file.byteLength + suffix.byteLength);
+				body.set(prefix, 0);
+				body.set(new Uint8ClampedArray(options.file), prefix.byteLength);
+				body.set(suffix, prefix.byteLength + options.file.byteLength);
+				
+				// follow-up request
+				let uploadResponse = await fetch(authData.url, {
+					headers: {
+						[headerNames['contentType']]: authData.contentType,
+					},
+					method: 'post',
+					body: body.buffer
+				});
+
+				if(uploadResponse.status === 201) {
+					let registerResponse = await fetch(url, {
+						...fetchConfig,
+						body: `upload=${authData.uploadKey}`
+					});
+					if(!registerResponse.ok) {
+						await throwErrorResponse(registerResponse, options, 'Upload stage 3: ');	
+					}
+					response = new FileUploadResponse({}, options, rawResponse, uploadResponse, registerResponse);
+				} else {
+					await throwErrorResponse(uploadResponse, options, 'Upload stage 2: ');
+				}
 			}
 		} else {
 			await throwErrorResponse(rawResponse, options, 'Upload stage 1: ');

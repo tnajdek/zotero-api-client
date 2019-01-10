@@ -251,8 +251,8 @@ class DeleteResponse extends ApiResponse {
  *                                       request
  */
 class FileUploadResponse extends ApiResponse {
-	constructor(options, authResponse, uploadResponse, registerResponse) {
-		super({}, options, authResponse);
+	constructor(data, options, authResponse, uploadResponse, registerResponse) {
+		super(data, options, authResponse);
 		this.uploadResponse = uploadResponse;
 		this.registerResponse = registerResponse;
 	}

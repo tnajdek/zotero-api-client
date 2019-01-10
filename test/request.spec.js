@@ -1049,7 +1049,18 @@ describe('ZoteroJS request', () => {
 			return request({ ...fileUploadRequest }).then(response => {
 				assert.strictEqual(response.getResponseType(), 'FileUploadResponse');
 				assert.instanceOf(response, FileUploadResponse);
+				assert.isNotOk(response.getData().exists);
 			});
+		});
+		it('should handle { exists: 1 } response in stage 1', () => {
+			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', {
+				exists: 1
+			});
+			return request({ ...fileUploadRequest })
+				.then(response => {
+					assert.instanceOf(response, FileUploadResponse);
+					assert.isOk(response.getData().exists);
+				});
 		});
 		it('should detect invalid config', () => {
 			return request({
@@ -1074,19 +1085,6 @@ describe('ZoteroJS request', () => {
 					assert.instanceOf(error, ErrorResponse);
 					assert.strictEqual(error.message, 'Upload stage 1: 409: Conflict');
 					assert.strictEqual(error.reason, 'The target library is locked.');
-				});
-		});
-		it('should handle { exists: 1 } response in stage 1', () => {
-			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', {
-				exists: 1
-			});
-			return request({ ...fileUploadRequest })
-				.then(() => {
-					throw new Error('fail');
-				}).catch(error => {
-					assert.instanceOf(error, ErrorResponse);
-					assert.strictEqual(error.message, 'Upload stage 1: File already exists');
-					assert.strictEqual(error.reason, 'File already exists');
 				});
 		});
 		it('should handle error reponse in stage 2', () => {

@@ -45,6 +45,7 @@ const queryParamNames = [
 	'itemType',
 	'limit',
 	'linkMode',
+	'locale',
 	'q',
 	'qmode',
 	'searchKey',

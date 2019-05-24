@@ -574,21 +574,27 @@ Executes request and returns a response
 | options.ifModifiedSinceVersion | <code>String</code> | 'If-Modified-Since-Version' header |
 | options.ifUnmodifiedSinceVersion | <code>String</code> | 'If-Unmodified-Since-Version' header |
 | options.contentType | <code>String</code> | 'Content-Type' header |
+| options.collectionKey | <code>String</code> | 'collectionKey' query argument |
+| options.content | <code>String</code> | 'content' query argument |
+| options.direction | <code>String</code> | 'direction' query argument |
 | options.format | <code>String</code> | 'format' query argument |
 | options.include | <code>String</code> | 'include' query argument |
-| options.content | <code>String</code> | 'content' query argument |
-| options.style | <code>String</code> | 'style' query argument |
 | options.itemKey | <code>String</code> | 'itemKey' query argument |
-| options.collectionKey | <code>String</code> | 'collectionKey' query argument |
-| options.searchKey | <code>String</code> | 'searchKey' query argument |
+| options.itemQ | <code>String</code> | 'itemQ' query argument |
+| options.itemQMode | <code>String</code> | 'itemQMode' query argument |
+| options.itemTag | <code>String</code> \| <code>Array.&lt;String&gt;</code> | 'itemTag' query argument |
 | options.itemType | <code>String</code> | 'itemType' query argument |
-| options.qmode | <code>String</code> | 'qmode' query argument |
-| options.since | <code>Number</code> | 'since' query argument |
-| options.tag | <code>String</code> | 'tag' query argument |
-| options.sort | <code>String</code> | 'sort' query argument |
-| options.direction | <code>String</code> | 'direction' query argument |
 | options.limit | <code>Number</code> | 'limit' query argument |
+| options.linkMode | <code>String</code> | 'linkMode' query argument |
+| options.locale | <code>String</code> | 'locale' query argument |
+| options.q | <code>String</code> | 'q' query argument |
+| options.qmode | <code>String</code> | 'qmode' query argument |
+| options.searchKey | <code>String</code> | 'searchKey' query argument |
+| options.since | <code>Number</code> | 'since' query argument |
+| options.sort | <code>String</code> | 'sort' query argument |
 | options.start | <code>Number</code> | 'start' query argument |
+| options.style | <code>String</code> | 'style' query argument |
+| options.tag | <code>String</code> \| <code>Array.&lt;String&gt;</code> | 'tag' query argument |
 | options.resource.top | <code>String</code> | use 'top' resource |
 | options.resource.trash | <code>String</code> | use 'trash' resource |
 | options.resource.children | <code>String</code> | use 'children' resource |

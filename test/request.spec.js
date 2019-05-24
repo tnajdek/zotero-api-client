@@ -578,7 +578,7 @@ describe('ZoteroJS request', () => {
 						'format', 'include', 'content', 'style', 'itemKey',
 						'collectionKey', 'searchKey', 'itemType', 'qmode',
 						'since', 'tag', 'sort', 'direction', 'limit', 'start', 'q'
-					].every(qp => url.includes(`${qp}=`));
+					].every(qp => url.includes(`${qp}=${qp}`));
 				}, {}
 			);
 
@@ -587,22 +587,22 @@ describe('ZoteroJS request', () => {
 					library: 'u475425',
 					items: null
 				},
-				format: 'foo',
-				include: 'foo',
-				content: 'foo',
-				style: 'foo',
-				itemKey: 'foo',
-				collectionKey: 'foo',
-				searchKey: 'foo',
-				itemType: 'foo',
-				qmode: 'foo',
-				since: 'foo',
-				tag: 'foo',
-				sort: 'foo',
-				direction: 'foo',
-				limit: 'foo',
-				start: 'foo',
-				q: 'foo',
+				collectionKey: 'collectionKey',
+				content: 'content',
+				direction: 'direction',
+				format: 'format',
+				include: 'include',
+				itemKey: 'itemKey',
+				itemType: 'itemType',
+				limit: 'limit',
+				q: 'q',
+				qmode: 'qmode',
+				searchKey: 'searchKey',
+				since: 'since',
+				sort: 'sort',
+				start: 'start',
+				style: 'style',
+				tag: 'tag',
 			});
 		});
 

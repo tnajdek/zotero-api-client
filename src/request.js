@@ -168,21 +168,27 @@ const throwErrorResponse = async (rawResponse, options, requestDesc) => {
  * @param {String} options.ifModifiedSinceVersion			- 'If-Modified-Since-Version' header
  * @param {String} options.ifUnmodifiedSinceVersion			- 'If-Unmodified-Since-Version' header
  * @param {String} options.contentType						- 'Content-Type' header
- * @param {String} options.format 							- 'format' query argument
- * @param {String} options.include 							- 'include' query argument
- * @param {String} options.content 							- 'content' query argument
- * @param {String} options.style 							- 'style' query argument
- * @param {String} options.itemKey 							- 'itemKey' query argument
- * @param {String} options.collectionKey 					- 'collectionKey' query argument
- * @param {String} options.searchKey 						- 'searchKey' query argument
- * @param {String} options.itemType 						- 'itemType' query argument
- * @param {String} options.qmode 							- 'qmode' query argument
- * @param {Number} options.since 							- 'since' query argument
- * @param {String} options.tag 								- 'tag' query argument
- * @param {String} options.sort 							- 'sort' query argument
- * @param {String} options.direction 						- 'direction' query argument
- * @param {Number} options.limit 							- 'limit' query argument
- * @param {Number} options.start 							- 'start' query argument 
+ * @param {String} options.collectionKey					- 'collectionKey' query argument
+ * @param {String} options.content							- 'content' query argument
+ * @param {String} options.direction						- 'direction' query argument
+ * @param {String} options.format							- 'format' query argument
+ * @param {String} options.include							- 'include' query argument
+ * @param {String} options.itemKey							- 'itemKey' query argument
+ * @param {String} options.itemQ							- 'itemQ' query argument
+ * @param {String} options.itemQMode						- 'itemQMode' query argument
+ * @param {String|String[]} options.itemTag					- 'itemTag' query argument
+ * @param {String} options.itemType							- 'itemType' query argument
+ * @param {Number} options.limit							- 'limit' query argument
+ * @param {String} options.linkMode							- 'linkMode' query argument
+ * @param {String} options.locale							- 'locale' query argument
+ * @param {String} options.q								- 'q' query argument
+ * @param {String} options.qmode							- 'qmode' query argument
+ * @param {String} options.searchKey						- 'searchKey' query argument
+ * @param {Number} options.since							- 'since' query argument
+ * @param {String} options.sort								- 'sort' query argument
+ * @param {Number} options.start							- 'start' query argument
+ * @param {String} options.style							- 'style' query argument
+ * @param {String|String[]} options.tag						- 'tag' query argument
  * @param {String} options.resource.top					    - use 'top' resource  
  * @param {String} options.resource.trash					- use 'trash' resource  
  * @param {String} options.resource.children				- use 'children' resource  	

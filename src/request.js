@@ -33,7 +33,7 @@ const headerNames = {
 	zoteroWriteToken: 'Zotero-Write-Token',
 };
 
-const queryParamsWithArraySupport = [ "tag" ];
+const queryParamsWithArraySupport = [ "tag", "itemTag" ];
 
 const queryParamNames = [
 	'collectionKey',
@@ -42,6 +42,9 @@ const queryParamNames = [
 	'format',
 	'include',
 	'itemKey',
+	'itemQ',
+	'itemQMode',
+	'itemTag',
 	'itemType',
 	'limit',
 	'linkMode',
@@ -72,9 +75,9 @@ const resourcesSpecs = [
 	{ 'name': 'publications', urlPart: 'publications', isKeyResource: false },
 	{ 'name': 'items', urlPart: 'items', isKeyResource: true },
 	{ 'name': 'searches', urlPart: 'searches', isKeyResource: true },
-	{ 'name': 'tags', urlPart: 'tags', isKeyResource: true },
 	{ 'name': 'top', urlPart: 'top', isKeyResource: false },
 	{ 'name': 'trash', urlPart: 'trash', isKeyResource: false },
+	{ 'name': 'tags', urlPart: 'tags', isKeyResource: true },
 	{ 'name': 'children', urlPart: 'children', isKeyResource: false },
 	{ 'name': 'groups', urlPart: 'groups', isKeyResource: false },
 	{ 'name': 'subcollections', urlPart: 'collections', isKeyResource: false },
@@ -254,7 +257,6 @@ const request = async config => {
 	// checking against access-control-allow-methods seems to be case sensitive
 	fetchConfig.method = fetchConfig.method.toUpperCase();
 	fetchConfig.headers = headers;
-
 
 	let rawResponse = await fetch(url, fetchConfig);
 	if(hasDefinedKey(options, 'file') && hasDefinedKey(options, 'fileName')) {

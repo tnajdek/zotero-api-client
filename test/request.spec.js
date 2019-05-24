@@ -396,6 +396,117 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
+		it('should get a set of tags for top items in the library', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/items/top/tags',
+				tagsResponseFixture
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: null,
+					top: null,
+					tags: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
+				assert.strictEqual(response.getData().length, 25);
+			});
+		});
+
+		it('should get a set of tags for top items in a collection', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/collections/N7W92H48/items/top/tags',
+				tagsResponseFixture
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					collections: 'N7W92H48',
+					items: null,
+					top: null,
+					tags: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
+				assert.strictEqual(response.getData().length, 25);
+			});
+		});
+
+		it('should get a set of tags for trashed items', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/items/trash/tags',
+				tagsResponseFixture
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: null,
+					trash: null,
+					tags: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
+				assert.strictEqual(response.getData().length, 25);
+			});
+		});
+
+		it('should get a set of tags for items in "My Publications"', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/publications/items/tags',
+				tagsResponseFixture
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: null,
+					publications: null,
+					tags: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
+				assert.strictEqual(response.getData().length, 25);
+			});
+		});
+
+		it('should get a set of tags for filtered by itemsQ and itemsTag', () => {
+			fetchMock.mock(
+				url => { 
+					assert.isOk(
+						url.startsWith('https://api.zotero.org/users/475425/items/tags')
+					);
+					assert.include(url, "itemQ=foo");
+					assert.include(url, "itemQMode=everything");
+					assert.include(url, "itemTag=bar");
+					assert.include(url, "itemTag=baz");
+					return true;
+				}, tagsResponseFixture
+			);
+
+			return request({
+				itemQ: 'foo',
+				itemQMode: 'everything',
+				itemTag: ['bar', 'baz'],
+				resource: {
+					library: 'u475425',
+					items: null,
+					tags: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
+				assert.strictEqual(response.getData().length, 25);
+			});
+		});
+
 		it('should get settings', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/settings',

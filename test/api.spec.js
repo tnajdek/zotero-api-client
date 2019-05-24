@@ -271,6 +271,20 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.isNull(lrc.resource.groups);
 		});
+
+		it('handles api.library.collections(C).items().top().tags().get', () => {
+			api(KEY)
+				.library(LIBRARY_KEY)
+				.collections(COLLECTION_KEY)
+				.items()
+				.tags()
+				.get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.collections, COLLECTION_KEY);
+			assert.isNull(lrc.resource.items);
+			assert.isNull(lrc.resource.tags);
+		});
 	});
 
 	describe('Construct write requests', () => {

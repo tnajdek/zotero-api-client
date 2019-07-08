@@ -615,6 +615,8 @@ Executes request and returns a response
 | options.mode | <code>String</code> | forwarded to fetch() |
 | options.cache | <code>String</code> | forwarded to fetch() |
 | options.credentials | <code>String</code> | forwarded to fetch() |
+| options.retry | <code>Number</code> | retry this many times after transient error. |
+| options.retryDelay | <code>Number</code> | wait this many seconds before retry. If not set                                         					  an exponential backoff algorithm will be used |
 
 <a name="module_response"></a>
 

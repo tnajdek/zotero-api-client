@@ -40,6 +40,7 @@ const request = async (opts) => {
 
 describe('ZoteroJS request', () => {
 	beforeEach(() => {
+			fetchMock.config.overwriteRoutes = false;
 			fetchMock.catch(request => {
 				throw(new Error(`A request to ${request} was not expected`));
 			});
@@ -702,6 +703,57 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.raw.bodyUsed, false);
 			});
 		});
+
+		it('should retry request on error if configured to do so', async () => {
+			fetchMock.mock('begin:https://api.zotero.org/users/475425/items/top', {
+				status: 500,
+				body: 'Nope'
+			}, { repeat: 2 });
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/items/top',
+				multiGetResponseFixture,
+				{ repeat: 1 }
+			);
+
+			return request({
+				retry: 2,
+				resource: {
+					library: 'u475425',
+					items: null,
+					top: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
+				assert.strictEqual(response.options.retryCount, 2);
+			});
+		}).timeout(4000); // first retry after 1 sec, second after further 2 sec, 1 sec for everything else
+
+		it('should retry request on error immediately configured to do so', async () => {
+			fetchMock.mock('begin:https://api.zotero.org/users/475425/items/top', {
+				status: 500,
+				body: 'Nope'
+			}, { repeat: 5 });
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/items/top',
+				multiGetResponseFixture,
+				{ repeat: 1 }
+			);
+
+			return request({
+				retry: 6,
+				retryDelay: 0,
+				resource: {
+					library: 'u475425',
+					items: null,
+					top: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
+				assert.strictEqual(response.options.retryCount, 5);
+			});
+		})
 	});
 
 	describe('Item write & delete requests', () => {

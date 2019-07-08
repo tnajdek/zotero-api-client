@@ -101,7 +101,9 @@ const defaults = {
 	mode: 'cors',
 	cache: 'default',
 	credentials: 'omit',
-	redirect: 'follow'
+	redirect: 'follow',
+	retry: 0,
+	retryDelay: null,
 };
 
 //@TODO implement validation
@@ -161,6 +163,15 @@ const throwErrorResponse = async (rawResponse, options, requestDesc) => {
 	throw new ErrorResponse(`${requestDesc}${rawResponse.status}: ${rawResponse.statusText}`, reason, rawResponse, options);
 }
 
+const isTransientFailure = response => response.status == 408 || response.status >= 500;
+const sleep = seconds => {
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve();
+		}, seconds * 1000);
+	});
+};
+
 /**
  * Executes request and returns a response
  * @param {String} options.authorization					- 'Authorization' header
@@ -209,6 +220,9 @@ const throwErrorResponse = async (rawResponse, options, requestDesc) => {
  * @param {String} options.mode 							- forwarded to fetch()
  * @param {String} options.cache 							- forwarded to fetch()
  * @param {String} options.credentials 						- forwarded to fetch()
+ * @param {Number} options.retry							- retry this many times after transient error.
+ * @param {Number} options.retryDelay						- wait this many seconds before retry. If not set
+ *                                         					  an exponential backoff algorithm will be used
  * 
  * @return {Object} Returns a Promise that will eventually return a response object
  * @throws {Error} If options specify impossible configuration
@@ -264,7 +278,26 @@ const request = async config => {
 	fetchConfig.method = fetchConfig.method.toUpperCase();
 	fetchConfig.headers = headers;
 
+	options.retryCount = 0;
 	let rawResponse = await fetch(url, fetchConfig);
+
+	if(isTransientFailure(rawResponse) && options.retry > 0) {
+		let retriesCounter = options.retry;
+		let nextRetryDelay = typeof(options.retryDelay) === 'number' ? options.retryDelay : 1;
+		while(retriesCounter > 0) {
+			await sleep(nextRetryDelay);
+			options.retryCount++;
+			rawResponse = await fetch(url, fetchConfig);
+			if(!isTransientFailure(rawResponse)) {
+				break;
+			}
+			if(typeof(options.retryDelay) !== 'number') {
+				nextRetryDelay *= 2;
+			}
+			retriesCounter--;
+		}
+	}
+
 	if(hasDefinedKey(options, 'file') && hasDefinedKey(options, 'fileName')) {
 		if(rawResponse.ok) {
 			let authData = await rawResponse.json();

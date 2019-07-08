@@ -699,7 +699,7 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(response, RawApiResponse);
 				assert.strictEqual(response.raw.status, 200);
 				assert.strictEqual(response.raw.url, 'https://api.zotero.org/');
-				assert.strictEqual(response.raw.body, 'Nothing to see here.');
+				assert.property(response.raw, 'body');
 				assert.strictEqual(response.raw.bodyUsed, false);
 			});
 		});

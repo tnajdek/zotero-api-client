@@ -47,10 +47,14 @@ describe('Zotero Api Client', () => {
 
 		it('allows configuration via multiple api() calls', () => {
 			const request = api(KEY).api(null, {
-				apiAuthorityPart: 'some-other-api.zotero.org'
+				apiAuthorityPart: 'some-other-api.zotero.org',
+				retry: 3,
+				retryDelay: 2,
 			}).api().api().getConfig();
 			assert.equal(request.zoteroApiKey, KEY);
 			assert.equal(request.apiAuthorityPart, 'some-other-api.zotero.org');
+			assert.equal(request.retry, 3);
+			assert.equal(request.retryDelay, 2);
 		});
 
 		it('allows independendly configured clients', () => {

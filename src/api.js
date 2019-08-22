@@ -369,7 +369,6 @@ module.exports = function() {
 		};
 		return ef.bind(this)({ 
 			format: null,
-			redirect: 'manual',
 			resource
 		});
 	}

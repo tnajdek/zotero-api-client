@@ -88,7 +88,7 @@ const resourcesSpecs = [
 	{ 'name': 'itemTypeCreatorTypes', urlPart: 'itemTypeCreatorTypes', isKeyResource: false },
 	{ 'name': 'template', urlPart: 'items/new', isKeyResource: false },
 	{ 'name': 'file', urlPart: 'file', isKeyResource: false },
-	{ 'name': 'fileUrl', urlPart: 'file/view', isKeyResource: false },
+	{ 'name': 'fileUrl', urlPart: 'file/view/url', isKeyResource: false },
 	{ 'name': 'settings', urlPart: 'settings', isKeyResource: false },
 ];
 
@@ -380,8 +380,8 @@ const request = async config => {
 				let rawData = await rawResponse.arrayBuffer();
 				response = new FileDownloadResponse(rawData, options, rawResponse);
 			} else if('fileUrl' in options.resource && options.method.toUpperCase() === 'GET') {
-				let location = rawResponse.headers.get('Location');
-				response = new FileUrlResponse(location, options, rawResponse);
+				let url = await rawResponse.text();
+				response = new FileUrlResponse(url, options, rawResponse);
 			} else {
 				response = new RawApiResponse(rawResponse, options);
 			}

@@ -431,7 +431,6 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.resource.items, ITEM_KEY);
 			assert.isNull(lrc.resource.fileUrl);
 			assert.isNull(lrc.format);
-			assert.equal(lrc.redirect, 'manual');
 			assert.isUndefined(lrc.fileName);
 			assert.isUndefined(lrc.file);
 		});

@@ -1328,16 +1328,16 @@ describe('ZoteroJS request', () => {
 			});
 		});
 		it('should obtain a temporary, authorised file url', () => {
-			fetchMock.get('https://api.zotero.org/users/475425/items/ABCD1111/file/view', {
-				status: 302,
+			fetchMock.get('https://api.zotero.org/users/475425/items/ABCD1111/file/view/url', {
+				status: 200,
 				headers: {
-					'Location': 'https://files.zotero.org/some-file'
-				}
+					contentType: 'text/plain'
+				},
+				body: 'https://files.zotero.org/some-file'
 			});
 			return request({
 				method: 'get',
 				format: null,
-				redirect: 'manual',
 				resource: {
 					library: 'u475425',
 					items: 'ABCD1111',

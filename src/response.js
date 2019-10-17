@@ -260,6 +260,12 @@ class FileUploadResponse extends ApiResponse {
 	getResponseType() {
 		return 'FileUploadResponse';
 	}
+
+	getVersion() {
+		return this.registerResponse ?
+			parseInt(this.registerResponse.headers.get('Last-Modified-Version'), 10) :
+			parseInt(this.response.headers.get('Last-Modified-Version'), 10);
+	}
 }
 
 /**

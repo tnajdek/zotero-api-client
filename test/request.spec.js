@@ -1196,7 +1196,10 @@ describe('ZoteroJS request', () => {
 					case 1:
 						assert.propertyVal(config, 'upload', 'some key');
 						return {
-							status: 204
+							status: 204,
+							headers: {
+								'Last-Modified-Version': 42
+							}
 						};
 					default:
 						throw(new Error(`This is ${counter + 1} request to ${url}. Only expected 2 requests.`));
@@ -1210,18 +1213,23 @@ describe('ZoteroJS request', () => {
 				};
 			});
 			return request({ ...fileUploadRequest }).then(response => {
-				assert.strictEqual(response.getResponseType(), 'FileUploadResponse');
 				assert.instanceOf(response, FileUploadResponse);
+				assert.strictEqual(response.getResponseType(), 'FileUploadResponse');
+				assert.strictEqual(response.getVersion(), 42);
 				assert.isNotOk(response.getData().exists);
 			});
 		});
 		it('should handle { exists: 1 } response in stage 1', () => {
-			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', {
-				exists: 1
+			fetchMock.once('https://api.zotero.org/users/475425/items/ABCD1111/file', {
+				headers: {
+					'Last-Modified-Version': 42,
+				},
+				body: { exists: 1 }
 			});
 			return request({ ...fileUploadRequest })
 				.then(response => {
 					assert.instanceOf(response, FileUploadResponse);
+					assert.strictEqual(response.getVersion(), 42);
 					assert.isOk(response.getData().exists);
 				});
 		});

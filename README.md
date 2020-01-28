@@ -155,6 +155,7 @@ Module contains api() function, a Zotero API client
         * [~groups()](#module_api--module.exports..groups) ⇒ <code>Object</code>
         * [~version(version)](#module_api--module.exports..version) ⇒ <code>Object</code>
         * [~attachment(fileName, file, mtime)](#module_api--module.exports..attachment) ⇒ <code>Object</code>
+        * [~registerAttachment(fileName, fileSize, mtime, md5sum)](#module_api--module.exports..registerAttachment) ⇒ <code>Object</code>
         * [~attachmentUrl()](#module_api--module.exports..attachmentUrl) ⇒ <code>Object</code>
         * [~get(opts)](#module_api--module.exports..get) ⇒ <code>Promise</code>
         * [~post(data, opts)](#module_api--module.exports..post) ⇒ <code>Promise</code>
@@ -429,7 +430,6 @@ populate the If-Unmodified-Since-Version header.
 Configure api to upload or download an attachment file
 Can be only used in conjuction with items() and post()/get()
 Use items() to select attachment item for which file is uploaded/downloaded
-This will not work in browser-environment due to CORS limitation
 Will populate format on download as well as Content-Type, If-None-Match headers
 in case of an upload
 
@@ -442,6 +442,27 @@ in case of an upload
 | fileName | <code>String</code> | name of the file, should match values in attachment                              item entry |
 | file | <code>ArrayBuffer</code> | file to be uploaded |
 | mtime | <code>Number</code> | file's mtime, if not provided current time is used |
+
+<a name="module_api--module.exports..registerAttachment"></a>
+
+#### module.exports~registerAttachment(fileName, fileSize, mtime, md5sum) ⇒ <code>Object</code>
+Advanced, low-level function that will attempt to register existing 
+file with given attachment-item based on known file metadata
+Can be only used in conjuction with items() and post()
+Use items() to select attachment item for which file is registered
+Will populate Content-Type, If-Match headers
+Will fail with a ErrorResponse if API does not return "exists"
+
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| fileName | <code>String</code> | name of the file, should match values in attachment                              item entry |
+| fileSize | <code>Number</code> | size of the existing file |
+| mtime | <code>Number</code> | mtime of the existing file |
+| md5sum | <code>String</code> | md5sum of the existing file |
 
 <a name="module_api--module.exports..attachmentUrl"></a>
 
@@ -615,6 +636,7 @@ Executes request and returns a response
 | options.mode | <code>String</code> | forwarded to fetch() |
 | options.cache | <code>String</code> | forwarded to fetch() |
 | options.credentials | <code>String</code> | forwarded to fetch() |
+| options.uploadRegisterOnly | <code>Boolean</code> | this file upload should only perform stage 1                                           				  error if file with provided meta does not exist |
 | options.retry | <code>Number</code> | retry this many times after transient error. |
 | options.retryDelay | <code>Number</code> | wait this many seconds before retry. If not set                                         					  an exponential backoff algorithm will be used |
 

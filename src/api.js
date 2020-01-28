@@ -324,7 +324,6 @@ module.exports = function() {
 	 * Configure api to upload or download an attachment file
 	 * Can be only used in conjuction with items() and post()/get()
 	 * Use items() to select attachment item for which file is uploaded/downloaded
-	 * This will not work in browser-environment due to CORS limitation
 	 * Will populate format on download as well as Content-Type, If-None-Match headers
 	 * in case of an upload
 	 * @param  {String} fileName  - name of the file, should match values in attachment
@@ -348,6 +347,43 @@ module.exports = function() {
 				file,
 				resource,
 				mtime
+			})	
+		} else {
+			return ef.bind(this)({ format: null, resource });
+		}
+	}
+
+	/**
+	 * Advanced, low-level function that will attempt to register existing 
+	 * file with given attachment-item based on known file metadata
+	 * Can be only used in conjuction with items() and post()
+	 * Use items() to select attachment item for which file is registered
+	 * Will populate Content-Type, If-Match headers
+	 * Will fail with a ErrorResponse if API does not return "exists"
+	 * @param  {String} fileName  - name of the file, should match values in attachment
+	 *                              item entry
+	 * @param  {Number} fileSize  - size of the existing file
+	 * @param  {Number} mtime     - mtime of the existing file
+	 * @param  {String} md5sum    - md5sum of the existing file
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const registerAttachment = function(fileName, fileSize, mtime, md5sum) {
+		let resource = {
+			...this.resource,
+			file: null
+		};
+		if(fileName && typeof(fileSize) !== 'undefined' && typeof(mtime) !== 'undefined' && md5sum) {
+			return ef.bind(this)({
+				contentType: 'application/x-www-form-urlencoded',
+				fileName,
+				fileSize,
+				format: null,
+				ifMatch: md5sum,
+				md5sum,
+				mtime,
+				resource,
+				uploadRegisterOnly: true,
 			})	
 		} else {
 			return ef.bind(this)({ format: null, resource });
@@ -586,6 +622,7 @@ module.exports = function() {
 		post,
 		publications,
 		put,
+		registerAttachment,
 		searches,
 		settings,
 		subcollections,

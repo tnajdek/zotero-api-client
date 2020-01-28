@@ -11,6 +11,7 @@ const SEARCH_KEY = 'SEARCH_KEY';
 const URL_ENCODED_TAGS = 'URL_ENCODED_TAGS';
 const FILE = Uint8ClampedArray.from('lorem ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
 const FILE_NAME = 'test.txt';
+const MD5 = '9edb2ca32f7b57662acbc112a80cc59d';
 
 describe('Zotero Api Client', () => {
 	var lrc;
@@ -433,6 +434,23 @@ describe('Zotero Api Client', () => {
 			assert.isNull(lrc.format);
 			assert.isUndefined(lrc.fileName);
 			assert.isUndefined(lrc.file);
+		});
+
+		it('handles api.library.items(I).registerAttachment(FName, FSize, Fmtime, Fmd5sum).post()', () => {
+			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).registerAttachment(FILE_NAME, 11, 22, MD5).post();
+			assert.equal(lrc.method, 'post');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.items, ITEM_KEY);
+			assert.isNull(lrc.resource.file);
+			assert.equal(lrc.fileName, FILE_NAME);
+			assert.equal(lrc.fileSize, 11);
+			assert.equal(lrc.mtime, 22);
+			assert.equal(lrc.md5sum, MD5);
+			assert.equal(lrc.uploadRegisterOnly, true);
+			assert.equal(lrc.ifMatch, MD5);
+			assert.equal(lrc.contentType, 'application/x-www-form-urlencoded');
+			assert.isNull(lrc.format);
+			assert.isUndefined(lrc.body);
 		});
 	});
 

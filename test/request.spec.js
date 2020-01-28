@@ -1305,6 +1305,60 @@ describe('ZoteroJS request', () => {
 					assert.strictEqual(error.reason, 'The file has changed remotely since retrieval');
 				});
 		});
+
+		let fileRegisterRequest = {
+			method: 'post',
+			resource: {
+				library: 'u475425',
+				items: 'ABCD1111',
+				file: null
+			},
+			body: undefined,
+			contentType: 'application/x-www-form-urlencoded',
+			fileName: FILE_NAME,
+			fileSize: 424242,
+			format: null,
+			md5sum: '9edb2ca32f7b57662acbc112a80cc59d',
+			mtime: 12345,
+			uploadRegisterOnly: true,
+		};
+
+		it('should only attempt to register file if requested', () => {
+			fetchMock.once('https://api.zotero.org/users/475425/items/ABCD1111/file', (url, options) => {
+				assert.strictEqual(options.body, 'md5=9edb2ca32f7b57662acbc112a80cc59d&filename=test.txt&filesize=424242&mtime=12345');
+				return {
+					headers: {
+						'Last-Modified-Version': 42,
+					},
+					body: { exists: 1 }
+				};
+			});
+
+			return request({ ...fileRegisterRequest })
+				.then(response => {
+					assert.instanceOf(response, FileUploadResponse);
+					assert.strictEqual(response.getVersion(), 42);
+					assert.isOk(response.getData().exists);
+			});
+		});
+
+		it('should handle error if attempting to register file that does not exist', () => {
+			fetchMock.once('https://api.zotero.org/users/475425/items/ABCD1111/file', {
+				'url': 'https://storage.zotero.org',
+				'contentType': 'text/plain',
+				'prefix': 'some prefix',
+				'suffix': 'some suffix',
+				'uploadKey': 'some key',
+			});
+			return request({ ...fileRegisterRequest })
+				.then(() => {
+					throw new Error('fail');
+				}).catch(error => {
+					assert.instanceOf(error, ErrorResponse);
+					assert.strictEqual(error.message, 'API did not recognize provided file meta.');
+					assert.strictEqual(error.reason, 'Attempted to register existing file, but API did not recognize provided file meta.');
+				});
+		});
 	});
 	describe("File download", () => {
 		it('should download a file', () => {

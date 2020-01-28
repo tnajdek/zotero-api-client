@@ -104,6 +104,7 @@ const defaults = {
 	redirect: 'follow',
 	retry: 0,
 	retryDelay: null,
+	uploadRegisterOnly: null,
 };
 
 //@TODO implement validation
@@ -220,6 +221,8 @@ const sleep = seconds => {
  * @param {String} options.mode 							- forwarded to fetch()
  * @param {String} options.cache 							- forwarded to fetch()
  * @param {String} options.credentials 						- forwarded to fetch()
+ * @param {Boolean} options.uploadRegisterOnly				- this file upload should only perform stage 1
+ *                                           				  error if file with provided meta does not exist
  * @param {Number} options.retry							- retry this many times after transient error.
  * @param {Number} options.retryDelay						- wait this many seconds before retry. If not set
  *                                         					  an exponential backoff algorithm will be used
@@ -274,6 +277,11 @@ const request = async config => {
 		fetchConfig['body'] = `md5=${md5sum}&filename=${fileName}&filesize=${filesize}&mtime=${mtime}`;
 	}
 
+	if(options.uploadRegisterOnly === true) {
+		const { fileName, fileSize, md5sum, mtime } = options;
+		fetchConfig['body'] = `md5=${md5sum}&filename=${fileName}&filesize=${fileSize}&mtime=${mtime}`;	
+	}
+
 	// checking against access-control-allow-methods seems to be case sensitive
 	fetchConfig.method = fetchConfig.method.toUpperCase();
 	fetchConfig.headers = headers;
@@ -298,12 +306,19 @@ const request = async config => {
 		}
 	}
 
-	if(hasDefinedKey(options, 'file') && hasDefinedKey(options, 'fileName')) {
+	if((hasDefinedKey(options, 'file') && hasDefinedKey(options, 'fileName')) || options.uploadRegisterOnly === true) {
 		if(rawResponse.ok) {
 			let authData = await rawResponse.json();
 			if('exists' in authData && authData.exists) {
 				response = new FileUploadResponse(authData, options, rawResponse);
 			} else {
+				if(options.uploadRegisterOnly === true) {
+					throw new ErrorResponse(
+						'API did not recognize provided file meta.',
+						'Attempted to register existing file, but API did not recognize provided file meta.',
+						rawResponse, options
+					);
+				}
 				let prefix = new Uint8ClampedArray(authData.prefix.split('').map(e => e.charCodeAt(0)));
 				let suffix = new Uint8ClampedArray(authData.suffix.split('').map(e => e.charCodeAt(0)));
 				let body = new Uint8ClampedArray(prefix.byteLength + options.file.byteLength + suffix.byteLength);

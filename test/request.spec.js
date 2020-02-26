@@ -1064,7 +1064,7 @@ describe('ZoteroJS request', () => {
 					let parsedUrl = URL.parse(url);
 					parsedUrl = parsedUrl.search.slice(1);
 					parsedUrl = parsedUrl.split('&');
-					assert.isOk(parsedUrl.includes('itemKey=ABCD1111,ABCD2222,ABCD3333'));
+					assert.isOk(parsedUrl.includes('itemKey=ABCD1111%2CABCD2222%2CABCD3333'));
 					return true;
 				}, {
 				status: 204,

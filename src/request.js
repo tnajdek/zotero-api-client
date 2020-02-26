@@ -140,9 +140,9 @@ const makeUrlQuery = options => {
 	for(let name of queryParamNames) {
 		if(options[name]) {
 			if(queryParamsWithArraySupport.includes(name) && Array.isArray(options[name])) {
-				params.push(...options[name].map(k => `${name}=${k}`));
+				params.push(...options[name].map(k => `${name}=${encodeURIComponent(k)}`));
 			} else {
-				params.push(`${name}=${options[name]}`);
+				params.push(`${name}=${encodeURIComponent(options[name])}`);
 			}
 		}
 	}

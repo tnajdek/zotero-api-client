@@ -41,6 +41,7 @@ const queryParamNames = [
 	'direction',
 	'format',
 	'include',
+	'includeTrashed',
 	'itemKey',
 	'itemQ',
 	'itemQMode',

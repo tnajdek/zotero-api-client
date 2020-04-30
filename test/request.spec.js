@@ -576,9 +576,9 @@ describe('ZoteroJS request', () => {
 			fetchMock.mock(
 				url => { 
 					return [
-						'format', 'include', 'content', 'style', 'itemKey',
-						'collectionKey', 'searchKey', 'itemType', 'qmode',
-						'since', 'tag', 'sort', 'direction', 'limit', 'start', 'q'
+						'collectionKey', 'content', 'direction', 'format', 'include', 'includeTrashed',
+						'itemKey', 'itemType', 'limit', 'q', 'qmode', 'searchKey', 'since', 'sort',
+						'start', 'style', 'tag'
 					].every(qp => url.includes(`${qp}=${qp}`));
 				}, {}
 			);
@@ -593,6 +593,7 @@ describe('ZoteroJS request', () => {
 				direction: 'direction',
 				format: 'format',
 				include: 'include',
+				includeTrashed: 'includeTrashed',
 				itemKey: 'itemKey',
 				itemType: 'itemType',
 				limit: 'limit',

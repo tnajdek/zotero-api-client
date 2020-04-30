@@ -600,6 +600,7 @@ Executes request and returns a response
 | options.direction | <code>String</code> | 'direction' query argument |
 | options.format | <code>String</code> | 'format' query argument |
 | options.include | <code>String</code> | 'include' query argument |
+| options.includeTrashed | <code>String</code> | 'includeTrashed' query argument |
 | options.itemKey | <code>String</code> | 'itemKey' query argument |
 | options.itemQ | <code>String</code> | 'itemQ' query argument |
 | options.itemQMode | <code>String</code> | 'itemQMode' query argument |

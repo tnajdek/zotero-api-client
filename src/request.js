@@ -186,6 +186,7 @@ const sleep = seconds => {
  * @param {String} options.direction						- 'direction' query argument
  * @param {String} options.format							- 'format' query argument
  * @param {String} options.include							- 'include' query argument
+ * @param {String} options.includeTrashed					- 'includeTrashed' query argument
  * @param {String} options.itemKey							- 'itemKey' query argument
  * @param {String} options.itemQ							- 'itemQ' query argument
  * @param {String} options.itemQMode						- 'itemQMode' query argument

@@ -543,6 +543,33 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getData()[0].id, 51240);
 			});
 		});
+
+		it('should get deleted content', () => {
+			const responseRaw = {
+				'collections': [],
+				'items': ['AABBCCDD'],
+				'searches': [],
+				'tags': [],
+				'settings': []
+			};
+
+			fetchMock.once(
+				/https:\/\/api.zotero.org\/users\/475425\/?.*?since=42/i,
+				responseRaw
+			);
+			
+			return request({
+				resource: {
+					library: 'u475425',
+					deleted: null,
+				},
+				since: 42
+			}).then(response => {
+				assert.instanceOf(response, SingleReadResponse);
+				assert.strictEqual(response.getResponseType(), 'SingleReadResponse');
+				assert.deepEqual(response.getData(), responseRaw);
+			});
+		});
 	});
 
 	describe('Get requests with extra params', () => {

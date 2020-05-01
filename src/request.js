@@ -91,6 +91,7 @@ const resourcesSpecs = [
 	{ 'name': 'file', urlPart: 'file', isKeyResource: false },
 	{ 'name': 'fileUrl', urlPart: 'file/view/url', isKeyResource: false },
 	{ 'name': 'settings', urlPart: 'settings', isKeyResource: false },
+	{ 'name': 'deleted', 'urlPart': 'deleted', isKeyResource: false },
 ];
 
 const defaults = {

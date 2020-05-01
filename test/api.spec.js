@@ -290,6 +290,18 @@ describe('Zotero Api Client', () => {
 			assert.isNull(lrc.resource.items);
 			assert.isNull(lrc.resource.tags);
 		});
+
+		it('handles api.library.deleted()', () => {
+			api(KEY)
+				.library(LIBRARY_KEY)
+				.deleted(42)
+				.get();
+
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.isNull(lrc.resource.deleted);
+			assert.equal(lrc.since, 42);
+		});
 	});
 
 	describe('Construct write requests', () => {

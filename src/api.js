@@ -291,6 +291,21 @@ module.exports = function() {
 	};
 
 	/**
+	 * Configure api to request deleted content
+	 * Can only be used in conjuction with get()
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const deleted = function(since) {
+		const resource = {
+			...this.resource,
+			deleted: null
+		};
+		
+		return ef.bind(this)({ since, resource });
+	};
+
+	/**
 	 * Configure api to request user-accessible groups (i.e. The set of groups 
 	 * the current API key has access to, including public groups the key owner
 	 * belongs to even if the key doesn't have explicit permissions for them.)
@@ -609,6 +624,7 @@ module.exports = function() {
 		collections,
 		creatorFields,
 		delete: del, //delete is a keyword
+		deleted,
 		get,
 		getConfig,
 		groups,

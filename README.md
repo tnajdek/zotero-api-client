@@ -152,6 +152,7 @@ Module contains api() function, a Zotero API client
         * [~trash()](#module_api--module.exports..trash) ⇒ <code>Object</code>
         * [~children()](#module_api--module.exports..children) ⇒ <code>Object</code>
         * [~settings()](#module_api--module.exports..settings) ⇒ <code>Object</code>
+        * [~deleted()](#module_api--module.exports..deleted) ⇒ <code>Object</code>
         * [~groups()](#module_api--module.exports..groups) ⇒ <code>Object</code>
         * [~version(version)](#module_api--module.exports..version) ⇒ <code>Object</code>
         * [~attachment(fileName, file, mtime)](#module_api--module.exports..attachment) ⇒ <code>Object</code>
@@ -391,6 +392,15 @@ function
 
 #### module.exports~settings() ⇒ <code>Object</code>
 Configure api to request settings
+Can only be used in conjuction with get()
+
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+<a name="module_api--module.exports..deleted"></a>
+
+#### module.exports~deleted() ⇒ <code>Object</code>
+Configure api to request deleted content
 Can only be used in conjuction with get()
 
 **Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  

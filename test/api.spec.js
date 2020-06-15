@@ -516,13 +516,13 @@ describe('Zotero Api Client', () => {
 
 		it('handles api.library.items().pretend(post, [I1b, I2b])', () => {
 			const body = [{ key: 'ITEM1111' }, { key: 'ITEM2222' }];
-			api(KEY).library(LIBRARY_KEY).items().pretend('post', body, { foo: 'bar' });
+			api(KEY).library(LIBRARY_KEY).items().pretend('post', { format: 'atom' }, body);
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.isNull(lrc.resource.items);
 			assert.deepEqual(lrc.body, body);
 			assert.strictEqual(lrc.pretend, true);
-			assert.strictEqual(lrc.foo, 'bar');
+			assert.strictEqual(lrc.format, 'atom');
 		});
 
 		it('handles api.library.items().pretend(delete, [I1, I2])', () => {

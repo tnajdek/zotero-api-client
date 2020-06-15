@@ -164,6 +164,7 @@ Module contains api() function, a Zotero API client
         * [~patch(data, opts)](#module_api--module.exports..patch) ⇒ <code>Promise</code>
         * [~del(keysToDelete, opts)](#module_api--module.exports..del) ⇒ <code>Promise</code>
         * [~getConfig()](#module_api--module.exports..getConfig) ⇒ <code>Object</code>
+        * [~pretend(verb, data, opts)](#module_api--module.exports..pretend) ⇒ <code>Promise</code>
         * [~use(extend)](#module_api--module.exports..use) ⇒ <code>Object</code>
 
 <a name="exp_module_api--module.exports"></a>
@@ -505,8 +506,8 @@ Execution function. Specifies that the request should use a GET method.
 Execution function. Specifies that the request should use a POST method.
 
 **Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
-**Returns**: <code>Promise</code> - A promise that will eventually return either an
-                  MultiWriteResponse. Might throw Error or ErrorResponse  
+**Returns**: <code>Promise</code> - A promise that will eventually return MultiWriteResponse.
+                  Might throw Error or ErrorResponse  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -519,8 +520,8 @@ Execution function. Specifies that the request should use a POST method.
 Execution function. Specifies that the request should use a PUT method.
 
 **Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
-**Returns**: <code>Promise</code> - A promise that will eventually return either an
-                  SingleWriteResponse. Might throw Error or ErrorResponse  
+**Returns**: <code>Promise</code> - A promise that will eventually return SingleWriteResponse.
+                  Might throw Error or ErrorResponse  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -534,8 +535,8 @@ Execution function. Specifies that the request should use a PATCH
 method.
 
 **Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
-**Returns**: <code>Promise</code> - A promise that will eventually return either an 
-                  SingleWriteResponse. Might throw Error or ErrorResponse  
+**Returns**: <code>Promise</code> - A promise that will eventually return SingleWriteResponse.
+                  Might throw Error or ErrorResponse  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -549,8 +550,8 @@ Execution function. Specifies that the request should use a DELETE
 method.
 
 **Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
-**Returns**: <code>Promise</code> - A promise that will eventually return either an
-                  DeleteResponse. Might throw Error or ErrorResponse  
+**Returns**: <code>Promise</code> - A promise that will eventually return DeleteResponse.
+                  Might throw Error or ErrorResponse  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -566,6 +567,25 @@ manually before submitted to the request method or as a debugging tool.
 
 **Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Returns**: <code>Object</code> - current config  
+<a name="module_api--module.exports..pretend"></a>
+
+#### module.exports~pretend(verb, data, opts) ⇒ <code>Promise</code>
+Execution function. Prepares the request but does not execute fetch()
+instead returning a "pretended" response where details for the actual
+fetch that would have been used are included.
+Usually used in advanced scenarios where config needs to be tweaked
+manually before submitted to the request method or as a debugging tool.
+
+**Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
+**Returns**: <code>Promise</code> - A promise that will eventually return PretendResponse.
+                  Might throw Error or ErrorResponse  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| verb | <code>String</code> | <code>get</code> | Defines which execution function is used to prepare                         the request. Should be one of 'get', 'post', 'patch'                         'put', 'delete'. Defaults to 'get'. |
+| data | <code>Object</code> |  | This argument is passed over to the actual execution                         function. For 'get' it is ignored, for 'post', 'patch'                         and 'put' see 'data' of that execution function, for                         'delete' see 'keysToDelete' |
+| opts | <code>Object</code> |  | Optional api configuration. If duplicate,                          overrides properties already present. For a list                         of all possible properties, see documentation                         for request() function |
+
 <a name="module_api--module.exports..use"></a>
 
 #### module.exports~use(extend) ⇒ <code>Object</code>
@@ -627,6 +647,7 @@ Executes request and returns a response
 | options.start | <code>Number</code> | 'start' query argument |
 | options.style | <code>String</code> | 'style' query argument |
 | options.tag | <code>String</code> \| <code>Array.&lt;String&gt;</code> | 'tag' query argument |
+| options.pretend | <code>Boolean</code> | triggers pretend mode where fetch request                                        					  is prepared and returned without execution |
 | options.resource.top | <code>String</code> | use 'top' resource |
 | options.resource.trash | <code>String</code> | use 'trash' resource |
 | options.resource.children | <code>String</code> | use 'children' resource |

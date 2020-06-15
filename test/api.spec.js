@@ -506,6 +506,35 @@ describe('Zotero Api Client', () => {
 			assert.isNull(lrc.resource.template);
 		});
 
+		it('handles api.library.items(I).pretend()', () => {
+			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).pretend();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.items, ITEM_KEY);
+			assert.strictEqual(lrc.pretend, true);
+		});
+
+		it('handles api.library.items().pretend(post, [I1b, I2b])', () => {
+			const body = [{ key: 'ITEM1111' }, { key: 'ITEM2222' }];
+			api(KEY).library(LIBRARY_KEY).items().pretend('post', body, { foo: 'bar' });
+			assert.equal(lrc.method, 'post');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.isNull(lrc.resource.items);
+			assert.deepEqual(lrc.body, body);
+			assert.strictEqual(lrc.pretend, true);
+			assert.strictEqual(lrc.foo, 'bar');
+		});
+
+		it('handles api.library.items().pretend(delete, [I1, I2])', () => {
+			const keysToDelete = ['ITEM1111', 'ITEM2222'];
+			api(KEY).library(LIBRARY_KEY).items().pretend('delete', keysToDelete);
+			assert.equal(lrc.method, 'delete');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.isNull(lrc.resource.items);
+			assert.deepEqual(lrc.itemKey.sort(), keysToDelete.sort());
+			assert.strictEqual(lrc.pretend, true);
+		});
+
 	});
 
 	describe('Handles invalid calls', () => {

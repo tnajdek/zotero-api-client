@@ -435,18 +435,7 @@ module.exports = function() {
 	 *                   Might throw Error or ErrorResponse.
 	 */
 	const get = function(opts) {
-		let requestConfig = {
-			...this,
-			...opts,
-			method: 'get'
-		};
-
-		if('version' in requestConfig) {
-			requestConfig['ifModifiedSinceVersion'] = requestConfig['version'];
-			delete requestConfig['version'];
-		}
-
-		return execute(requestConfig);
+		return execute(prepareRequest(this, 'get', opts));
 	};
 
 	/**
@@ -456,23 +445,11 @@ module.exports = function() {
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
 	 *                         for request() function
-	 * @return {Promise} A promise that will eventually return either an
-	 *                   MultiWriteResponse. Might throw Error or ErrorResponse
+	 * @return {Promise} A promise that will eventually return MultiWriteResponse.
+	 *                   Might throw Error or ErrorResponse
 	 */
 	const post = function(data, opts) {
-		let requestConfig = {
-			...this,
-			...opts,
-			body: data,
-			method: 'post'
-		};
-
-		if('version' in requestConfig) {
-			requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
-			delete requestConfig['version'];
-		}
-
-		return execute(requestConfig);
+		return execute(prepareRequest(this, 'post', opts, data));
 
 	};
 
@@ -483,23 +460,11 @@ module.exports = function() {
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
 	 *                         for request() function
-	 * @return {Promise} A promise that will eventually return either an
-	 *                   SingleWriteResponse. Might throw Error or ErrorResponse
+	 * @return {Promise} A promise that will eventually return SingleWriteResponse.
+	 *                   Might throw Error or ErrorResponse
 	 */
 	const put = function(data, opts) {
-		let requestConfig = {
-			...this,
-			...opts,
-			body: data,
-			method: 'put'
-		};
-
-		if('version' in requestConfig) {
-			requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
-			delete requestConfig['version'];
-		}
-
-		return execute(requestConfig);
+		return execute(prepareRequest(this, 'put', opts, data));
 	};
 
 	/**
@@ -510,23 +475,11 @@ module.exports = function() {
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
 	 *                         for request() function
-	 * @return {Promise} A promise that will eventually return either an 
-	 *                   SingleWriteResponse. Might throw Error or ErrorResponse
+	 * @return {Promise} A promise that will eventually return SingleWriteResponse.
+	 *                   Might throw Error or ErrorResponse
 	 */
 	const patch = function(data, opts) {
-		let requestConfig = {
-			...this,
-			...opts,
-			body: data,
-			method: 'patch'
-		};
-
-		if('version' in requestConfig) {
-			requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
-			delete requestConfig['version'];
-		}
-
-		return execute(requestConfig);
+		return execute(prepareRequest(this, 'patch', opts, data));
 	};
 
 	/**
@@ -543,47 +496,11 @@ module.exports = function() {
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
 	 *                         for request() function
-	 * @return {Promise} A promise that will eventually return either an
-	 *                   DeleteResponse. Might throw Error or ErrorResponse
+	 * @return {Promise} A promise that will eventually return DeleteResponse.
+	 *                   Might throw Error or ErrorResponse
 	 */
 	const del = function(keysToDelete, opts) {
-		let requestConfig = {
-			...this,
-			...opts,
-			method: 'delete'
-		};
-
-		if(keysToDelete && !Array.isArray(keysToDelete)) {
-			throw new Error(`Called delete() with ${typeof keysToDelete}, expected an Array`);
-		}
-
-		if('version' in requestConfig) {
-			requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
-			delete requestConfig['version'];
-		}
-
-		if('resource' in requestConfig && 'items' in requestConfig.resource) {
-			relevantSearchKey = 'itemKey';
-		} else if('resource' in requestConfig && 'collections' in requestConfig.resource) {
-			relevantSearchKey = 'collectionKey';
-		} else if('resource' in requestConfig && 'tags' in requestConfig.resource) {
-			relevantSearchKey = 'tag';
-		} else if('resource' in requestConfig && 'searches' in requestConfig.resource) {
-			relevantSearchKey = 'searchKey';
-		} else {
-			throw new Error('Called delete() without first specifing what to delete')
-		}
-
-		if(keysToDelete) {
-			var relevantSearchKey;
-			
-			requestConfig[relevantSearchKey] = [
-				...(requestConfig[relevantSearchKey] || []),
-				...keysToDelete
-			]
-		}
-
-		return execute(requestConfig);
+		return execute(prepareRequest(this, 'delete', opts, keysToDelete));
 	};
 
 	/**
@@ -594,6 +511,30 @@ module.exports = function() {
 	 */
 	const getConfig = function() {
 		return this;
+	};
+
+	/**
+	 * Execution function. Prepares the request but does not execute fetch()
+	 * instead returning a "pretended" response where details for the actual
+	 * fetch that would have been used are included.
+	 * Usually used in advanced scenarios where config needs to be tweaked
+	 * manually before submitted to the request method or as a debugging tool.
+	 * @param  {String} verb - Defines which execution function is used to prepare
+	 *                         the request. Should be one of 'get', 'post', 'patch'
+	 *                         'put', 'delete'. Defaults to 'get'.
+	 * @param  {Object} data - This argument is passed over to the actual execution
+	 *                         function. For 'get' it is ignored, for 'post', 'patch'
+	 *                         and 'put' see 'data' of that execution function, for
+	 *                         'delete' see 'keysToDelete'
+	 * @param  {Object} opts - Optional api configuration. If duplicate, 
+	 *                         overrides properties already present. For a list
+	 *                         of all possible properties, see documentation
+	 *                         for request() function
+	 * @return {Promise} A promise that will eventually return PretendResponse.
+	 *                   Might throw Error or ErrorResponse
+	 */
+	const pretend = function(verb = 'get', data, opts) {
+		return execute(prepareRequest(this, verb, { ...opts, pretend: true }, data));
 	};
 
 	/**
@@ -636,6 +577,7 @@ module.exports = function() {
 		library,
 		patch,
 		post,
+		pretend,
 		publications,
 		put,
 		registerAttachment,
@@ -664,6 +606,64 @@ module.exports = function() {
 		resource = { ...this.resource, ...resource };
 		opts = { ...opts, resource};
 		return ef.bind(this)(opts);
+	}
+
+	const prepareRequest = function(config, verb, opts, body) {
+		var method = verb.toLowerCase();
+		var requestConfig;
+		switch(method) {
+			default:
+			case 'get':
+				requestConfig = { ...config, ...opts, method };
+				if('version' in requestConfig) {
+					requestConfig['ifModifiedSinceVersion'] = requestConfig['version'];
+					delete requestConfig['version'];
+				}
+				return requestConfig;
+			case 'post':
+			case 'put':
+			case 'patch':
+				requestConfig = { ...config, ...opts, body, method };
+				if('version' in requestConfig) {
+					requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
+					delete requestConfig['version'];
+				}
+				return requestConfig;
+			case 'delete':
+				requestConfig = { ...config, ...opts, method };
+				let keysToDelete = body;
+
+				if(keysToDelete && !Array.isArray(keysToDelete)) {
+					throw new Error(`Called delete() with ${typeof keysToDelete}, expected an Array`);
+				}
+
+				if('version' in requestConfig) {
+					requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
+					delete requestConfig['version'];
+				}
+
+				if('resource' in requestConfig && 'items' in requestConfig.resource) {
+					relevantSearchKey = 'itemKey';
+				} else if('resource' in requestConfig && 'collections' in requestConfig.resource) {
+					relevantSearchKey = 'collectionKey';
+				} else if('resource' in requestConfig && 'tags' in requestConfig.resource) {
+					relevantSearchKey = 'tag';
+				} else if('resource' in requestConfig && 'searches' in requestConfig.resource) {
+					relevantSearchKey = 'searchKey';
+				} else {
+					throw new Error('Called delete() without first specifing what to delete')
+				}
+
+				if(keysToDelete) {
+					var relevantSearchKey;
+					
+					requestConfig[relevantSearchKey] = [
+						...(requestConfig[relevantSearchKey] || []),
+						...keysToDelete
+					]
+				}
+				return requestConfig;
+		}
 	}
 
 	const execute = async config => {

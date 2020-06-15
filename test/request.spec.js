@@ -19,6 +19,7 @@ const {
 	FileUrlResponse,
 	MultiReadResponse,
 	MultiWriteResponse,
+	PretendResponse,
 	RawApiResponse,
 	SingleReadResponse,
 	SingleWriteResponse,
@@ -568,6 +569,32 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(response, SingleReadResponse);
 				assert.strictEqual(response.getResponseType(), 'SingleReadResponse');
 				assert.deepEqual(response.getData(), responseRaw);
+			});
+		});
+
+		it('should return only return url and config if pretend = true', () => {
+			return request({
+				resource: {
+					library: 'u475425',
+					collections: 'N7W92H48',
+					items: null,
+					top: null,
+				},
+				start: 100,
+				limit: 50,
+				ifUnmodifiedSinceVersion: 42,
+				pretend: true
+			}).then(response => {
+				assert.instanceOf(response, PretendResponse);
+				assert.strictEqual(response.getResponseType(), 'PretendResponse');
+				const { url, fetchConfig } =response.getData();
+				assert.include(url, 'https://api.zotero.org/users/475425/collections/N7W92H48/items/top')
+				assert.include(url, 'format=json')
+				assert.include(url, 'start=100')
+				assert.include(url, 'limit=50')
+				assert.strictEqual(fetchConfig.method, 'GET');
+				assert.strictEqual(fetchConfig.headers['Content-Type'], 'application/json');
+				assert.strictEqual(fetchConfig.headers['If-Unmodified-Since-Version'], 42);
 			});
 		});
 	});

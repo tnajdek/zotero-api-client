@@ -302,6 +302,16 @@ class RawApiResponse extends ApiResponse {
 	}
 }
 
+class PretendResponse extends ApiResponse {
+	getResponseType() {
+		return 'PretendResponse';
+	}
+
+	getVersion() {
+		return null;
+	}
+}
+
 /**
  * @class represents an error response from the api
  * @extends Error
@@ -333,6 +343,7 @@ module.exports = {
 	FileUrlResponse,
 	MultiReadResponse,
 	MultiWriteResponse,
+	PretendResponse,
 	RawApiResponse,
 	SingleReadResponse,
 	SingleWriteResponse,

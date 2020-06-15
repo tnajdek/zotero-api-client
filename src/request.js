@@ -17,6 +17,7 @@ const {
 	FileUrlResponse,
 	MultiReadResponse,
 	MultiWriteResponse,
+	PretendResponse,
 	RawApiResponse,
 	SingleReadResponse,
 	SingleWriteResponse,
@@ -96,14 +97,15 @@ const resourcesSpecs = [
 
 const defaults = {
 	apiAuthorityPart: 'api.zotero.org',
+	cache: 'default',
 	contentType: 'application/json',
+	credentials: 'omit',
 	format: 'json',
 	method: 'get',
-	resource: {},
 	mode: 'cors',
-	cache: 'default',
-	credentials: 'omit',
+	pretend: false,
 	redirect: 'follow',
+	resource: {},
 	retry: 0,
 	retryDelay: null,
 	uploadRegisterOnly: null,
@@ -204,6 +206,8 @@ const sleep = seconds => {
  * @param {Number} options.start							- 'start' query argument
  * @param {String} options.style							- 'style' query argument
  * @param {String|String[]} options.tag						- 'tag' query argument
+ * @param {Boolean} options.pretend							- triggers pretend mode where fetch request
+ *                                        					  is prepared and returned without execution
  * @param {String} options.resource.top					    - use 'top' resource  
  * @param {String} options.resource.trash					- use 'trash' resource  
  * @param {String} options.resource.children				- use 'children' resource  	
@@ -290,6 +294,10 @@ const request = async config => {
 	fetchConfig.headers = headers;
 
 	options.retryCount = 0;
+	if(options.pretend) {
+		const response = new PretendResponse({ url, fetchConfig }, options);
+		return { response, ...config, source: 'request' };
+	}
 	let rawResponse = await fetch(url, fetchConfig);
 
 	if(isTransientFailure(rawResponse) && options.retry > 0) {

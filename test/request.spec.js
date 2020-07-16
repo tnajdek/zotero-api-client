@@ -47,7 +47,7 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
-	afterEach(fetchMock.restore);
+	afterEach(() => fetchMock.restore());
 
 	describe('Meta read requests', () => {
 		it('should get item types', () => {

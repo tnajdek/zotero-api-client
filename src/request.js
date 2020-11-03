@@ -62,12 +62,13 @@ const queryParamNames = [
 ];
 
 const fetchParamNames = [
-	'method',
 	'body',
-	'mode',
 	'cache',
 	'credentials',
-	'redirect'
+	'method',
+	'mode',
+	'redirect',
+	'signal',
 ];
 
 const resourcesSpecs = [

@@ -18,9 +18,9 @@ This is a lightweight, minimalistic Zotero API client written in JavaScript. It'
 
 * Version management - version headers need to be provided explictely
 * Caching - each call to get(), post() etc. will actually call the api
-* Abstraction - There is no **Item** or **Collection**
+* Abstraction - There is no **Item** or **Collection** objects, only raw JSON
 
-This library should be considered a low level tool to talk to the API. For more clever, high level API client with abstraction over data see [libZotero](https://github.com/fcheslack/libZoteroJS)
+This library should be considered a low level tool to talk to the API.
 
 Getting The Library
 -------------------
@@ -67,26 +67,16 @@ Library composes of three layers:
 * An ApiResponse, or, more likely, its specialised variant
 
 
-Documentation
--------------
-
-Library composes of three layers:
-
-* An api function, which is the only interface exported.
-* A request engine called by the api. It does the heavy lifting.
-* An ApiResponse, or, more likely, its specialised variant
-
-
 API interface
 =============
 
 API interface is a function that returns set of functions bound to previously configured options. This way it can be chained and stored at any level. Common scenario is to store authentication details and library details, which can be done quite simply:
 
-	const myapi = require('zotero-api-client')('AUTH').library('user', 0);
+	const myapi = require('zotero-api-client')('AUTH_KEY').library('user', 0);
 
 That produces api client already configured with your credentials and user library id. You can re-use it obtain list of collections in that library:
 
-	const itemsResponse = await myapi.collections().get();
+	const itemsResponse = await myapi.items().get();
 
 Items in that library:
 

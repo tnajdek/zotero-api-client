@@ -35,7 +35,7 @@
     "lib/*.js"
   ],
   "dependencies": {
-    "core-js": "^3.6.5",
+    "core-js": "^3.7.0",
     "cross-fetch": "^3.0.6",
     "js-md5": "^0.7.3"
   },

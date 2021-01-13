@@ -409,6 +409,18 @@ describe('Zotero Api Client', () => {
 			assert.isNull(lrc.resource.tags);
 			assert.deepEqual(lrc.tag.sort(), keysToDelete.sort())
 		});
+
+		it('handles api.library.settings().post(SE1)', () => {
+			const body = { tagColors: { value: [ {
+				name: "test-tag",
+				color: "#FFC0CB"
+			} ] } };
+			api(KEY).library(LIBRARY_KEY).settings().post(body);
+			assert.equal(lrc.method, 'post');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.isNull(lrc.resource.settings);
+			assert.deepEqual(lrc.body, body);
+		});
 	});
 
 	describe('Construct attachment requests', () => {

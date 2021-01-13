@@ -1142,6 +1142,38 @@ describe('ZoteroJS request', () => {
 				assert.isNull(response.raw);
 			});
 		});
+
+		it('should post updated library settings', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings'));
+					assert.strictEqual(opts.method, 'POST');
+					assert.equal(opts.body, JSON.stringify(newSettings));
+					return true;
+				}, {
+					status: 204,
+					headers: {
+						'Last-Modified-Version': 3483
+					}
+			});
+
+			const newSettings = { tagColors: { value: [ {
+				"name": "test-tag",
+				"color": "#ffcc00"
+			}]}};
+
+			return request({
+				method: 'post',
+				body: newSettings,
+				resource: {
+					library: 'u475425',
+					settings: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, SingleWriteResponse);
+				assert.strictEqual(response.getResponseType(), 'SingleWriteResponse');
+				assert.strictEqual(response.response.status, 204);
+			});
+		});
 	});
 
 	describe('Failing write & delete requests', () => {

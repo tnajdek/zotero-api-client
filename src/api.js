@@ -280,7 +280,7 @@ module.exports = function() {
 
 	/**
 	 * Configure api to request settings
-	 * Can only be used in conjuction with get()
+	 * Can only be used in conjuction with get() and post()
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */

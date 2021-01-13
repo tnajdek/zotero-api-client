@@ -383,7 +383,7 @@ function
 
 #### module.exports~settings() ⇒ <code>Object</code>
 Configure api to request settings
-Can only be used in conjuction with get()
+Can only be used in conjuction with get() and post()
 
 **Kind**: inner method of [<code>module.exports</code>](#exp_module_api--module.exports)  
 **Chainable**  

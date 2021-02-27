@@ -1,8 +1,7 @@
 /* eslint-env mocha */
-'use strict';
+const { assert } = require('chai');
+const _api = require('../src/api.js');
 
-const mockery = require('mockery');
-const assert = require('chai').assert;
 const KEY = 'LOREM';
 const LIBRARY_KEY = 'u123456';
 const ITEM_KEY = 'IITTEEMM';
@@ -13,20 +12,20 @@ const FILE = Uint8ClampedArray.from('lorem ipsum'.split('').map(e => e.charCodeA
 const FILE_NAME = 'test.txt';
 const MD5 = '9edb2ca32f7b57662acbc112a80cc59d';
 
+
 describe('Zotero Api Client', () => {
 	var lrc;
 	// mock api so it never calls request(), instead
 	// entire config is placed into lrc variable
-	mockery.registerMock('./request', async opts => {
+	const mockRequest = async opts => {
+		// console.log('mockRequest', { opts });
 		lrc = opts;
 		return {
 			...opts,
 			response: 'response' in opts && opts.response || null
 		};
-	});
-	mockery.enable({ warnOnUnregistered: false });
-	const api = require('../src/api');
-	mockery.disable();
+	};
+	const api = _api(null, { executors: [mockRequest] }).api;
 	
 	beforeEach(() => {
 		lrc = null;

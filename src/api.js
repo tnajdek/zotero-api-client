@@ -1,17 +1,14 @@
-'use strict';
 /**
  * Module contains api() function, a Zotero API client
  * @module api
  */
-
-const request = require('./request');
-
+const request = require('./request.js');
 
 /**
  * Wrapper function creates closure scope and calls api()
  * @return {Object} Partially configured api functions
  */
-module.exports = function() {
+const api = function() {
 	/**
 	 * Entry point of the interface. Configures authentication.
 	 * Can be used to configure any other properties of the api
@@ -27,7 +24,7 @@ module.exports = function() {
 	const api = function(key = '', opts = {}) {
 		let props = { ...opts };
 		
-		if(!this || !('executors' in this)) {
+		if(!('executors' in props) && (!this || !('executors' in this))) {
 			props.executors = [request];
 		}
 
@@ -676,3 +673,5 @@ module.exports = function() {
 
 	return api(...arguments);
 };
+
+module.exports = api;

@@ -1,4 +1,4 @@
-{
+module.exports = {
     "tagColors": {
         "value": [
             {

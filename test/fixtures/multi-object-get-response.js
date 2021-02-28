@@ -1,4 +1,4 @@
-[
+module.exports = [
   {
     "key": "N7W92H48",
     "version": 1,

@@ -1,4 +1,4 @@
-{
+module.exports = {
   "success": {
     "0": "ABCD1111",
     "2": "ABCD2222"

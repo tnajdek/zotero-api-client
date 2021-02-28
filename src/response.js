@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Module contains classes that offer abstraction over Zotero API responses
  * @module response
@@ -334,17 +332,6 @@ class ErrorResponse extends Error {
 	}
 }
 
-module.exports = {
-	ApiResponse,
-	DeleteResponse,
-	ErrorResponse,
-	FileDownloadResponse,
-	FileUploadResponse,
-	FileUrlResponse,
-	MultiReadResponse,
-	MultiWriteResponse,
-	PretendResponse,
-	RawApiResponse,
-	SingleReadResponse,
-	SingleWriteResponse,
-};
+module.exports = { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse,
+	FileUploadResponse, FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse,
+	RawApiResponse, SingleReadResponse, SingleWriteResponse };

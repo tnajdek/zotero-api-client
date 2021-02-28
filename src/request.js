@@ -1,5 +1,3 @@
-'use strict';
-
 /**
  * Module contains a request() function, a low-level Zotero API client
  * @module request
@@ -7,21 +5,9 @@
 
 require('cross-fetch/polyfill');
 const md5 = require('js-md5');
-
-const {
-	ApiResponse,
-	DeleteResponse,
-	ErrorResponse,
-	FileDownloadResponse,
-	FileUploadResponse,
-	FileUrlResponse,
-	MultiReadResponse,
-	MultiWriteResponse,
-	PretendResponse,
-	RawApiResponse,
-	SingleReadResponse,
-	SingleWriteResponse,
-} = require('./response');
+const { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
+	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
+	SingleReadResponse, SingleWriteResponse, } = require('./response');
 
 const headerNames = {
 	authorization: 'Authorization',

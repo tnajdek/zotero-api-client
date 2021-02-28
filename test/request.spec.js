@@ -1,38 +1,26 @@
 /* eslint-env mocha */
-'use strict';
+const URL  = require('url');
+const fetchMock  = require('fetch-mock');
+const { assert }  = require('chai');
+const _request  = require('../src/request.js');
+const { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
+	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
+	SingleReadResponse, SingleWriteResponse, } = require('../src/response.js');
 
-const URL = require('url');
-const fetchMock = require('fetch-mock');
-const { assert } = require('chai');
-const _request = require('../src/request');
+const singleGetResponseFixture = require('./fixtures/single-object-get-response.js');
+const multiGetResponseFixture = require('./fixtures/multi-object-get-response.js');
+const tagsResponseFixture = require('./fixtures/tags-data-response.js');
+const searchesResponseFixture = require('./fixtures/searches-data-response.js');
+const itemTypesDataFixture = require('./fixtures/item-types-data.js');
+const multiMixedWriteResponseFixture = require('./fixtures/multi-mixed-write-response.js');
+const multiSuccessWriteResponseFixture = require('./fixtures/multi-success-write-response.js');
+const settingsReponseFixture = require('./fixtures/settings-response.js');
+const userGroupsFixture = require('./fixtures/user-groups-response.js');
 
 const FILE = Uint8ClampedArray.from('lorem ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
 const FILE_MD5 = '80a751fde577028640c419000e33eba6';
 const FILE_NAME = 'test.txt';
 const FILE_SIZE = FILE.byteLength;
-const {
-	ApiResponse,
-	DeleteResponse,
-	ErrorResponse,
-	FileDownloadResponse,
-	FileUploadResponse,
-	FileUrlResponse,
-	MultiReadResponse,
-	MultiWriteResponse,
-	PretendResponse,
-	RawApiResponse,
-	SingleReadResponse,
-	SingleWriteResponse,
-} = require('../src/response.js');
-const singleGetResponseFixture = require('./fixtures/single-object-get-response.json');
-const multiGetResponseFixture = require('./fixtures/multi-object-get-response.json');
-const tagsResponseFixture = require('./fixtures/tags-data-response.json');
-const searchesResponseFixture = require('./fixtures/searches-data-response.json');
-const itemTypesDataFixture = require('./fixtures/item-types-data.json');
-const multiMixedWriteResponseFixture = require('./fixtures/multi-mixed-write-response.json');
-const multiSuccessWriteResponseFixture = require('./fixtures/multi-success-write-response.json');
-const settingsReponseFixture = require('./fixtures/settings-response.json');
-const userGroupsFixture = require('./fixtures/user-groups-response.json');
 
 const request = async (opts) => {
 	var config = await _request(opts);

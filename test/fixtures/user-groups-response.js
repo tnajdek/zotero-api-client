@@ -1,4 +1,4 @@
-[
+module.exports = [
     {
         "id": 51240,
         "version": 1,

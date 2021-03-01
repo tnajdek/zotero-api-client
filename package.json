@@ -4,6 +4,8 @@
   "description": "A lightweight, minimalistic Zotero API client",
   "repository": "https://github.com/tnajdek/zotero-api-client.git",
   "main": "src/api.js",
+  "umd:main": "dist/zotero-api-client.js",
+  "unpkg": "dist/zotero-api-client.js",
   "author": "Tom Najdek",
   "license": "AGPL-3.0",
   "engines": {

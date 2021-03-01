@@ -1,7 +1,3 @@
-/**
- * Module contains api() function, a Zotero API client
- * @module api
- */
 const request = require('./request.js');
 
 /**

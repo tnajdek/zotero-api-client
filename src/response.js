@@ -1,9 +1,3 @@
-/**
- * Module contains classes that offer abstraction over Zotero API responses
- * @module response
- */
-
-
 /*
  * @class represents a generic Zotero API response 
  */

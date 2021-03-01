@@ -3,39 +3,39 @@
   "version": "0.33.0",
   "description": "A lightweight, minimalistic Zotero API client",
   "repository": "https://github.com/tnajdek/zotero-api-client.git",
-  "main": "lib/api.js",
+  "main": "src/api.js",
   "author": "Tom Najdek",
   "license": "AGPL-3.0",
+  "engines": {
+    "node": ">= 10.0.0"
+  },
   "browserify": {
     "transform": [
       "babelify"
     ]
   },
   "browserslist": [
-    "last 2 versions",
-    "maintained node versions"
+    "last 2 versions"
   ],
   "scripts": {
     "readme": "jsdoc2md --template docs/README.md --no-cache --configure .jsdoc.json src/*.js > README.md",
-    "test": "nyc mocha",
-    "coverage": "nyc --reporter=html --reporter=text mocha",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "test": "c8 mocha",
+    "coverage": "c8 --reporter=html --reporter=text mocha",
+    "coveralls": "c8 report --reporter=text-lcov | coveralls",
     "test-watch": "mocha -w",
     "prepack": "npm run build",
-    "postpack": "rimraf lib && rimraf build",
+    "postpack": "rimraf build",
     "lint": "eslint \"src/*.js\" || true",
-    "clean": "rimraf build lib",
-    "build": "rimraf lib/* && rimraf build/* && run-p browserify build:node",
-    "build:node": "mkdir -p lib/ && cd src && babel *.js -d ../lib",
-    "browserify": "mkdir -p build/ && NODE_ENV=production browserify -s zoteroApiClient -d src/api.js -t [babelify] -g [ envify --NODE_ENV production ] -g uglifyify | terser --compress --mangle > build/zotero-api-client.js",
+    "clean": "rimraf build",
+    "build": "rimraf build/* && npm run browserify",
+    "browserify": "mkdir -p build/ && NODE_ENV=production browserify -s zoteroApiClient -d src/api.js -t [babelify] -g [ envify --NODE_ENV production ] | terser --compress --mangle > build/zotero-api-client.js",
     "start": "mocha -w"
   },
   "files": [
     "build/*.js",
-    "lib/*.js"
+    "src/*.js"
   ],
   "dependencies": {
-    "core-js": "^3.7.0",
     "cross-fetch": "^3.0.6",
     "js-md5": "^0.7.3"
   },
@@ -43,21 +43,21 @@
     "@babel/cli": "^7.12.8",
     "@babel/core": "^7.12.9",
     "@babel/preset-env": "^7.12.7",
+    "babel-eslint": "^10.1.0",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
+    "c8": "^7.6.0",
     "chai": "^4.2.0",
     "coveralls": "^3.1.0",
     "envify": "^4.1.0",
+    "eslint": "^7.21.0",
     "fetch-mock": "^9.11.0",
     "jasmine-core": "^3.6.0",
     "jsdoc-strip-async-await": "^0.1.0",
     "jsdoc-to-markdown": "^6.0.1",
     "mocha": "^8.2.1",
-    "mockery": "^2.1.0",
     "npm-run-all": "^4.1.5",
-    "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
-    "terser": "^5.5.0",
-    "uglifyify": "^5.0.2"
+    "terser": "^5.5.0"
   }
 }

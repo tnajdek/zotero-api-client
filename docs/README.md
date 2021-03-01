@@ -25,7 +25,15 @@ This library should be considered a low level tool to talk to the API.
 Getting The Library
 -------------------
 
+NPM package contains source of the library which can be used as part of your build (e.g. when using browserify/rollup/webpack etc.) process or directly in node:
+
 	npm i zotero-api-client
+
+Also included in the package is an [UMD](https://github.com/umdjs/umd) bundle which can be loaded using common loaders or included directly in a `<script>` tag. In the latter case library is available globally as `zoteroApiClient`. One way of using UMD bundle on your page is to include it from [unpkg](https://unpkg.com) project CDN:
+
+```
+	<script src="https://unpkg.com/zotero-api-client"></script>
+```
 
 
 Example
@@ -33,7 +41,7 @@ Example
 
 Simple example reading items from the public/test user library.
 
-1. Require the library
+1. Require the library (if using UMD bundle, skip this step and use loader and/or `zoteroApiClient` global object).
 
 ```
 const api = require('zotero-api-client');

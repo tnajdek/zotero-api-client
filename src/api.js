@@ -607,7 +607,7 @@ const api = function() {
 
 	const prepareRequest = function(config, verb, opts, body) {
 		var method = verb.toLowerCase();
-		var requestConfig;
+		var requestConfig, keysToDelete;
 		switch(method) {
 			default:
 			case 'get':
@@ -628,7 +628,7 @@ const api = function() {
 				return requestConfig;
 			case 'delete':
 				requestConfig = { ...config, ...opts, method };
-				let keysToDelete = body;
+				keysToDelete = body;
 
 				if(keysToDelete && !Array.isArray(keysToDelete)) {
 					throw new Error(`Called delete() with ${typeof keysToDelete}, expected an Array`);

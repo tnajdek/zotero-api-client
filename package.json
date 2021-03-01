@@ -24,15 +24,15 @@
     "coveralls": "c8 report --reporter=text-lcov | coveralls",
     "test-watch": "mocha -w",
     "prepack": "npm run build",
-    "postpack": "rimraf build",
+    "postpack": "npm run clean",
     "lint": "eslint \"src/*.js\" || true",
-    "clean": "rimraf build",
-    "build": "rimraf build/* && npm run browserify",
-    "browserify": "mkdir -p build/ && NODE_ENV=production browserify -s zoteroApiClient -d src/api.js -t [babelify] -g [ envify --NODE_ENV production ] | terser --compress --mangle > build/zotero-api-client.js",
+    "clean": "rimraf dist",
+    "build": "rimraf dist/* && npm run browserify",
+    "browserify": "mkdir -p dist/ && NODE_ENV=production browserify -s zoteroApiClient -d src/api.js -t [babelify] -g [ envify --NODE_ENV production ] | terser --compress --mangle > dist/zotero-api-client.js",
     "start": "mocha -w"
   },
   "files": [
-    "build/*.js",
+    "dist/*.js",
     "src/*.js"
   ],
   "dependencies": {

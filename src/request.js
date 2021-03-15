@@ -1,5 +1,5 @@
 require('cross-fetch/polyfill');
-const md5 = require('js-md5');
+const SparkMD5 = require('spark-md5');
 const { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
 	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
 	SingleReadResponse, SingleWriteResponse, } = require('./response');
@@ -260,7 +260,7 @@ const request = async config => {
 	// process the request for file upload authorisation request
 	if(hasDefinedKey(options, 'file') && hasDefinedKey(options, 'fileName')) {
 		let fileName = options.fileName;
-		let md5sum = md5(options.file);
+		let md5sum = SparkMD5.ArrayBuffer.hash(options.file);
 		let filesize = options.file.byteLength;
 		let mtime = options.mtime || Date.now();
 		fetchConfig['body'] = `md5=${md5sum}&filename=${fileName}&filesize=${filesize}&mtime=${mtime}`;

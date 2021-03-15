@@ -3,7 +3,7 @@
   "version": "0.34.2",
   "description": "A lightweight, minimalistic Zotero API client",
   "repository": "https://github.com/tnajdek/zotero-api-client.git",
-  "main": "src/api.js",
+  "main": "src/main.js",
   "umd:main": "dist/zotero-api-client.js",
   "unpkg": "dist/zotero-api-client.js",
   "author": "Tom Najdek",
@@ -30,7 +30,7 @@
     "lint": "eslint \"src/*.js\" || true",
     "clean": "rimraf dist",
     "build": "rimraf dist/* && npm run browserify",
-    "browserify": "mkdir -p dist/ && NODE_ENV=production browserify -s zoteroApiClient -d src/api.js -t [babelify] -g [ envify --NODE_ENV production ] | terser --compress --mangle > dist/zotero-api-client.js",
+    "browserify": "mkdir -p dist/ && NODE_ENV=production browserify -s zoteroApiClient -d src/main.js -t [babelify] -g [ envify --NODE_ENV production ] | terser --compress --mangle > dist/zotero-api-client.js",
     "start": "mocha -w"
   },
   "files": [

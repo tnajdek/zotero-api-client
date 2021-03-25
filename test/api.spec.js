@@ -436,6 +436,21 @@ describe('Zotero Api Client', () => {
 			assert.isNull(lrc.format);
 			assert.isUndefined(lrc.body);
 		});
+
+		it('handles api.library.items(I).attachment(Fname, F, Fmtime, F2md5sum).post()', () => {
+			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).attachment(FILE_NAME, FILE, 22, MD5).post();
+			assert.equal(lrc.method, 'post');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.items, ITEM_KEY);
+			assert.isNull(lrc.resource.file);
+			assert.equal(lrc.file.byteLength, FILE.byteLength);
+			assert.equal(lrc.fileName, FILE_NAME);
+			assert.equal(lrc.mtime, 22);
+			assert.equal(lrc.ifMatch, MD5);
+			assert.equal(lrc.contentType, 'application/x-www-form-urlencoded');
+			assert.isNull(lrc.format);
+			assert.isUndefined(lrc.body);
+		});
 		
 		it('handles api.library.items(I).attachment().get()', () => {
 			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).attachment().get();

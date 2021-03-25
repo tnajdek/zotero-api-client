@@ -338,10 +338,11 @@ const api = function() {
 	 *                              item entry
 	 * @param  {ArrayBuffer} file - file to be uploaded
 	 * @param  {Number} mtime     - file's mtime, if not provided current time is used
+	 * @param  {Number} md5sum    - existing file md5sum, if matches will override existing file. Leave empty to perform new upload.
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const attachment = function(fileName, file, mtime) {
+	const attachment = function(fileName, file, mtime = null, md5sum = null) {
 		let resource = {
 			...this.resource,
 			file: null
@@ -349,7 +350,7 @@ const api = function() {
 		if(fileName && file) {
 			return ef.bind(this)({
 				format: null,
-				ifNoneMatch: '*',
+				[md5sum ? 'ifMatch' : 'ifNoneMatch']: md5sum || '*',
 				contentType: 'application/x-www-form-urlencoded',
 				fileName,
 				file,

@@ -351,7 +351,7 @@ Wrapper function creates closure scope and calls api()
     * [~deleted()](#api..deleted) ⇒ <code>Object</code>
     * [~groups()](#api..groups) ⇒ <code>Object</code>
     * [~version(version)](#api..version) ⇒ <code>Object</code>
-    * [~attachment(fileName, file, mtime)](#api..attachment) ⇒ <code>Object</code>
+    * [~attachment(fileName, file, mtime, md5sum)](#api..attachment) ⇒ <code>Object</code>
     * [~registerAttachment(fileName, fileSize, mtime, md5sum)](#api..registerAttachment) ⇒ <code>Object</code>
     * [~attachmentUrl()](#api..attachmentUrl) ⇒ <code>Object</code>
     * [~get(opts)](#api..get) ⇒ <code>Promise</code>
@@ -626,7 +626,7 @@ populate the If-Unmodified-Since-Version header.
 
 <a name="api..attachment"></a>
 
-### api~attachment(fileName, file, mtime) ⇒ <code>Object</code>
+### api~attachment(fileName, file, mtime, md5sum) ⇒ <code>Object</code>
 Configure api to upload or download an attachment file
 Can be only used in conjuction with items() and post()/get()
 Use items() to select attachment item for which file is uploaded/downloaded
@@ -637,11 +637,12 @@ in case of an upload
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| fileName | <code>String</code> | name of the file, should match values in attachment                              item entry |
-| file | <code>ArrayBuffer</code> | file to be uploaded |
-| mtime | <code>Number</code> | file's mtime, if not provided current time is used |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| fileName | <code>String</code> |  | name of the file, should match values in attachment                              item entry |
+| file | <code>ArrayBuffer</code> |  | file to be uploaded |
+| mtime | <code>Number</code> | <code></code> | file's mtime, if not provided current time is used |
+| md5sum | <code>Number</code> | <code></code> | existing file md5sum, if matches will override existing file. Leave empty to perform new upload. |
 
 <a name="api..registerAttachment"></a>
 

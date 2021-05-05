@@ -84,11 +84,11 @@ API interface is a function that returns set of functions bound to previously co
 
 That produces api client already configured with your credentials and user library id. You can re-use it obtain list of collections in that library:
 
-	const itemsResponse = await myapi.items().get();
+	const itemsResponse = await myapi.collections().get();
 
 Items in that library:
 
-	const itemsResponse = await myapi.collections().get();
+	const itemsResponse = await myapi.items().get();
 
 Or items in specific collection:
 

@@ -32,8 +32,8 @@ NPM package contains source of the library which can be used as part of your bui
 
 Also included in the package is an [UMD](https://github.com/umdjs/umd) bundle which can be loaded using common loaders or included directly in a `<script>` tag. In the latter case library is available globally as `ZoteroApiClient`. One way of using UMD bundle on your page is to include it from [unpkg](https://unpkg.com) project CDN:
 
-```
-	<script src="https://unpkg.com/zotero-api-client"></script>
+```html
+<script src="https://unpkg.com/zotero-api-client"></script>
 ```
 
 
@@ -44,7 +44,7 @@ Simple example reading items from the public/test user library.
 
 1. Import the library, pick one depending on your environment:
 
-```
+```javascript
 // es module, most scenarios when using a bundler:
 import api from 'zotero-api-client'
 // common-js, node and some cases when using a bundler:
@@ -55,19 +55,19 @@ const { default: api } = ZoteroApiClient;
 
 2. Use the api to make the request (we're using [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function))
 
-```
+```javascript
 const response = await api().library('user', 475425).collections('9KH9TNSJ').items().get();
 ```
 
 3. Extract items from the response
 
-```
+```javascript
 const items = response.getData();
 ```
 
 4. Print titles of all the items in the library to console
 
-```
+```javascript
 console.log(items.map(i => i.title));
 ```
 
@@ -86,20 +86,26 @@ API interface
 
 API interface is a function that returns set of functions bound to previously configured options. This way it can be chained and stored at any level. Common scenario is to store authentication details and library details, which can be done quite simply:
 
-	import api from 'zotero-api-client';
-    const myapi = api('AUTH_KEY').library('user', 0);
+```javascript
+import api from 'zotero-api-client';
+const myapi = api('AUTH_KEY').library('user', 0);
+```
 
 That produces api client already configured with your credentials and user library id. You can re-use it obtain list of collections in that library:
 
-	const itemsResponse = await myapi.items().get();
+```javascript
+const itemsResponse = await myapi.items().get();
+```
 
 Items in that library:
 
-	const itemsResponse = await myapi.collections().get();
+```javascript
+const itemsResponse = await myapi.collections().get();
+```
 
 Or items in specific collection:
 
-	const collectionItemsResponse = await myapi.collections('EXAMPLE1').items().get();
+const collectionItemsResponse = await myapi.collections('EXAMPLE1').items().get();
 
 There two types of api functions, configuration functions (e.g. `items()`) that can be further chained and execution functions (e.g. `get()`) that fire up the request. 
 

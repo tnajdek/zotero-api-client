@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     "key": "HHF7BB4C",
     "version": 1,

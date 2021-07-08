@@ -326,6 +326,6 @@ class ErrorResponse extends Error {
 	}
 }
 
-module.exports = { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse,
-	FileUploadResponse, FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse,
-	RawApiResponse, SingleReadResponse, SingleWriteResponse };
+export { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse,
+FileUploadResponse, FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse,
+RawApiResponse, SingleReadResponse, SingleWriteResponse };

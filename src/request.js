@@ -1,8 +1,8 @@
-require('cross-fetch/polyfill');
-const SparkMD5 = require('spark-md5');
-const { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
+import SparkMD5 from 'spark-md5';
+
+import { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
 	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
-	SingleReadResponse, SingleWriteResponse, } = require('./response');
+	SingleReadResponse, SingleWriteResponse, } from './response.js';
 
 const headerNames = {
 	authorization: 'Authorization',
@@ -403,4 +403,4 @@ const request = async config => {
 	};
 };
 
-module.exports = request;
+export default request;

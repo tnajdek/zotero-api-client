@@ -1,4 +1,4 @@
-const request = require('./request.js');
+import request from './request.js';
 
 /**
  * Wrapper function creates closure scope and calls api()
@@ -671,4 +671,4 @@ const api = function() {
 	return api(...arguments);
 };
 
-module.exports = api;
+export default api;

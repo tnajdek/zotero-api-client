@@ -1,4 +1,4 @@
-module.exports = [
+export default [
     {
         "tag": "Fitzharris, Edward, 1648?-1681 -- Early works to 1800. ; Great Britain -- History -- Charles II, 1660-1685 -- Early works to 1800.",
         "links": {

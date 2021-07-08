@@ -1,4 +1,4 @@
-module.exports = [
+export default [
     {
         "id": 51240,
         "version": 1,

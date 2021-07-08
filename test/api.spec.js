@@ -1,6 +1,6 @@
 /* eslint-env mocha */
-const { assert } = require('chai');
-const _api = require('../src/api.js');
+import { assert } from 'chai';
+import _api from '../src/api.js';
 
 const KEY = 'LOREM';
 const LIBRARY_KEY = 'u123456';

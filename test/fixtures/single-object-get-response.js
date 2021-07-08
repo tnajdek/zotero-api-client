@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   "key": "X42A7DEE",
   "version": 1,
   "library": {

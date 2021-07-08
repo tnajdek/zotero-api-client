@@ -1,21 +1,21 @@
 /* eslint-env mocha */
-const URL  = require('url');
-const fetchMock  = require('fetch-mock');
-const { assert }  = require('chai');
-const _request  = require('../src/request.js');
-const { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
+import URL from 'url';
+import fetchMock from 'fetch-mock';
+import { assert } from 'chai';
+import _request from '../src/request.js';
+import { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
 	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
-	SingleReadResponse, SingleWriteResponse, } = require('../src/response.js');
+	SingleReadResponse, SingleWriteResponse, } from '../src/response.js';
 
-const singleGetResponseFixture = require('./fixtures/single-object-get-response.js');
-const multiGetResponseFixture = require('./fixtures/multi-object-get-response.js');
-const tagsResponseFixture = require('./fixtures/tags-data-response.js');
-const searchesResponseFixture = require('./fixtures/searches-data-response.js');
-const itemTypesDataFixture = require('./fixtures/item-types-data.js');
-const multiMixedWriteResponseFixture = require('./fixtures/multi-mixed-write-response.js');
-const multiSuccessWriteResponseFixture = require('./fixtures/multi-success-write-response.js');
-const settingsReponseFixture = require('./fixtures/settings-response.js');
-const userGroupsFixture = require('./fixtures/user-groups-response.js');
+import singleGetResponseFixture from './fixtures/single-object-get-response.js';
+import multiGetResponseFixture from './fixtures/multi-object-get-response.js';
+import tagsResponseFixture from './fixtures/tags-data-response.js';
+import searchesResponseFixture from './fixtures/searches-data-response.js';
+import itemTypesDataFixture from './fixtures/item-types-data.js';
+import multiMixedWriteResponseFixture from './fixtures/multi-mixed-write-response.js';
+import multiSuccessWriteResponseFixture from './fixtures/multi-success-write-response.js';
+import settingsReponseFixture from './fixtures/settings-response.js';
+import userGroupsFixture from './fixtures/user-groups-response.js';
 
 const FILE = Uint8ClampedArray.from('lorem ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
 const FILE_MD5 = '80a751fde577028640c419000e33eba6';

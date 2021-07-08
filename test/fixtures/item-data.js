@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   "key": "ABCD2345",
   "version": 1,
   "itemType": "book",

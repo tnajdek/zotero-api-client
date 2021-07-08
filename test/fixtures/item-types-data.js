@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     "itemType": "book",
     "localized": "Book"

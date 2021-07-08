@@ -3,7 +3,10 @@
   "version": "0.36.0",
   "description": "A lightweight, minimalistic Zotero API client",
   "repository": "https://github.com/tnajdek/zotero-api-client.git",
-  "main": "src/main.js",
+  "type": "module",
+  "main": "lib/main-node.cjs",
+  "browser": "lib/main.cjs",
+  "esnext": "src/main.js",
   "umd:main": "dist/zotero-api-client.js",
   "unpkg": "dist/zotero-api-client.js",
   "author": "Tom Najdek",
@@ -16,50 +19,52 @@
       "babelify"
     ]
   },
-  "browserslist": [
-    "last 2 versions"
-  ],
+  "browserslist": "firefox >= 68, chrome >=67, edge >= 15, safari >= 10, last 2 versions, not dead, not ie 11, not ie 10",
   "scripts": {
     "readme": "jsdoc2md --template docs/README.md --no-cache --configure .jsdoc.json src/*.js > README.md",
-    "test": "c8 mocha",
-    "coverage": "c8 --reporter=html --reporter=text mocha",
+    "test": "c8 mocha --parallel",
+    "coverage": "c8 --reporter=html --reporter=text mocha --parallel",
     "coveralls": "c8 report --reporter=text-lcov | coveralls",
-    "test-watch": "mocha -w",
+    "test-watch": "mocha -w --parallel",
     "prepack": "npm run build",
     "postpack": "npm run clean",
     "lint": "eslint \"src/*.js\" || true",
-    "clean": "rimraf dist",
-    "build": "rimraf dist/* && npm run browserify",
-    "browserify": "mkdir -p dist/ && NODE_ENV=production browserify -s zoteroApiClient -d src/main.js -t [babelify] -g [ envify --NODE_ENV production ] | terser --compress --mangle > dist/zotero-api-client.js",
-    "start": "mocha -w"
+    "clean": "rimraf dist lib",
+    "build": "rollup -c",
+    "start": "npm run test-watch"
   },
   "files": [
     "dist/*.js",
+    "lib/*.js",
     "src/*.js"
   ],
   "dependencies": {
+    "@babel/runtime": "^7.14.6",
+    "@babel/runtime-corejs3": "^7.14.7",
     "cross-fetch": "^3.1.4",
     "spark-md5": "^3.0.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.14.3",
-    "@babel/core": "^7.14.3",
-    "@babel/eslint-parser": "^7.14.3",
-    "@babel/preset-env": "^7.14.2",
-    "babelify": "^10.0.0",
-    "browserify": "^17.0.0",
-    "c8": "^7.7.2",
+    "@babel/core": "^7.14.6",
+    "@babel/eslint-parser": "^7.14.7",
+    "@babel/plugin-transform-runtime": "^7.14.5",
+    "@babel/preset-env": "^7.14.7",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "@rollup/plugin-replace": "^2.4.2",
+    "c8": "^7.7.3",
     "chai": "^4.3.4",
-    "coveralls": "^3.1.0",
-    "envify": "^4.1.0",
-    "eslint": "^7.26.0",
+    "coveralls": "^3.1.1",
+    "eslint": "^7.30.0",
     "fetch-mock": "^9.11.0",
-    "jasmine-core": "^3.7.1",
     "jsdoc-strip-async-await": "^0.1.0",
     "jsdoc-to-markdown": "^7.0.1",
-    "mocha": "^8.4.0",
-    "npm-run-all": "^4.1.5",
+    "mocha": "^9.0.2",
     "rimraf": "^3.0.2",
-    "terser": "^5.7.0"
+    "rollup": "^2.52.8",
+    "rollup-plugin-filesize": "^9.1.1",
+    "rollup-plugin-sizes": "^1.0.4",
+    "rollup-plugin-terser": "^7.0.2"
   }
 }

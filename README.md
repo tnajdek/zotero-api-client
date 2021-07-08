@@ -7,9 +7,10 @@ Overview
 This is a lightweight, minimalistic Zotero API client written in JavaScript. It's been developed based on the following principles:
 
 * Small, single purpose module, i.e. talk to the API
-* Works in node & browser (with the help of babel & commonjs)
+* Works in both node & browser environment
 * No abstraction over Zotero data, what you see is what you get
 * Clean api
+* Small bundle footprint
 * Minimal request validation
 * Predictable and consistent responses
 * Great test coverage, testing of all features
@@ -29,7 +30,7 @@ NPM package contains source of the library which can be used as part of your bui
 
 	npm i zotero-api-client
 
-Also included in the package is an [UMD](https://github.com/umdjs/umd) bundle which can be loaded using common loaders or included directly in a `<script>` tag. In the latter case library is available globally as `zoteroApiClient`. One way of using UMD bundle on your page is to include it from [unpkg](https://unpkg.com) project CDN:
+Also included in the package is an [UMD](https://github.com/umdjs/umd) bundle which can be loaded using common loaders or included directly in a `<script>` tag. In the latter case library is available globally as `ZoteroApiClient`. One way of using UMD bundle on your page is to include it from [unpkg](https://unpkg.com) project CDN:
 
 ```
 	<script src="https://unpkg.com/zotero-api-client"></script>
@@ -41,10 +42,15 @@ Example
 
 Simple example reading items from the public/test user library.
 
-1. Require the library (if using UMD bundle, skip this step and use loader and/or `zoteroApiClient` global object).
+1. Import the library, pick one depending on your environment:
 
 ```
-const api = require('zotero-api-client');
+// es module, most scenarios when using a bundler:
+import api from 'zotero-api-client'
+// common-js, node and some cases when using a bundler:
+const { default: api } = require('zotero-api-client');
+// UMD bundle creates `ZoteroApiClient` global object
+const { default: api } = ZoteroApiClient;
 ```
 
 2. Use the api to make the request (we're using [async functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function))
@@ -80,7 +86,8 @@ API interface
 
 API interface is a function that returns set of functions bound to previously configured options. This way it can be chained and stored at any level. Common scenario is to store authentication details and library details, which can be done quite simply:
 
-	const myapi = require('zotero-api-client')('AUTH_KEY').library('user', 0);
+	import api from 'zotero-api-client';
+    const myapi = api('AUTH_KEY').library('user', 0);
 
 That produces api client already configured with your credentials and user library id. You can re-use it obtain list of collections in that library:
 

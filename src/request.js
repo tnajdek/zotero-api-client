@@ -388,8 +388,8 @@ const request = async config => {
 				let rawData = await rawResponse.arrayBuffer();
 				response = new FileDownloadResponse(rawData, options, rawResponse);
 			} else if('fileUrl' in options.resource && options.method.toUpperCase() === 'GET') {
-				let url = await rawResponse.text();
-				response = new FileUrlResponse(url, options, rawResponse);
+				const url = await rawResponse.text();
+				response = new FileUrlResponse(url.replace('\n', '').trim(), options, rawResponse);
 			} else {
 				response = new RawApiResponse(rawResponse, options);
 			}

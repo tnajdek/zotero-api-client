@@ -1470,7 +1470,7 @@ describe('ZoteroJS request', () => {
 				headers: {
 					contentType: 'text/plain'
 				},
-				body: 'https://files.zotero.org/some-file'
+				body: 'https://files.zotero.org/some-file\n'
 			});
 			return request({
 				method: 'get',

@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/tnajdek/zotero-api-client.svg?branch=master)](https://travis-ci.org/tnajdek/zotero-api-client)
-[![Coverage Status](https://coveralls.io/repos/github/tnajdek/zotero-api-client/badge.svg?branch=master)](https://coveralls.io/github/tnajdek/zotero-api-client?branch=master)
+[![CI](https://github.com/tnajdek/zotero-api-client/actions/workflows/ci.yml/badge.svg)](https://github.com/tnajdek/zotero-api-client/actions/workflows/ci.yml)
+[![Coverage Status](https://coveralls.io/repos/github/tnajdek/zotero-api-client/badge.svg)](https://coveralls.io/github/tnajdek/zotero-api-client)
 [![npm version](https://img.shields.io/npm/v/zotero-api-client)](https://www.npmjs.com/package/zotero-api-client)
 
 Overview

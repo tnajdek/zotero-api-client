@@ -24,7 +24,7 @@
     "readme": "jsdoc2md --template docs/README.md --no-cache --configure .jsdoc.json src/*.js > README.md",
     "test": "c8 mocha --parallel",
     "coverage": "c8 --reporter=html --reporter=text mocha --parallel",
-    "coveralls": "c8 report --reporter=text-lcov | coveralls",
+    "coverage-make-lcov": "c8 report --reporter=text-lcov > ./coverage/lcov.info",
     "test-watch": "mocha -w --parallel",
     "prepack": "npm run build",
     "postpack": "npm run clean",

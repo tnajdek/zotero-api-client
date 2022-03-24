@@ -1,5 +1,5 @@
-[![CI](https://github.com/tnajdek/zotero-api-client/actions/workflows/ci.yml/badge.svg)](https://github.com/tnajdek/zotero-api-client/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/tnajdek/zotero-api-client/badge.svg)](https://coveralls.io/github/tnajdek/zotero-api-client)
+[![Build Status](https://travis-ci.org/tnajdek/zotero-api-client.svg?branch=master)](https://travis-ci.org/tnajdek/zotero-api-client)
+[![Coverage Status](https://coveralls.io/repos/github/tnajdek/zotero-api-client/badge.svg?branch=master)](https://coveralls.io/github/tnajdek/zotero-api-client?branch=master)
 [![npm version](https://img.shields.io/npm/v/zotero-api-client)](https://www.npmjs.com/package/zotero-api-client)
 
 Overview
@@ -367,6 +367,7 @@ Wrapper function creates closure scope and calls api()
     * [~attachment(fileName, file, mtime, md5sum)](#api..attachment) ⇒ <code>Object</code>
     * [~registerAttachment(fileName, fileSize, mtime, md5sum)](#api..registerAttachment) ⇒ <code>Object</code>
     * [~attachmentUrl()](#api..attachmentUrl) ⇒ <code>Object</code>
+    * [~verifyKeyAccess()](#api..verifyKeyAccess) ⇒ <code>Object</code>
     * [~get(opts)](#api..get) ⇒ <code>Promise</code>
     * [~post(data, opts)](#api..post) ⇒ <code>Promise</code>
     * [~put(data, opts)](#api..put) ⇒ <code>Promise</code>
@@ -685,6 +686,15 @@ Configure api to request a temporary attachment file url
 Can be only used in conjuction with items() and get()
 Use items() to select attachment item for which file is url is requested
 Will populate format, redirect
+
+**Kind**: inner method of [<code>api</code>](#api)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+<a name="api..verifyKeyAccess"></a>
+
+### api~verifyKeyAccess() ⇒ <code>Object</code>
+Configure api to request information on the API key.
+Can only be used in conjuction with get()
 
 **Kind**: inner method of [<code>api</code>](#api)  
 **Chainable**  

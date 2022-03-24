@@ -418,6 +418,20 @@ const api = function() {
 		});
 	}
 
+
+	/**
+	 * Configure api to request information on the API key.
+	 * Can only be used in conjuction with get()
+	 *
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const verifyKeyAccess = function() {
+		return efr.bind(this)({
+			verifyKeyAccess: null
+		})	
+	}
+
 	/**
 	 * Execution function. Specifies that the request should use a GET method.
 	 * @param  {Object} opts - Optional api configuration. If duplicate, 
@@ -552,38 +566,10 @@ const api = function() {
 	}
 
 	const functions = {
-		api,
-		attachment,
-		attachmentUrl,
-		children,
-		collections,
-		creatorFields,
-		delete: del, //delete is a keyword
-		deleted,
-		get,
-		getConfig,
-		groups,
-		itemFields,
-		items,
-		itemTypeCreatorTypes,
-		itemTypeFields,
-		itemTypes,
-		library,
-		patch,
-		post,
-		pretend,
-		publications,
-		put,
-		registerAttachment,
-		searches,
-		settings,
-		subcollections,
-		tags,
-		template,
-		top,
-		trash,
-		use,
-		version,
+		api, attachment, attachmentUrl, children, collections, creatorFields, delete: del, //delete is a keyword
+		deleted, get, getConfig, groups, itemFields, items, itemTypeCreatorTypes, itemTypeFields,
+		itemTypes, library, patch, post, pretend, publications, put, registerAttachment, searches,
+		settings, subcollections, tags, template, top, trash, use, verifyKeyAccess, version,
 	}
 
 	const ef = function(opts) {

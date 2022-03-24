@@ -304,7 +304,6 @@ describe('Zotero Api Client', () => {
 	});
 
 	describe('Construct write requests', () => {
-
 		it('handles api.library.items().post([I1b, I2b])', () => {
 			let body = [{ key: 'ITEM1111' }, { key: 'ITEM2222' }];
 			api(KEY).library(LIBRARY_KEY).items().post(body);
@@ -531,8 +530,10 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.itemType, 'book');
 			assert.isNull(lrc.resource.template);
 		});
+	});
 
-		it('handles api.library.items(I).pretend()', () => {
+	describe('Handles pretend calls', () => {
+			it('handles api.library.items(I).pretend()', () => {
 			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).pretend();
 			assert.equal(lrc.method, 'get');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
@@ -560,7 +561,15 @@ describe('Zotero Api Client', () => {
 			assert.deepEqual(lrc.itemKey.sort(), keysToDelete.sort());
 			assert.strictEqual(lrc.pretend, true);
 		});
+	});
 
+	describe('Handles access calls', () => {
+		it('handles api.verifyKeyAccess.get()', () => {
+			api(KEY).verifyKeyAccess().get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.method, 'get');
+			assert.isNull(lrc.resource.verifyKeyAccess);
+		});
 	});
 
 	describe('Handles invalid calls', () => {

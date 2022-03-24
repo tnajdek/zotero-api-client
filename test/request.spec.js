@@ -15,6 +15,7 @@ import itemTypesDataFixture from './fixtures/item-types-data.js';
 import multiMixedWriteResponseFixture from './fixtures/multi-mixed-write-response.js';
 import multiSuccessWriteResponseFixture from './fixtures/multi-success-write-response.js';
 import settingsReponseFixture from './fixtures/settings-response.js';
+import keysCurrentResponse from './fixtures/keys-current-response.js';
 import userGroupsFixture from './fixtures/user-groups-response.js';
 
 const FILE = Uint8ClampedArray.from('lorem ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
@@ -583,6 +584,21 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(fetchConfig.method, 'GET');
 				assert.strictEqual(fetchConfig.headers['Content-Type'], 'application/json');
 				assert.strictEqual(fetchConfig.headers['If-Unmodified-Since-Version'], 42);
+			});
+		});
+
+		it('should verify key access', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/keys/current',
+				keysCurrentResponse
+			);
+
+			return request({ 
+				resource: { verifyKeyAccess: null }
+			}).then(response => {
+				assert.instanceOf(response, ApiResponse);
+				assert.strictEqual(response.getResponseType(), 'ApiResponse');
+				assert.deepEqual(response.getData(), keysCurrentResponse);
 			});
 		});
 	});

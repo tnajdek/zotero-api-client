@@ -94,11 +94,6 @@ const defaults = {
 	uploadRegisterOnly: null,
 };
 
-//@TODO implement validation
-const validateUrlPath = urlPath => { //eslint-disable-line no-unused-vars
-	return true;
-};
-
 const makeUrlPath = resource => {
 	let path = [];
 
@@ -143,11 +138,7 @@ const hasDefinedKey = (object, key) => {
 const throwErrorResponse = async (rawResponse, options, requestDesc) => {
 	let clonedRawResponse = rawResponse.clone();
 	let reason = null;
-	try {
-		reason = await clonedRawResponse.text();
-	} catch(_) {
-		// unable to parse error from response but should still throw
-	}
+	reason = await clonedRawResponse.text();
 	throw new ErrorResponse(`${requestDesc}${rawResponse.status}: ${rawResponse.statusText}`, reason, rawResponse, options);
 }
 
@@ -241,10 +232,6 @@ const request = async config => {
 	const url = `https://${options.apiAuthorityPart}/${path}${query}`;
 	const fetchConfig = {};
 
-	if(!validateUrlPath(path)) {
-		throw new Error('Invalid resource');
-	}
-
 	for(let param of fetchParamNames) {
 		if(param === 'body' && hasDefinedKey(options, param)) {
 			fetchConfig[param] = JSON.stringify(options[param]);
@@ -335,19 +322,19 @@ const request = async config => {
 						body: `upload=${authData.uploadKey}`
 					});
 					if(!registerResponse.ok) {
-						await throwErrorResponse(registerResponse, options, 'Upload stage 3: ');	
+						return await throwErrorResponse(registerResponse, options, 'Upload stage 3: ');
 					}
 					response = new FileUploadResponse({}, options, rawResponse, uploadResponse, registerResponse);
 				} else {
-					await throwErrorResponse(uploadResponse, options, 'Upload stage 2: ');
+					return await throwErrorResponse(uploadResponse, options, 'Upload stage 2: ');
 				}
 			}
 		} else {
-			await throwErrorResponse(rawResponse, options, 'Upload stage 1: ');
+			return await throwErrorResponse(rawResponse, options, 'Upload stage 1: ');
 		}
 	} else {
 		if(rawResponse.status < 200 || rawResponse.status >= 400) {
-			await throwErrorResponse(rawResponse, options, '');
+			return await throwErrorResponse(rawResponse, options, '');
 		}
 
 		let content;

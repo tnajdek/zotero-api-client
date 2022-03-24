@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 import { assert } from 'chai';
 import _api from '../src/api.js';
+import _request from '../src/request.js';
 
 const KEY = 'LOREM';
 const LIBRARY_KEY = 'u123456';
@@ -662,6 +663,11 @@ describe('Zotero Api Client', () => {
 			assert.property(configWithFoo, 'isFoo');
 			assert.equal(configWithFoo.isFoo, true);
 			assert.equal(configWithFoo.zoteroApiKey, KEY);
+		});
+
+		it('installs default executor', () => {
+			const regularApi = _api();
+			assert.equal(regularApi.getConfig().executors[0], _request);
 		});
 	});
 });

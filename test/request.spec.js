@@ -576,7 +576,8 @@ describe('ZoteroJS request', () => {
 			}).then(response => {
 				assert.instanceOf(response, PretendResponse);
 				assert.strictEqual(response.getResponseType(), 'PretendResponse');
-				const { url, fetchConfig } =response.getData();
+				assert.isNull(response.getVersion());
+				const { url, fetchConfig } = response.getData();
 				assert.include(url, 'https://api.zotero.org/users/475425/collections/N7W92H48/items/top')
 				assert.include(url, 'format=json')
 				assert.include(url, 'start=100')

@@ -395,7 +395,7 @@ const api = function() {
 				uploadRegisterOnly: true,
 			})	
 		} else {
-			return ef.bind(this)({ format: null, resource });
+			throw new Error('Called registerAttachment() without specifing required parameters');
 		}
 	}
 

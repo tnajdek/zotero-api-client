@@ -583,6 +583,14 @@ describe('Zotero Api Client', () => {
 			assert.throws(configuredApi.delete.bind(configuredApi), /Called delete\(\) without first specifing what to delete/);
 			assert.throws(configuredApi.delete.bind(configuredApi, 'foobar'), /Called delete\(\) with string, expected an Array/);
 		});
+
+		it('throws when registerAttachment is called incorrectly', () => {
+			let configuredApi = api(KEY).library(LIBRARY_KEY).items(ITEM_KEY);
+			assert.throws(
+				configuredApi.registerAttachment.bind(configuredApi, FILE_NAME),
+				'Called registerAttachment() without specifing required parameters'
+			);
+		});
 	});
 
 	describe('Handles extensions', () => {

@@ -39,13 +39,13 @@
     "src/**/*"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.17.2",
-    "@babel/runtime-corejs3": "^7.17.2",
+    "@babel/runtime": "^7.17.8",
+    "@babel/runtime-corejs3": "^7.17.8",
     "cross-fetch": "^3.1.5",
     "spark-md5": "^3.0.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.5",
+    "@babel/core": "^7.17.8",
     "@babel/eslint-parser": "^7.17.0",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
@@ -55,13 +55,13 @@
     "@rollup/plugin-replace": "^4.0.0",
     "c8": "^7.11.0",
     "chai": "^4.3.6",
-    "eslint": "^8.9.0",
+    "eslint": "^8.11.0",
     "fetch-mock": "^9.11.0",
     "jsdoc-strip-async-await": "^0.1.0",
     "jsdoc-to-markdown": "^7.1.1",
-    "mocha": "^9.2.1",
+    "mocha": "^9.2.2",
     "rimraf": "^3.0.2",
-    "rollup": "^2.68.0",
+    "rollup": "^2.70.1",
     "rollup-plugin-filesize": "^9.1.2",
     "rollup-plugin-sizes": "^1.0.4",
     "rollup-plugin-terser": "^7.0.2"

@@ -273,13 +273,18 @@ const api = function() {
 
 	/**
 	 * Configure api to request settings
-	 * Can only be used in conjuction with get() and post()
+	 * Can only be used in conjuction with get(), put(), post() and delete()
+	 * For usage with put() and delete() settings key must be provided
+	 * For usage with post() settings key must not be included
+	 * @param  {String} settings - Settings key, if present, configure api to point at
+	 *                             this specific key within settings, e.g. `tagColors`.
+
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const settings = function() {
+	const settings = function(settings = null) {
 		return efr.bind(this)({
-			settings: null
+			settings
 		});
 	};
 
@@ -498,8 +503,8 @@ const api = function() {
 	 *                                be item keys, collection keys, search 
 	 *                                keys or tag names. If not present, api
 	 *                                should be configured to use specific 
-	 *                                item, collection or saved search, in
-	 *                                which case, that entity will be deleted
+	 *                                item, collection, saved search or settings
+	 *                                key, in which case, that entity will be deleted
 	 * @param  {Object} opts - Optional api configuration. If duplicate, 
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
@@ -590,6 +595,7 @@ const api = function() {
 
 	const prepareRequest = function(config, verb, opts, body) {
 		var method = verb.toLowerCase();
+		var relevantSearchKey;
 		var requestConfig, keysToDelete;
 		switch(method) {
 			default:
@@ -630,13 +636,15 @@ const api = function() {
 					relevantSearchKey = 'tag';
 				} else if('resource' in requestConfig && 'searches' in requestConfig.resource) {
 					relevantSearchKey = 'searchKey';
+				} else if('resource' in requestConfig && 'settings' in requestConfig.resource) {
+					if(keysToDelete) {
+						throw new Error('Arguments to delete() not supported when deleting settings');
+					}
 				} else {
 					throw new Error('Called delete() without first specifing what to delete')
 				}
 
 				if(keysToDelete) {
-					var relevantSearchKey;
-					
 					requestConfig[relevantSearchKey] = [
 						...(requestConfig[relevantSearchKey] || []),
 						...keysToDelete

@@ -73,7 +73,7 @@ const resourcesSpecs = [
 	{ 'name': 'template', urlPart: 'items/new', isKeyResource: false },
 	{ 'name': 'file', urlPart: 'file', isKeyResource: false },
 	{ 'name': 'fileUrl', urlPart: 'file/view/url', isKeyResource: false },
-	{ 'name': 'settings', urlPart: 'settings', isKeyResource: false },
+	{ 'name': 'settings', urlPart: 'settings', isKeyResource: true },
 	{ 'name': 'deleted', 'urlPart': 'deleted', isKeyResource: false },
 	{ 'name': 'verifyKeyAccess', urlPart: 'keys/current', isKeyResource: false },
 ];

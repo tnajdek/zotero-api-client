@@ -8,6 +8,7 @@ const LIBRARY_KEY = 'u123456';
 const ITEM_KEY = 'IITTEEMM';
 const COLLECTION_KEY = 'CCOOLLEE';
 const SEARCH_KEY = 'SEARCH_KEY';
+const SETTING_KEY = 'SETTING_KEY';
 const URL_ENCODED_TAGS = 'URL_ENCODED_TAGS';
 const FILE = Uint8ClampedArray.from('lorem ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
 const FILE_NAME = 'test.txt';
@@ -270,6 +271,13 @@ describe('Zotero Api Client', () => {
 			assert.isNull(lrc.resource.settings);
 		});
 
+		it('handles api.library.settings(KEY).get', () => {
+			api(KEY).library(LIBRARY_KEY).settings(SETTING_KEY).get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.settings, SETTING_KEY);
+		});
+
 		it('handles api.library.groups().get', () => {
 			api(KEY).library(LIBRARY_KEY).groups().get();
 			assert.equal(lrc.method, 'get');
@@ -420,6 +428,24 @@ describe('Zotero Api Client', () => {
 			assert.isNull(lrc.resource.settings);
 			assert.deepEqual(lrc.body, body);
 		});
+
+		it('handles api.library.settings(KEY).put', () => {
+			const body = { value: "foobar" };
+			api(KEY).library(LIBRARY_KEY).settings(SETTING_KEY).put(body);
+			assert.equal(lrc.method, 'put');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.settings, SETTING_KEY);
+			assert.deepEqual(lrc.body, body);
+		});
+
+		it('handles api.library.settings(KEY).delete', () => {
+			api(KEY).library(LIBRARY_KEY).settings(SETTING_KEY).delete();
+			assert.equal(lrc.method, 'delete');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.settings, SETTING_KEY);
+			assert.isUndefined(lrc.body);
+		});
+
 	});
 
 	describe('Construct attachment requests', () => {

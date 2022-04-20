@@ -516,6 +516,24 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
+		it('should get individual keys from settings', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/users/475425/settings/tagColors',
+				settingsReponseFixture.tagColors
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					settings: 'tagColors',
+				}
+			}).then(response => {
+				assert.instanceOf(response, SingleReadResponse);
+				assert.strictEqual(response.getResponseType(), 'SingleReadResponse');
+				assert.lengthOf(response.getData().value, 2);
+			});
+		});
+
 		it('should get user-accessible groups', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/groups',
@@ -1177,6 +1195,64 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(response, SingleWriteResponse);
 				assert.strictEqual(response.getResponseType(), 'SingleWriteResponse');
 				assert.strictEqual(response.response.status, 204);
+			});
+		});
+
+		it('should put individual updated keys into library settings', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings/tagColors'));
+					assert.strictEqual(opts.method, 'PUT');
+					assert.equal(opts.body, JSON.stringify(newSettings));
+					return true;
+				}, {
+					status: 204,
+					headers: {
+						'Last-Modified-Version': 3483
+					}
+			});
+
+			const newSettings = { value: [ {
+				"name": "test-tag",
+				"color": "#ffcc00"
+			}]};
+
+			return request({
+				method: 'put',
+				body: newSettings,
+				resource: {
+					library: 'u475425',
+					settings: 'tagColors'
+				}
+			}).then(response => {
+				assert.instanceOf(response, SingleWriteResponse);
+				assert.strictEqual(response.getResponseType(), 'SingleWriteResponse');
+				assert.strictEqual(response.response.status, 204);
+			});
+		});
+
+		it('should delete individual keys from library settings', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings/tagColors'));
+					assert.strictEqual(opts.method, 'DELETE');
+					return true;
+				}, {
+					status: 204,
+					headers: {
+						'Last-Modified-Version': 1234
+					}
+			});
+
+			return request({
+				method: 'delete',
+				resource: {
+					library: 'u475425',
+					settings: 'tagColors'
+				}
+			}).then(response => {
+				assert.instanceOf(response, DeleteResponse);
+				assert.strictEqual(response.getVersion(), 1234);
+				assert.strictEqual(response.response.status, 204);
+				assert.isNull(response.raw);
 			});
 		});
 	});

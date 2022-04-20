@@ -602,13 +602,13 @@ describe('Zotero Api Client', () => {
 	describe('Handles invalid calls', () => {
 		it('throws when invalid library is specified', () => {
 			let configuredApi = api();
-			assert.throws(configuredApi.library.bind(configuredApi, 'foobar', 1), /Unrecognized library type foobar/);
+			assert.throws(configuredApi.library.bind(configuredApi, 'foobar', 1), 'Unrecognized library type foobar');
 		});
 
 		it('throws when delete is called incorrectly', () => {
 			let configuredApi = api();
-			assert.throws(configuredApi.delete.bind(configuredApi), /Called delete\(\) without first specifing what to delete/);
-			assert.throws(configuredApi.delete.bind(configuredApi, 'foobar'), /Called delete\(\) with string, expected an Array/);
+			assert.throws(configuredApi.delete.bind(configuredApi), 'Called delete() without first specifing what to delete');
+			assert.throws(configuredApi.delete.bind(configuredApi, 'foobar'), 'Called delete() with string, expected an Array');
 		});
 
 		it('throws when registerAttachment is called incorrectly', () => {
@@ -617,6 +617,11 @@ describe('Zotero Api Client', () => {
 				configuredApi.registerAttachment.bind(configuredApi, FILE_NAME),
 				'Called registerAttachment() without specifing required parameters'
 			);
+		});
+
+		it('throws when api.library.settings(KEY).delete', () => {
+			let configuredApi = api(KEY).library(LIBRARY_KEY).settings(SETTING_KEY);
+			assert.throws(configuredApi.delete.bind(configuredApi, []), 'Arguments to delete() not supported when deleting settings');
 		});
 	});
 

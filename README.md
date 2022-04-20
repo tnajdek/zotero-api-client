@@ -360,7 +360,7 @@ Wrapper function creates closure scope and calls api()
     * [~top()](#api..top) ⇒ <code>Object</code>
     * [~trash()](#api..trash) ⇒ <code>Object</code>
     * [~children()](#api..children) ⇒ <code>Object</code>
-    * [~settings()](#api..settings) ⇒ <code>Object</code>
+    * [~settings(settings)](#api..settings) ⇒ <code>Object</code>
     * [~deleted()](#api..deleted) ⇒ <code>Object</code>
     * [~groups()](#api..groups) ⇒ <code>Object</code>
     * [~version(version)](#api..version) ⇒ <code>Object</code>
@@ -594,13 +594,20 @@ function
 **Returns**: <code>Object</code> - Partially configured api functions  
 <a name="api..settings"></a>
 
-### api~settings() ⇒ <code>Object</code>
+### api~settings(settings) ⇒ <code>Object</code>
 Configure api to request settings
-Can only be used in conjuction with get() and post()
+Can only be used in conjuction with get(), put(), post() and delete()
+For usage with put() and delete() settings key must be provided
+For usage with post() settings key must not be included
 
 **Kind**: inner method of [<code>api</code>](#api)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| settings | <code>String</code> | <code></code> | Settings key, if present, configure api to point at                             this specific key within settings, e.g. `tagColors`. |
+
 <a name="api..deleted"></a>
 
 ### api~deleted() ⇒ <code>Object</code>
@@ -768,7 +775,7 @@ method.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keysToDelete | <code>Array</code> | An array of keys to delete. Depending on                                how api has been configured, these will                                be item keys, collection keys, search                                 keys or tag names. If not present, api                                should be configured to use specific                                 item, collection or saved search, in                                which case, that entity will be deleted |
+| keysToDelete | <code>Array</code> | An array of keys to delete. Depending on                                how api has been configured, these will                                be item keys, collection keys, search                                 keys or tag names. If not present, api                                should be configured to use specific                                 item, collection, saved search or settings                                key, in which case, that entity will be deleted |
 | opts | <code>Object</code> | Optional api configuration. If duplicate,                          overrides properties already present. For a list                         of all possible properties, see documentation                         for request() function |
 
 <a name="api..getConfig"></a>

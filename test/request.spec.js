@@ -127,6 +127,7 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
 				assert.strictEqual(response.getData().length, 15);
 				assert.strictEqual(response.getLinks().length, 15);
+				assert.strictEqual(response.getVersion(), 1337);
 				assert.strictEqual(response.getMeta().length, 15);
 				assert.deepEqual(response.getRelLinks(), {
 					next: 'https://api.zotero.org/users/475425/items/top?start=15',
@@ -903,6 +904,7 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(response, MultiWriteResponse);
 				assert.strictEqual(response.getResponseType(), 'MultiWriteResponse');
 				assert.isOk(response.isSuccess());
+				assert.strictEqual(response.getVersion(), 1337);
 				assert.strictEqual(response.getData()[0].key, 'AZBCAADA');
 				assert.strictEqual(response.getData()[0].title, 'My Amazing Book');
 				assert.strictEqual(response.getData()[0].itemType, 'book');

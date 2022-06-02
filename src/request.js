@@ -152,7 +152,8 @@ const sleep = seconds => {
 };
 
 /**
- * Executes request and returns a response
+ * Executes request and returns a response. Not meant to be called directly, instead use {@link
+   module:zotero-api-client~api}.
  * @param {String} options.authorization					- 'Authorization' header
  * @param {String} options.zoteroWriteToken					- 'Zotero-Write-Token' header 
  * @param {String} options.ifModifiedSinceVersion			- 'If-Modified-Since-Version' header
@@ -211,6 +212,8 @@ const sleep = seconds => {
  * @return {Object} Returns a Promise that will eventually return a response object
  * @throws {Error} If options specify impossible configuration
  * @throws {ErrorResponse} If API responds with a non-ok response
+ * @memberof module:zotero-api-client
+ * @inner
  */
 const request = async config => {
 	var response;

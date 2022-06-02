@@ -1,6 +1,10 @@
 import request from './request.js';
 
 /**
+ * @module zotero-api-client
+ */
+
+/**
  * Wrapper function creates closure scope and calls api()
  * @return {Object} Partially configured api functions
  */

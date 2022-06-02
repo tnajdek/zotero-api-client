@@ -103,10 +103,18 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get /top items from a user library', () => {
-			fetchMock.mock(
-				'begin:https://api.zotero.org/users/475425/items/top',
-				multiGetResponseFixture
-			);
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/top'));
+					assert.strictEqual(opts.method, 'GET');
+					return true;
+				}, {
+				headers: {
+					'Last-Modified-Version': 1337,
+					'Total-Results': 15,
+					'Link': '<https://api.zotero.org/users/475425/items/top?start=15>; rel="next", <https://api.zotero.org/users/475425/items/top?start=150>; rel="last", <https://www.zotero.org/users/475425/items/top>; rel="alternate"'
+				},
+				body: multiGetResponseFixture
+			});
 
 			return request({
 				resource: {
@@ -120,6 +128,11 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getData().length, 15);
 				assert.strictEqual(response.getLinks().length, 15);
 				assert.strictEqual(response.getMeta().length, 15);
+				assert.deepEqual(response.getRelLinks(), {
+					next: 'https://api.zotero.org/users/475425/items/top?start=15',
+					last: 'https://api.zotero.org/users/475425/items/top?start=150',
+					alternate: 'https://www.zotero.org/users/475425/items/top'
+				});
 			});
 		});
 
@@ -329,6 +342,31 @@ describe('ZoteroJS request', () => {
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
 				assert.strictEqual(response.getData().length, 1);
+			});
+		});
+
+		it('should handle multiple response with missing headers', () => {
+			fetchMock.mock( (url, opts) => {
+					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/top'));
+					assert.strictEqual(opts.method, 'GET');
+					return true;
+				}, {
+				headers: {},
+				body: multiGetResponseFixture
+			});
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: null,
+					top: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
+				assert.deepEqual(response.getRelLinks(), {});
+				assert.isNull(response.getTotalResults());
+				assert.isNull(response.getVersion());
 			});
 		});
 	});

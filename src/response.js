@@ -1,3 +1,8 @@
+const parseIntHeaders = (headers, headerName) => {
+	const value = headers && headers.get(headerName);
+	return value === null ? null : parseInt(value, 10);
+}
+
 /*
  * @class represents a generic Zotero API response 
  */
@@ -31,7 +36,7 @@ class ApiResponse {
 	}
 
 	getVersion() {
-		return parseInt(this.response.headers.get('Last-Modified-Version'), 10);
+		return parseIntHeaders(this.response?.headers, 'Last-Modified-Version');
 	}
 }
 
@@ -73,6 +78,19 @@ class MultiReadResponse extends ApiResponse {
 	getMeta() {
 		return this.raw.map(r => 'meta' in r && r.meta || null);
 	}
+
+	getTotalResults() {
+		return parseIntHeaders(this.response?.headers, 'Total-Results');
+	}
+
+	getRelLinks() {
+		const links = this.response?.headers.get('link') ?? '';
+		const matches = Array.from(links.matchAll(/<(.*?)>;\s+rel="(.*?)"/ig));
+		return Array.from(matches).reduce((acc, [_match, url, rel]) => {
+			acc[rel] = url;
+			return acc;
+		}, {});
+	}
 }
 
 /**
@@ -90,7 +108,7 @@ class SingleWriteResponse extends ApiResponse {
 	getData() {
 		return {
 			...this.options.body,
-			version: parseInt(this.response.headers.get('Last-Modified-Version'), 10)
+			version: this.getVersion()
 		}
 	}
 }
@@ -125,7 +143,7 @@ class MultiWriteResponse extends ApiResponse {
 					...item,
 					...remoteItem.data,
 					key: this.raw.success[index],
-					version: parseInt(this.response.headers.get('Last-Modified-Version'), 10)
+					version: this.getVersion()
 				};
 			} else {
 				return item;
@@ -206,7 +224,7 @@ class MultiWriteResponse extends ApiResponse {
 				...this.options.body[index],
 				...remoteItem.data,
 				key: this.raw.success[index],
-				version: parseInt(this.response.headers.get('Last-Modified-Version'), 10)
+				version: this.getVersion()
 			}	
 		}
 
@@ -255,8 +273,8 @@ class FileUploadResponse extends ApiResponse {
 
 	getVersion() {
 		return this.registerResponse ?
-			parseInt(this.registerResponse.headers.get('Last-Modified-Version'), 10) :
-			parseInt(this.response.headers.get('Last-Modified-Version'), 10);
+			parseIntHeaders(this.registerResponse?.headers, 'Last-Modified-Version') :
+			parseIntHeaders(this.response?.headers, 'Last-Modified-Version');
 	}
 }
 

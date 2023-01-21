@@ -4,9 +4,7 @@ import replace from '@rollup/plugin-replace';
 import sizes from 'rollup-plugin-sizes';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
-import { terser } from 'rollup-plugin-terser';
-
-const isProduction = process.env.NODE_ENV?.startsWith('prod');
+import terser from '@rollup/plugin-terser';
 
 const config = {
 	external: [

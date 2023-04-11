@@ -118,6 +118,19 @@ const api = function() {
 		});
 	};
 
+	
+	/**
+	 * Configure api to request schema
+	 * Can only be used in conjuction with get()
+	 * @returns {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const schema = function() {
+		return efr.bind(this)({
+			schema: null
+		});
+	}
+
 	/**
 	 * Configure api to request all valid fields for an item type
 	 * Can only be used in conjuction with get()
@@ -577,8 +590,8 @@ const api = function() {
 	const functions = {
 		api, attachment, attachmentUrl, children, collections, creatorFields, delete: del, //delete is a keyword
 		deleted, get, getConfig, groups, itemFields, items, itemTypeCreatorTypes, itemTypeFields,
-		itemTypes, library, patch, post, pretend, publications, put, registerAttachment, searches,
-		settings, subcollections, tags, template, top, trash, use, verifyKeyAccess, version,
+		itemTypes, library, patch, post, pretend, publications, put, registerAttachment, schema,
+		searches, settings, subcollections, tags, template, top, trash, use, verifyKeyAccess, version,
 	}
 
 	const ef = function(opts) {

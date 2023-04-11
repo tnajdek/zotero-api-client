@@ -5,7 +5,7 @@ import { assert } from 'chai';
 import _request from '../src/request.js';
 import { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
 	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
-	SingleReadResponse, SingleWriteResponse, } from '../src/response.js';
+	SchemaResponse, SingleReadResponse, SingleWriteResponse, } from '../src/response.js';
 
 import singleGetResponseFixture from './fixtures/single-object-get-response.js';
 import multiGetResponseFixture from './fixtures/multi-object-get-response.js';
@@ -57,6 +57,26 @@ describe('ZoteroJS request', () => {
 				assert.isNull(response.getMeta());
 			});
 		});
+
+		it('should get schema', () => {
+			fetchMock.mock(
+				'begin:https://api.zotero.org/schema',
+				{ version: 26, itemTypes: [], meta: {}, csl: {}, locales: {}, }
+			);
+
+			return request({
+				resource: {
+					schema: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, SchemaResponse);
+				assert.strictEqual(response.getResponseType(), 'SchemaResponse');
+				assert.strictEqual(response.getData().version, 26);
+				assert.strictEqual(response.getVersion(), 26);
+				assert.isNull(response.getLinks());
+				assert.isNull(response.getMeta());
+			});
+		})
 
 		it('should get item template', () => {
 			fetchMock.mock(

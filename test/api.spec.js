@@ -531,6 +531,12 @@ describe('Zotero Api Client', () => {
 			assert.isNull(lrc.resource.itemFields);
 		});
 
+		it('handles api.schema', () => {
+			api().schema().get();
+			assert.equal(lrc.method, 'get');
+			assert.isNull(lrc.resource.schema);
+		});
+
 		it('handles api.itemTypeFields', () => {
 			api().itemTypeFields('book').get();
 			assert.equal(lrc.method, 'get');

@@ -2,7 +2,7 @@ import SparkMD5 from 'spark-md5';
 
 import { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
 	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
-	SingleReadResponse, SingleWriteResponse, } from './response.js';
+	SchemaResponse, SingleReadResponse, SingleWriteResponse, } from './response.js';
 
 const headerNames = {
 	authorization: 'Authorization',
@@ -67,6 +67,7 @@ const resourcesSpecs = [
 	{ 'name': 'subcollections', urlPart: 'collections', isKeyResource: false },
 	{ 'name': 'itemTypes', urlPart: 'itemTypes', isKeyResource: false },
 	{ 'name': 'itemFields', urlPart: 'itemFields', isKeyResource: false },
+	{ 'name': 'schema', urlPart: 'schema', isKeyResource: false },
 	{ 'name': 'creatorFields', urlPart: 'creatorFields', isKeyResource: false },
 	{ 'name': 'itemTypeFields', urlPart: 'itemTypeFields', isKeyResource: false },
 	{ 'name': 'itemTypeCreatorTypes', urlPart: 'itemTypeCreatorTypes', isKeyResource: false },
@@ -358,7 +359,11 @@ const request = async config => {
 							response = new SingleReadResponse(content, options, rawResponse);
 						}
 					} else {
-						response = new ApiResponse(content, options, rawResponse);
+						if('schema' in options.resource) {
+							response = new SchemaResponse(content, options, rawResponse);
+						} else {
+							response = new ApiResponse(content, options, rawResponse);
+						}
 					}
 				break;
 				case 'POST':

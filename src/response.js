@@ -65,6 +65,25 @@ class ApiResponse {
 	}
 }
 
+class SchemaResponse extends ApiResponse {
+	/**
+	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	*/
+	getResponseType() {
+		return 'SchemaResponse';
+	}
+	/**
+	* @returns {number} Version of the schema
+	*/
+	getVersion() {
+		return this.raw.version;
+	}
+
+	getMeta() {
+		return null;
+	}
+}
+
 /**
  * @class Represents a response to a GET request containing a single entity
  * @extends ApiResponse
@@ -137,7 +156,7 @@ module:zotero-api-client~MultiReadResponse#getData}
 	getRelLinks() {
 		const links = this.response?.headers.get('link') ?? '';
 		const matches = Array.from(links.matchAll(/<(.*?)>;\s+rel="(.*?)"/ig));
-		return Array.from(matches).reduce((acc, [_match, url, rel]) => {
+		return Array.from(matches).reduce((acc, [_match, url, rel]) => { // eslint-disable-line no-unused-vars
 			acc[rel] = url;
 			return acc;
 		}, {});
@@ -458,4 +477,4 @@ class ErrorResponse extends Error {
 
 export { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse,
 FileUploadResponse, FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse,
-RawApiResponse, SingleReadResponse, SingleWriteResponse };
+RawApiResponse, SchemaResponse, SingleReadResponse, SingleWriteResponse };

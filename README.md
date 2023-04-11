@@ -181,6 +181,7 @@ API Reference
         * [~itemTypes()](#module_zotero-api-client..api..itemTypes) ⇒ <code>Object</code>
         * [~itemFields()](#module_zotero-api-client..api..itemFields) ⇒ <code>Object</code>
         * [~creatorFields()](#module_zotero-api-client..api..creatorFields) ⇒ <code>Object</code>
+        * [~schema()](#module_zotero-api-client..api..schema) ⇒ <code>Object</code>
         * [~itemTypeFields(itemType)](#module_zotero-api-client..api..itemTypeFields) ⇒ <code>Object</code>
         * [~itemTypeCreatorTypes(itemType)](#module_zotero-api-client..api..itemTypeCreatorTypes) ⇒ <code>Object</code>
         * [~template(itemType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
@@ -574,6 +575,7 @@ Wrapper function creates closure scope and calls api()
     * [~itemTypes()](#module_zotero-api-client..api..itemTypes) ⇒ <code>Object</code>
     * [~itemFields()](#module_zotero-api-client..api..itemFields) ⇒ <code>Object</code>
     * [~creatorFields()](#module_zotero-api-client..api..creatorFields) ⇒ <code>Object</code>
+    * [~schema()](#module_zotero-api-client..api..schema) ⇒ <code>Object</code>
     * [~itemTypeFields(itemType)](#module_zotero-api-client..api..itemTypeFields) ⇒ <code>Object</code>
     * [~itemTypeCreatorTypes(itemType)](#module_zotero-api-client..api..itemTypeCreatorTypes) ⇒ <code>Object</code>
     * [~template(itemType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
@@ -671,6 +673,14 @@ Can only be used in conjuction with get()
 #### api~creatorFields() ⇒ <code>Object</code>
 Configure api to request localized creator fields
 Can only be used in conjuction with get()
+
+**Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+<a name="module_zotero-api-client..api..schema"></a>
+
+#### api~schema() ⇒ <code>Object</code>
+Configure api to request schema
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  

@@ -638,7 +638,7 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
-		it('should return only return url and config if pretend = true', () => {
+		it('should only return url and config if pretend = true', () => {
 			return request({
 				resource: {
 					library: 'u475425',
@@ -660,7 +660,6 @@ describe('ZoteroJS request', () => {
 				assert.include(url, 'start=100')
 				assert.include(url, 'limit=50')
 				assert.strictEqual(fetchConfig.method, 'GET');
-				assert.strictEqual(fetchConfig.headers['Content-Type'], 'application/json');
 				assert.strictEqual(fetchConfig.headers['If-Unmodified-Since-Version'], 42);
 			});
 		});
@@ -705,6 +704,26 @@ describe('ZoteroJS request', () => {
 				'ifModifiedSinceVersion': 1,
 				'ifUnmodifiedSinceVersion': 1 ,
 				'contentType': 'c'
+			});
+		});
+
+		it('should not include unnecessary headers', () => {
+			fetchMock.mock(
+				(url, opts) => {
+					assert.property(opts, 'headers');
+					assert.notProperty(opts.headers, 'Authorization');
+					assert.notProperty(opts.headers, 'Zotero-Write-Token');
+					assert.notProperty(opts.headers, 'If-Modified-Since-Version');
+					assert.notProperty(opts.headers, 'If-Unmodified-Since-Version');
+					assert.notProperty(opts.headers, 'Content-Type');
+					return true;
+				}, {}
+			);
+			
+			return request({
+				resource: {
+					schema: null,
+				},
 			});
 		});
 
@@ -898,6 +917,7 @@ describe('ZoteroJS request', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
 					assert.strictEqual(opts.method, 'POST');
+					assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
 					return true;
 				}, {
 				headers: {
@@ -1036,6 +1056,7 @@ describe('ZoteroJS request', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
 					assert.strictEqual(opts.method, 'POST');
+					assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
 					return true;
 				}, {
 				headers: {
@@ -1101,6 +1122,7 @@ describe('ZoteroJS request', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
 					assert.strictEqual(opts.method, 'PUT');
+					assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
 					return true;
 				}, {
 				status: 204,
@@ -1138,6 +1160,7 @@ describe('ZoteroJS request', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
 					assert.strictEqual(opts.method, 'PATCH');
+					assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
 					return true;
 				}, {
 				status: 204,
@@ -1172,6 +1195,7 @@ describe('ZoteroJS request', () => {
 			fetchMock.mock( (url, opts) => {
 					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
 					assert.strictEqual(opts.method, 'DELETE');
+					assert.notProperty(opts.headers, 'Content-Type');
 					return true;
 				}, {
 				status: 204,
@@ -1313,6 +1337,27 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getVersion(), 1234);
 				assert.strictEqual(response.response.status, 204);
 				assert.isNull(response.raw);
+			});
+		});
+
+		it('should override default headers based on config', () => {
+			fetchMock.mock(
+				(url, opts) => {
+					assert.property(opts, 'headers');
+					assert.strictEqual(opts.method, 'PUT');
+					assert.strictEqual(opts.headers['Content-Type'], 'text-plain');
+					return true;
+				}, {}
+			);
+
+			return request({
+				method: 'put',
+				body: '',
+				resource: {
+					library: 'u475425',
+					settings: 'test'
+				},
+				'contentType': 'text-plain'
 			});
 		});
 	});

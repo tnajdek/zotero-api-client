@@ -82,7 +82,6 @@ const resourcesSpecs = [
 const defaults = {
 	apiAuthorityPart: 'api.zotero.org',
 	cache: 'default',
-	contentType: 'application/json',
 	credentials: 'omit',
 	format: 'json',
 	method: 'get',
@@ -224,6 +223,11 @@ const request = async config => {
 	}
 
 	const options = {...defaults, ...config};
+	
+	if (['POST', 'PUT', 'PATCH'].includes(options.method.toUpperCase()) && !('contentType' in config)) {
+		options.contentType = 'application/json';
+	}
+
 	const headers = {};
 
 	for(let header of Object.keys(headerNames)) {

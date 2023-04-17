@@ -681,6 +681,7 @@ Can only be used in conjuction with get()
 
 #### api~schema() ⇒ <code>Object</code>
 Configure api to request schema
+Can only be used in conjuction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  

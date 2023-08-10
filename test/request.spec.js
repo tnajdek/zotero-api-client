@@ -98,6 +98,33 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(Object.keys(response.getData()).length, 2);
 			});
 		});
+		
+		it('should get annotation template', () => {
+			fetchMock.mock(
+				url => {
+					return url.startsWith('https://api.zotero.org/items/new') &&
+					[
+						['itemType', 'annotation'],
+						['annotationType', 'highlight']
+					].every(([q, v]) => url.match(new RegExp(`\\b${q}=${v}\\b`)));
+				}, {
+					itemType: 'annotation',
+					annotationType: 'highlight'
+				}
+			);
+
+			return request({
+				resource: {
+					template: null
+				},
+				itemType: 'annotation',
+				annotationType: 'highlight'
+			}).then(response => {
+				assert.instanceOf(response, ApiResponse);
+				assert.strictEqual(response.getData().itemType, 'annotation');
+				assert.strictEqual(Object.keys(response.getData()).length, 2);
+			});
+		});
 	});
 
 	describe('Item read requests', () => {

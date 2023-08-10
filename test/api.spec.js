@@ -563,6 +563,22 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.itemType, 'book');
 			assert.isNull(lrc.resource.template);
 		});
+
+		it('handles api.template for annotations', () => {
+			api().template('annotation', 'underline').get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.itemType, 'annotation');
+			assert.equal(lrc.annotationType, 'underline');
+			assert.isNull(lrc.resource.template);
+		});
+
+		it('handles api.template for attachments', () => {
+			api().template('attachment', 'imported_file').get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.itemType, 'attachment');
+			assert.equal(lrc.linkMode, 'imported_file');
+			assert.isNull(lrc.resource.template);
+		});
 	});
 
 	describe('Handles pretend calls', () => {

@@ -18,6 +18,7 @@ const headerNames = {
 const queryParamsWithArraySupport = [ "tag", "itemTag" ];
 
 const queryParamNames = [
+	'annotationType',
 	'collectionKey',
 	'content',
 	'direction',

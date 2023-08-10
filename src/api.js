@@ -165,13 +165,23 @@ const api = function() {
 	 * Can only be used in conjuction with get()
 	 * @param  {String} itemType - item type for which template will be
 	 *                             requested, e.g. 'book' or 'journalType'
+	 * @param  {String} subType -  annotationType if itemType is 'annotation'
+	 * 						   	   or linkMode if itemType is 'attachment'		
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const template = function(itemType) {
+	const template = function(itemType, subType) {
+		const subTypeOpts = {};
+		
+		if (subType && itemType === 'annotation') {
+			subTypeOpts.annotationType = subType;
+		} else if (subType && itemType === 'attachment') {
+			subTypeOpts.linkMode = subType;
+		}
+
 		return efr.bind(this)({
 			template: null
-		}, itemType ? { itemType } : {});
+		}, itemType ? { itemType, ...subTypeOpts } : {});
 	};
 
 	/**

@@ -1,11 +1,12 @@
 /* eslint-env mocha */
-import URL from 'url';
 import fetchMock from 'fetch-mock';
 import { assert } from 'chai';
 import _request from '../src/request.js';
-import { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
+import {
+	ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
 	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
-	SchemaResponse, SingleReadResponse, SingleWriteResponse, } from '../src/response.js';
+	SchemaResponse, SingleReadResponse, SingleWriteResponse,
+} from '../src/response.js';
 
 import singleGetResponseFixture from './fixtures/single-object-get-response.js';
 import multiGetResponseFixture from './fixtures/multi-object-get-response.js';
@@ -21,7 +22,10 @@ import userGroupsFixture from './fixtures/user-groups-response.js';
 const FILE = Uint8ClampedArray.from('lorem ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
 const FILE_MD5 = '80a751fde577028640c419000e33eba6';
 const FILE_NAME = 'test.txt';
-const FILE_SIZE = FILE.byteLength;
+const NEW_FILE = Uint8ClampedArray.from('lorem dolot ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
+const NEW_FILE_MD5 = '0293973cad1be8dbda55d94c53069865';
+const FILE_PATCH = new Uint8Array(28);
+const API_KEY = 'test';
 
 const request = async (opts) => {
 	var config = await _request(opts);
@@ -30,11 +34,11 @@ const request = async (opts) => {
 
 describe('ZoteroJS request', () => {
 	beforeEach(() => {
-			fetchMock.config.overwriteRoutes = false;
-			fetchMock.catch(request => {
-				throw(new Error(`A request to ${request} was not expected`));
-			});
+		fetchMock.config.overwriteRoutes = false;
+		fetchMock.catch(request => {
+			throw (new Error(`A request to ${request} was not expected`));
 		});
+	});
 
 	afterEach(() => fetchMock.restore());
 
@@ -98,19 +102,19 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(Object.keys(response.getData()).length, 2);
 			});
 		});
-		
+
 		it('should get annotation template', () => {
 			fetchMock.mock(
 				url => {
 					return url.startsWith('https://api.zotero.org/items/new') &&
-					[
-						['itemType', 'annotation'],
-						['annotationType', 'highlight']
-					].every(([q, v]) => url.match(new RegExp(`\\b${q}=${v}\\b`)));
+						[
+							['itemType', 'annotation'],
+							['annotationType', 'highlight']
+						].every(([q, v]) => url.match(new RegExp(`\\b${q}=${v}\\b`)));
 				}, {
-					itemType: 'annotation',
-					annotationType: 'highlight'
-				}
+				itemType: 'annotation',
+				annotationType: 'highlight'
+			}
 			);
 
 			return request({
@@ -150,11 +154,11 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get /top items from a user library', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/top'));
-					assert.strictEqual(opts.method, 'GET');
-					return true;
-				}, {
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/top'));
+				assert.strictEqual(opts.method, 'GET');
+				return true;
+			}, {
 				headers: {
 					'Last-Modified-Version': 1337,
 					'Total-Results': 15,
@@ -303,7 +307,7 @@ describe('ZoteroJS request', () => {
 				resource: {
 					library: 'u475425',
 					tags: null
-					},
+				},
 				tag: 'Fiction'
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
@@ -321,7 +325,7 @@ describe('ZoteroJS request', () => {
 				resource: {
 					library: 'u475425',
 					searches: null
-					},
+				},
 				searchKey: 'HHF7BB4C'
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
@@ -332,19 +336,19 @@ describe('ZoteroJS request', () => {
 		it('should handle sorting and pagination', () => {
 			fetchMock.mock(
 				url => {
-					let parsedUrl = URL.parse(url);
+					let parsedUrl = new URL(url);
 					parsedUrl = parsedUrl.search.slice(1);
 					parsedUrl = parsedUrl.split('&');
-					if(!parsedUrl.includes('sort=title')) {
+					if (!parsedUrl.includes('sort=title')) {
 						return false;
 					}
-					if(!parsedUrl.includes('direction=asc')) {
+					if (!parsedUrl.includes('direction=asc')) {
 						return false;
 					}
-					if(!parsedUrl.includes('limit=50')) {
+					if (!parsedUrl.includes('limit=50')) {
 						return false;
 					}
-					if(!parsedUrl.includes('start=25')) {
+					if (!parsedUrl.includes('start=25')) {
 						return false;
 					}
 					return true;
@@ -356,7 +360,7 @@ describe('ZoteroJS request', () => {
 				resource: {
 					library: 'u475425',
 					items: null
-					},
+				},
 				sort: 'title',
 				direction: 'asc',
 				limit: 50,
@@ -370,10 +374,10 @@ describe('ZoteroJS request', () => {
 		it('should handle searching by itemKey', () => {
 			fetchMock.mock(
 				url => {
-					let parsedUrl = URL.parse(url);
+					let parsedUrl = new URL(url);
 					parsedUrl = parsedUrl.search.slice(1);
 					parsedUrl = parsedUrl.split('&');
-					if(!parsedUrl.includes('itemKey=N7W92H48')) {
+					if (!parsedUrl.includes('itemKey=N7W92H48')) {
 						return false;
 					}
 					return true;
@@ -385,7 +389,7 @@ describe('ZoteroJS request', () => {
 				resource: {
 					library: 'u475425',
 					items: null
-					},
+				},
 				itemKey: 'N7W92H48'
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
@@ -394,11 +398,11 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should handle multiple response with missing headers', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/top'));
-					assert.strictEqual(opts.method, 'GET');
-					return true;
-				}, {
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/top'));
+				assert.strictEqual(opts.method, 'GET');
+				return true;
+			}, {
 				headers: {},
 				body: multiGetResponseFixture
 			});
@@ -430,7 +434,7 @@ describe('ZoteroJS request', () => {
 				resource: {
 					library: 'u475425',
 					searches: null
-					},
+				},
 				searchKey: 'HHF7BB4C'
 			}).then(response => {
 				assert.instanceOf(response, MultiReadResponse);
@@ -448,7 +452,7 @@ describe('ZoteroJS request', () => {
 				resource: {
 					library: 'u475425',
 					searches: null
-					}
+				}
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
 				assert.strictEqual(response.getData().length, 1);
@@ -556,7 +560,7 @@ describe('ZoteroJS request', () => {
 
 		it('should get a set of tags for filtered by itemsQ and itemsTag', () => {
 			fetchMock.mock(
-				url => { 
+				url => {
 					assert.isOk(
 						url.startsWith('https://api.zotero.org/users/475425/items/tags')
 					);
@@ -651,7 +655,7 @@ describe('ZoteroJS request', () => {
 				/https:\/\/api.zotero.org\/users\/475425\/?.*?since=42/i,
 				responseRaw
 			);
-			
+
 			return request({
 				resource: {
 					library: 'u475425',
@@ -697,7 +701,7 @@ describe('ZoteroJS request', () => {
 				keysCurrentResponse
 			);
 
-			return request({ 
+			return request({
 				resource: { verifyKeyAccess: null }
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
@@ -729,7 +733,7 @@ describe('ZoteroJS request', () => {
 				'authorization': 'a',
 				'zoteroWriteToken': 'b',
 				'ifModifiedSinceVersion': 1,
-				'ifUnmodifiedSinceVersion': 1 ,
+				'ifUnmodifiedSinceVersion': 1,
 				'contentType': 'c'
 			});
 		});
@@ -746,7 +750,7 @@ describe('ZoteroJS request', () => {
 					return true;
 				}, {}
 			);
-			
+
 			return request({
 				resource: {
 					schema: null,
@@ -756,7 +760,7 @@ describe('ZoteroJS request', () => {
 
 		it('should include query params in the request', () => {
 			fetchMock.mock(
-				url => { 
+				url => {
 					return [
 						'collectionKey', 'content', 'direction', 'format', 'include', 'includeTrashed',
 						'itemKey', 'itemType', 'limit', 'q', 'qmode', 'searchKey', 'since', 'sort',
@@ -795,7 +799,7 @@ describe('ZoteroJS request', () => {
 				'https://api.zotero.org/users/475425/items?format=json&tag=aaa&tag=bbb',
 				multiGetResponseFixture
 			);
-			
+
 			return request({
 				resource: {
 					library: 'u475425',
@@ -910,7 +914,7 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
 				assert.strictEqual(response.options.retryCount, 2);
 			});
-		}).timeout(4000); // first retry after 1 sec, second after further 2 sec, 1 sec for everything else
+		}, 4000) // timeout 4s: first retry after 1 sec, second after further 2 sec, 1 sec for everything else
 
 		it('should retry request on error immediately configured to do so', async () => {
 			fetchMock.mock('begin:https://api.zotero.org/users/475425/items/top', {
@@ -941,19 +945,19 @@ describe('ZoteroJS request', () => {
 
 	describe('Item write & delete requests', () => {
 		it('should post a single item', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
-					assert.strictEqual(opts.method, 'POST');
-					assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
-					return true;
-				}, {
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
+				assert.strictEqual(opts.method, 'POST');
+				assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
+				return true;
+			}, {
 				headers: {
 					'Last-Modified-Version': 1337
 				},
 				body: multiSuccessWriteResponseFixture
 			});
 
-			const item ={
+			const item = {
 				'key': 'AZBCAADA',
 				'version': 0,
 				'itemType': 'book',
@@ -980,16 +984,16 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should use new data from successful write response', () => {
-			const item ={
+			const item = {
 				'version': 0,
 				'itemType': 'book',
 				'title': 'My Amazing Book'
 			};
 
-			fetchMock.post( (url) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
-					return true;
-				}, {
+			fetchMock.post((url) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
+				return true;
+			}, {
 				headers: {
 					'Last-Modified-Version': 1337
 				},
@@ -1018,7 +1022,7 @@ describe('ZoteroJS request', () => {
 					}
 				}
 			});
-			
+
 			return request({
 				method: 'post',
 				body: [item],
@@ -1073,19 +1077,19 @@ describe('ZoteroJS request', () => {
 				'title': 'My super paper'
 			};
 
-			const serverSideData = { 
+			const serverSideData = {
 				dateAdded: "2018-07-05T09:24:36Z",
 				dateModified: "2018-07-05T09:24:36Z",
 				tags: [],
 				relations: {}
 			};
 
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
-					assert.strictEqual(opts.method, 'POST');
-					assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
-					return true;
-				}, {
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
+				assert.strictEqual(opts.method, 'POST');
+				assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
+				return true;
+			}, {
 				headers: {
 					'Last-Modified-Version': 1337
 				},
@@ -1093,9 +1097,9 @@ describe('ZoteroJS request', () => {
 					...multiMixedWriteResponseFixture,
 					"successful": {
 						// add server side data to one of the responses
-						"0": { 
+						"0": {
 							data: {
-							...book, ...serverSideData
+								...book, ...serverSideData
 							},
 							meta: {
 								parsedDate: "1987"
@@ -1146,12 +1150,12 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should update put a single, complete item', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.strictEqual(opts.method, 'PUT');
-					assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
-					return true;
-				}, {
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
+				assert.strictEqual(opts.method, 'PUT');
+				assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
+				return true;
+			}, {
 				status: 204,
 				headers: {
 					'Last-Modified-Version': 42
@@ -1184,12 +1188,12 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should patch a single item', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.strictEqual(opts.method, 'PATCH');
-					assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
-					return true;
-				}, {
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
+				assert.strictEqual(opts.method, 'PATCH');
+				assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
+				return true;
+			}, {
 				status: 204,
 				headers: {
 					'Last-Modified-Version': 42
@@ -1219,12 +1223,12 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should delete a single item', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.strictEqual(opts.method, 'DELETE');
-					assert.notProperty(opts.headers, 'Content-Type');
-					return true;
-				}, {
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
+				assert.strictEqual(opts.method, 'DELETE');
+				assert.notProperty(opts.headers, 'Content-Type');
+				return true;
+			}, {
 				status: 204,
 				headers: {
 					'Last-Modified-Version': 43
@@ -1248,14 +1252,14 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should delete multiple items', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.strictEqual(opts.method, 'DELETE');
-					let parsedUrl = URL.parse(url);
-					parsedUrl = parsedUrl.search.slice(1);
-					parsedUrl = parsedUrl.split('&');
-					assert.isOk(parsedUrl.includes('itemKey=ABCD1111%2CABCD2222%2CABCD3333'));
-					return true;
-				}, {
+			fetchMock.mock((url, opts) => {
+				assert.strictEqual(opts.method, 'DELETE');
+				let parsedUrl = new URL(url);
+				parsedUrl = parsedUrl.search.slice(1);
+				parsedUrl = parsedUrl.split('&');
+				assert.isOk(parsedUrl.includes('itemKey=ABCD1111%2CABCD2222%2CABCD3333'));
+				return true;
+			}, {
 				status: 204,
 				headers: {
 					'Last-Modified-Version': 100
@@ -1278,22 +1282,26 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should post updated library settings', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings'));
-					assert.strictEqual(opts.method, 'POST');
-					assert.equal(opts.body, JSON.stringify(newSettings));
-					return true;
-				}, {
-					status: 204,
-					headers: {
-						'Last-Modified-Version': 3483
-					}
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings'));
+				assert.strictEqual(opts.method, 'POST');
+				assert.equal(opts.body, JSON.stringify(newSettings));
+				return true;
+			}, {
+				status: 204,
+				headers: {
+					'Last-Modified-Version': 3483
+				}
 			});
 
-			const newSettings = { tagColors: { value: [ {
-				"name": "test-tag",
-				"color": "#ffcc00"
-			}]}};
+			const newSettings = {
+				tagColors: {
+					value: [{
+						"name": "test-tag",
+						"color": "#ffcc00"
+					}]
+				}
+			};
 
 			return request({
 				method: 'post',
@@ -1310,22 +1318,24 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should put individual updated keys into library settings', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings/tagColors'));
-					assert.strictEqual(opts.method, 'PUT');
-					assert.equal(opts.body, JSON.stringify(newSettings));
-					return true;
-				}, {
-					status: 204,
-					headers: {
-						'Last-Modified-Version': 3483
-					}
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings/tagColors'));
+				assert.strictEqual(opts.method, 'PUT');
+				assert.equal(opts.body, JSON.stringify(newSettings));
+				return true;
+			}, {
+				status: 204,
+				headers: {
+					'Last-Modified-Version': 3483
+				}
 			});
 
-			const newSettings = { value: [ {
-				"name": "test-tag",
-				"color": "#ffcc00"
-			}]};
+			const newSettings = {
+				value: [{
+					"name": "test-tag",
+					"color": "#ffcc00"
+				}]
+			};
 
 			return request({
 				method: 'put',
@@ -1342,15 +1352,15 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should delete individual keys from library settings', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings/tagColors'));
-					assert.strictEqual(opts.method, 'DELETE');
-					return true;
-				}, {
-					status: 204,
-					headers: {
-						'Last-Modified-Version': 1234
-					}
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings/tagColors'));
+				assert.strictEqual(opts.method, 'DELETE');
+				return true;
+			}, {
+				status: 204,
+				headers: {
+					'Last-Modified-Version': 1234
+				}
 			});
 
 			return request({
@@ -1391,11 +1401,11 @@ describe('ZoteroJS request', () => {
 
 	describe('Failing write & delete requests', () => {
 		it('should throw ErrorResponse for error post responses', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.strictEqual(opts.method, 'PUT');
-					return true;
-				}, {
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
+				assert.strictEqual(opts.method, 'PUT');
+				return true;
+			}, {
 				status: 400,
 				body: 'Uploaded data must be a JSON array'
 			});
@@ -1417,11 +1427,11 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should throw ErrorResponse for error put responses', () => {
-			fetchMock.mock( (url, opts) => {
-					assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-					assert.strictEqual(opts.method, 'PUT');
-					return true;
-				}, {
+			fetchMock.mock((url, opts) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
+				assert.strictEqual(opts.method, 'PUT');
+				return true;
+			}, {
 				status: 412,
 				body: 'Item has been modified since specified version (expected 42, found 41)'
 			});
@@ -1470,21 +1480,167 @@ describe('ZoteroJS request', () => {
 			body: undefined,
 			fileName: FILE_NAME,
 			contentType: 'application/x-www-form-urlencoded',
+			zoteroApiKey: API_KEY
 		};
-		it('should perform 3-step file upload procedure ', () => {
-			let counter = 0; 
+
+		let filePatchFullRequest = {
+			method: 'post',
+			resource: {
+				library: 'u475425',
+				items: 'ABCD1111',
+				file: null
+			},
+			format: null,
+			file: NEW_FILE,
+			ifMatch: FILE_MD5, // old file's md5
+			body: undefined,
+			fileName: FILE_NAME,
+			contentType: 'application/x-www-form-urlencoded',
+			zoteroApiKey: API_KEY
+		};
+
+		let filePatchPartialRequest = {
+			method: 'patch',
+			resource: {
+				library: 'u475425',
+				items: 'ABCD1111',
+				file: null
+			},
+			format: null,
+			file: NEW_FILE,
+			ifMatch: FILE_MD5, // old file's md5
+			body: undefined,
+			fileName: FILE_NAME,
+			contentType: 'application/x-www-form-urlencoded',
+			filePatch: FILE_PATCH,
+			algorithm: 'xdelta',
+			zoteroApiKey: API_KEY
+		};
+		it('should upload a new file', () => {
+			let counter = 0;
 			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', (url, options) => {
 				var config = options.body.split('&').reduce(
-					(acc, val) => { 
+					(acc, val) => {
 						acc[val.split('=')[0]] = val.split('=')[1];
 						return acc
 					}, {}
 				);
-				switch(counter++) {
+				switch (counter++) {
 					case 0:
+						// first request: upload authorization
 						assert.propertyVal(config, 'md5', FILE_MD5);
 						assert.propertyVal(config, 'filename', FILE_NAME);
-						assert.propertyVal(config, 'filesize', FILE_SIZE.toString());
+						assert.propertyVal(config, 'filesize', FILE.byteLength.toString());
+						assert.property(config, 'mtime');
+						return {
+							'url': 'https://storage.zotero.org',
+							'contentType': 'text/plain',
+							'prefix': 'some prefix',
+							'suffix': 'some suffix',
+							'uploadKey': 'some key',
+						};
+					case 1:
+						// final request: register upload
+						assert.propertyVal(config, 'upload', 'some key');
+						return {
+							status: 204,
+							headers: {
+								'Last-Modified-Version': 42
+							}
+						};
+					default:
+						throw (new Error(`This is ${counter + 1} request to ${url}. Only expected 2 requests.`));
+				}
+			});
+			// second request: upload file to storage
+			fetchMock.once('https://storage.zotero.org', (url, options) => {
+				assert.strictEqual(counter, 1);
+				assert.strictEqual(options.body.byteLength, 33);
+				return {
+					status: 201
+				};
+			});
+			return request({ ...fileUploadRequest }).then(response => {
+				assert.instanceOf(response, FileUploadResponse);
+				assert.strictEqual(response.getResponseType(), 'FileUploadResponse');
+				assert.strictEqual(response.getVersion(), 42);
+				assert.isNotOk(response.getData().exists);
+			});
+		});
+
+		it('should update a file, using partial upload', () => {
+			let counter = 0;
+			fetchMock.mock('begin:https://api.zotero.org/users/475425/items/ABCD1111/file', (url, options) => {
+				const config = (counter === 0 || counter == 2) && options.body.split('&').reduce(
+					(acc, val) => {
+						acc[val.split('=')[0]] = val.split('=')[1];
+						return acc
+					}, {}
+				);
+				const parsedUrl = new URL(url);
+				assert.strictEqual(options.headers['Zotero-API-Key'], API_KEY);
+				switch (counter++) {
+					case 0:
+						// first request: upload authorization
+						assert.strictEqual(options.method, 'POST');
+						assert.strictEqual(options.headers['If-Match'], FILE_MD5);
+						assert.strictEqual(options.headers['Content-Type'], 'application/x-www-form-urlencoded');
+						assert.propertyVal(config, 'md5', NEW_FILE_MD5);
+						assert.propertyVal(config, 'filename', FILE_NAME);
+						assert.propertyVal(config, 'filesize', NEW_FILE.byteLength.toString());
+						assert.property(config, 'mtime');
+						return {
+							headers: {
+								'Last-Modified-Version': 42
+							},
+							body: {
+								'url': 'https://storage.zotero.org',
+								'contentType': 'text/plain',
+								'prefix': 'some prefix',
+								'suffix': 'some suffix',
+								'uploadKey': 'some key',
+							}
+						};
+					case 1:
+						// second (last) request: upload file patch
+						assert.strictEqual(options.method, 'PATCH');
+						assert.strictEqual(parsedUrl.searchParams.get('algorithm'), 'xdelta');
+						assert.strictEqual(parsedUrl.searchParams.get('upload'), 'some key');
+						assert.strictEqual(options.headers['If-Match'], FILE_MD5);
+						assert.strictEqual(options.body.byteLength, 28); // xdelta patch size
+						return {
+							status: 204
+						};
+					default:
+						throw (new Error(`Counted ${counter} requests to ${url}. Only expected 2 requests.`));
+				}
+			});
+			return request(filePatchPartialRequest).then(response => {
+				assert.instanceOf(response, FileUploadResponse);
+				assert.strictEqual(response.getResponseType(), 'FileUploadResponse');
+				assert.strictEqual(response.getVersion(), 42);
+				assert.isNotOk(response.getData().exists);
+			});
+		});
+
+		it('should update a file, using full upload', () => {
+			let counter = 0;
+			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', (url, options) => {
+				var config = options.body.split('&').reduce(
+					(acc, val) => {
+						acc[val.split('=')[0]] = val.split('=')[1];
+						return acc
+					}, {}
+				);
+				switch (counter++) {
+					case 0:
+						// first request: upload authorization
+						assert.strictEqual(options.method, 'POST');
+						assert.strictEqual(options.headers['If-Match'], FILE_MD5);
+						assert.strictEqual(options.headers['Content-Type'], 'application/x-www-form-urlencoded');
+						assert.propertyVal(config, 'md5', NEW_FILE_MD5);
+						assert.propertyVal(config, 'filename', FILE_NAME);
+						assert.propertyVal(config, 'filesize', NEW_FILE.byteLength.toString());
 						assert.property(config, 'mtime');
 						return {
 							'url': 'https://storage.zotero.org',
@@ -1502,23 +1658,24 @@ describe('ZoteroJS request', () => {
 							}
 						};
 					default:
-						throw(new Error(`This is ${counter + 1} request to ${url}. Only expected 2 requests.`));
+						throw (new Error(`Counted ${counter} requests to ${url}. Only expected 2 requests.`));
 				}
 			});
 			fetchMock.once('https://storage.zotero.org', (url, options) => {
 				assert.strictEqual(counter, 1);
-				assert.strictEqual(options.body.byteLength, 33);
+				assert.strictEqual(options.body.byteLength, NEW_FILE.byteLength + 'some prefix'.length + 'some suffix'.length);
 				return {
 					status: 201
 				};
 			});
-			return request({ ...fileUploadRequest }).then(response => {
+			return request({ ...filePatchFullRequest }).then(response => {
 				assert.instanceOf(response, FileUploadResponse);
 				assert.strictEqual(response.getResponseType(), 'FileUploadResponse');
 				assert.strictEqual(response.getVersion(), 42);
 				assert.isNotOk(response.getData().exists);
 			});
 		});
+
 		it('should handle { exists: 1 } response in stage 1', () => {
 			fetchMock.once('https://api.zotero.org/users/475425/items/ABCD1111/file', {
 				headers: {
@@ -1533,7 +1690,7 @@ describe('ZoteroJS request', () => {
 					assert.isOk(response.getData().exists);
 				});
 		});
-		it('should detect invalid config', () => {
+		it('should detect invalid config: body and file', () => {
 			return request({
 				...fileUploadRequest,
 				body: 'should not be here'
@@ -1541,9 +1698,10 @@ describe('ZoteroJS request', () => {
 				throw new Error('fail');
 			}).catch(error => {
 				assert.instanceOf(error, Error);
-				assert.include(error.toString(), 'Cannot use both');
+				assert.match(error.toString(), /Cannot use both "file" and "body" in a single request./);
 			})
 		});
+
 		it('should handle error reponse in stage 1', () => {
 			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', {
 				status: 409,
@@ -1639,7 +1797,7 @@ describe('ZoteroJS request', () => {
 					assert.instanceOf(response, FileUploadResponse);
 					assert.strictEqual(response.getVersion(), 42);
 					assert.isOk(response.getData().exists);
-			});
+				});
 		});
 
 		it('should handle error if attempting to register file that does not exist', () => {
@@ -1683,8 +1841,8 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(
 					Array.from(
 						(new Uint8ClampedArray(response.getData())))
-							.map(b => String.fromCharCode(b))
-							.join(''),
+						.map(b => String.fromCharCode(b))
+						.join(''),
 					'lorem ipsum'
 				);
 			});

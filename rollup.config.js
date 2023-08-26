@@ -12,6 +12,16 @@ const config = {
 		'cross-fetch/polyfill',
 		/@babel\/runtime/
 	],
+	treeshake: {
+		preset: 'smallest',
+		unknownGlobalSideEffects: false,
+		moduleSideEffects: (id) => {
+			if (id.includes('core-js/')) {
+				return true;
+			}
+			return false;
+		}
+	},
 	output: {
 		format: 'cjs',
 		compact: false,
@@ -43,11 +53,14 @@ if(process.env.DEBUG) {
 
 export default [
 	{ ...config, input: 'src/main.js', output: { ...config.output, file: 'lib/main.cjs' } },
-	{ ...config, input: 'src/main-node.js', output: { ...config.output, file: 'lib/main-node.cjs' } },
+	{ ...config,
+		input: 'src/main-node.js',
+		output: { ...config.output, file: 'lib/main-node.cjs' },
+	},
 	{ ...config, 
 		external: [],
 		input: 'src/main.js',
 		output: { ...config.output, compact: true, name: 'ZoteroApiClient', format: 'umd', file: 'dist/zotero-api-client.js' },
 		plugins: [ ...config.plugins, terser() ]
-	}
+	},
 ];

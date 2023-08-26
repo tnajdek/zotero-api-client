@@ -12,25 +12,24 @@
   "author": "Tom Najdek",
   "license": "AGPL-3.0",
   "engines": {
-    "node": ">= 10.0.0"
+    "node": ">= 18.0.0"
   },
   "browserify": {
     "transform": [
       "babelify"
     ]
   },
-  "browserslist": "firefox >= 68, chrome >=67, edge >= 15, safari >= 10, last 2 versions, not dead, not ie 11, not ie 10",
+  "browserslist": "firefox >= 68, chrome >= 67, edge >= 15, safari >= 11, last 2 versions, not dead, not ie 11, not ie 10",
   "scripts": {
     "readme": "jsdoc2md --template docs/README.md --no-cache --configure .jsdoc.json src/*.js > README.md",
-    "test": "c8 mocha --parallel",
-    "coverage": "c8 --reporter=html --reporter=text mocha --parallel",
-    "coverage-make-lcov": "c8 report --reporter=text-lcov > ./coverage/lcov.info",
-    "test-watch": "mocha -w --parallel",
+    "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules --no-warnings=ExperimentalWarning\" jest",
+    "coverage": "cross-env NODE_OPTIONS=\"--experimental-vm-modules --no-warnings=ExperimentalWarning\" jest --coverage",
+    "test-watch": "cross-env NODE_OPTIONS=\"--experimental-vm-modules --no-warnings=ExperimentalWarning\" jest --watchAll",
     "prepack": "npm run build",
     "postpack": "npm run clean",
     "lint": "eslint \"src/*.js\" || true",
     "clean": "rimraf dist lib",
-    "build": "rollup -c",
+    "build": "cross-env NODE_ENV=\"production\" rollup -c",
     "start": "npm run test-watch"
   },
   "files": [
@@ -56,11 +55,12 @@
     "@rollup/plugin-terser": "^0.4.3",
     "c8": "^8.0.1",
     "chai": "^4.3.7",
+    "cross-env": "^7.0.3",
     "eslint": "^8.46.0",
     "fetch-mock": "^9.11.0",
+    "jest": "^29.6.4",
     "jsdoc-strip-async-await": "^0.1.0",
     "jsdoc-to-markdown": "^8.0.0",
-    "mocha": "^10.2.0",
     "rimraf": "^5.0.1",
     "rollup": "^3.28.0",
     "rollup-plugin-filesize": "^10.0.0",

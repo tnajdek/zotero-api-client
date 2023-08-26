@@ -11,9 +11,10 @@ const SEARCH_KEY = 'SEARCH_KEY';
 const SETTING_KEY = 'SETTING_KEY';
 const URL_ENCODED_TAGS = 'URL_ENCODED_TAGS';
 const FILE = Uint8ClampedArray.from('lorem ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
+const NEW_FILE = Uint8ClampedArray.from('lorem dolot ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
+const PATCH = new Uint8Array(16);
 const FILE_NAME = 'test.txt';
 const MD5 = '9edb2ca32f7b57662acbc112a80cc59d';
-
 
 describe('Zotero Api Client', () => {
 	var lrc;
@@ -449,7 +450,7 @@ describe('Zotero Api Client', () => {
 	});
 
 	describe('Construct attachment requests', () => {
-		it('handles api.library.items(I).attachment(Fname, F).post()', () => {
+		it('handles api.library.items(I).attachment(Fname, F).post() to upload new file', () => {
 			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).attachment(FILE_NAME, FILE).post();
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
@@ -463,16 +464,31 @@ describe('Zotero Api Client', () => {
 			assert.isUndefined(lrc.body);
 		});
 
-		it('handles api.library.items(I).attachment(Fname, F, Fmtime, F2md5sum).post()', () => {
-			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).attachment(FILE_NAME, FILE, 22, MD5).post();
+		it('handles api.library.items(I).attachment(Fname, F, mtime, OLD_MD5).post() to update file by performing full upload', () => {
+			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).attachment(FILE_NAME, FILE, null, MD5).post();
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.equal(lrc.resource.items, ITEM_KEY);
 			assert.isNull(lrc.resource.file);
 			assert.equal(lrc.file.byteLength, FILE.byteLength);
 			assert.equal(lrc.fileName, FILE_NAME);
-			assert.equal(lrc.mtime, 22);
 			assert.equal(lrc.ifMatch, MD5);
+			assert.equal(lrc.contentType, 'application/x-www-form-urlencoded');
+			assert.isNull(lrc.format);
+			assert.isUndefined(lrc.body);
+		});
+
+		it('handles api.library.items(I).attachment(Fname, F, mtime, OLD_MD5, FILE_PATCH, ALG).patch() to update file by performing partial upload', () => {
+			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).attachment(FILE_NAME, NEW_FILE, null, MD5, PATCH, 'xdelta').patch();
+			assert.equal(lrc.method, 'patch');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.items, ITEM_KEY);
+			assert.isNull(lrc.resource.file);
+			assert.equal(lrc.fileName, FILE_NAME);
+			assert.equal(lrc.ifMatch, MD5);
+			assert.equal(lrc.algorithm, 'xdelta');
+			assert.equal(lrc.filePatch.byteLength, PATCH.byteLength);
+			assert.equal(lrc.file.byteLength, NEW_FILE.byteLength);
 			assert.equal(lrc.contentType, 'application/x-www-form-urlencoded');
 			assert.isNull(lrc.format);
 			assert.isUndefined(lrc.body);

@@ -1,10 +1,11 @@
 import SparkMD5 from 'spark-md5';
 
+
 import { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
 	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
 	SchemaResponse, SingleReadResponse, SingleWriteResponse, } from './response.js';
 
-const headerNames = {
+const acceptedHeaderNames = {
 	authorization: 'Authorization',
 	contentType: 'Content-Type',
 	ifMatch: 'If-Match',
@@ -41,6 +42,11 @@ const queryParamNames = [
 	'start',
 	'style',
 	'tag',
+];
+
+const filePatchQueryParamNames = [
+	'algorithm',
+	'upload',
 ];
 
 const fetchParamNames = [
@@ -118,9 +124,9 @@ const makeUrlPath = resource => {
 	return path.join('/');
 };
 
-const makeUrlQuery = options => {
+const makeUrlQuery = (options, paramNames) => {
 	let params = [];
-	for(let name of queryParamNames) {
+	for(let name of paramNames) {
 		if(options[name]) {
 			if(queryParamsWithArraySupport.includes(name) && Array.isArray(options[name])) {
 				params.push(...options[name].map(k => `${name}=${encodeURIComponent(k)}`));
@@ -131,6 +137,16 @@ const makeUrlQuery = options => {
 	}
 	return params.length ? '?' + params.join('&') : '';
 };
+
+const makeHeaders = (options, headerNames) => {
+	let headers = {};
+	for (let header of Object.keys(headerNames)) {
+		if (header in options) {
+			headers[headerNames[header]] = options[header];
+		}
+	}
+	return headers;
+}
 
 const hasDefinedKey = (object, key) => {
 	return key in object && object[key] !== null && typeof(object[key]) !== 'undefined';
@@ -224,20 +240,23 @@ const request = async config => {
 	}
 
 	const options = {...defaults, ...config};
+
+	if (hasDefinedKey(options, 'body') && (hasDefinedKey(options, 'file') || hasDefinedKey(options, 'oldFile'))) {
+		throw new Error('Cannot use both "file" and "body" in a single request.');
+	}
 	
 	if (['POST', 'PUT', 'PATCH'].includes(options.method.toUpperCase()) && !('contentType' in config)) {
 		options.contentType = 'application/json';
 	}
 
-	const headers = {};
-
-	for(let header of Object.keys(headerNames)) {
-		if(header in options) {
-			headers[headerNames[header]] = options[header];
-		}
+	if (hasDefinedKey(options, 'filePatch')) {
+		// for partial file upload api uses patch(), however first request (file authorisation still uses POST
+		options.method = 'POST';
 	}
+
+	const headers = makeHeaders(options, acceptedHeaderNames);
 	const path = makeUrlPath(options.resource);
-	const query = makeUrlQuery(options);
+	const query = makeUrlQuery(options, queryParamNames);
 	const url = `https://${options.apiAuthorityPart}/${path}${query}`;
 	const fetchConfig = {};
 
@@ -249,22 +268,20 @@ const request = async config => {
 		}
 	}
 
-	// build pre-upload (authorisation) request body based on the file provided
-	if(hasDefinedKey(options, 'body') && hasDefinedKey(options, 'file')) {
-		throw new Error('Cannot use both "file" and "body" in a single request.');
-	}
-
+	let fileUploadData = {};
 	// process the request for file upload authorisation request
-	if(hasDefinedKey(options, 'file') && hasDefinedKey(options, 'fileName')) {
+	if ((hasDefinedKey(options, 'filePatch') || hasDefinedKey(options, 'file')) && hasDefinedKey(options, 'fileName')) {
 		let fileName = options.fileName;
 		let md5sum = SparkMD5.ArrayBuffer.hash(options.file);
-		let filesize = options.file.byteLength;
-		let mtime = options.mtime || Date.now();
-		fetchConfig['body'] = `md5=${md5sum}&filename=${fileName}&filesize=${filesize}&mtime=${mtime}`;
+		let mtime = Date.now();
+		let fileSize = options.file.byteLength;
+		fileUploadData = { fileName, md5sum, mtime, fileSize };
+		fetchConfig['body'] = `md5=${md5sum}&filename=${fileName}&filesize=${fileSize}&mtime=${mtime}`;
 	}
 
 	if(options.uploadRegisterOnly === true) {
 		const { fileName, fileSize, md5sum, mtime } = options;
+		fileUploadData = { fileName, md5sum, mtime, fileSize };
 		fetchConfig['body'] = `md5=${md5sum}&filename=${fileName}&filesize=${fileSize}&mtime=${mtime}`;	
 	}
 
@@ -277,6 +294,7 @@ const request = async config => {
 		const response = new PretendResponse({ url, fetchConfig }, options);
 		return { response, ...config, source: 'request' };
 	}
+
 	let rawResponse = await fetch(url, fetchConfig);
 
 	if(isTransientFailure(rawResponse) && options.retry > 0) {
@@ -296,12 +314,12 @@ const request = async config => {
 		}
 	}
 
-	if((hasDefinedKey(options, 'file') && hasDefinedKey(options, 'fileName')) || options.uploadRegisterOnly === true) {
+	if (((hasDefinedKey(options, 'file') || hasDefinedKey(options, 'filePatch')) && hasDefinedKey(options, 'fileName')) || options.uploadRegisterOnly === true) {
 		if(rawResponse.ok) {
 			let authData = await rawResponse.json();
 			if('exists' in authData && authData.exists) {
-				response = new FileUploadResponse(authData, options, rawResponse);
-			} else {
+				response = new FileUploadResponse({ ...fileUploadData, ...authData }, options, rawResponse);
+			} else {	
 				if(options.uploadRegisterOnly === true) {
 					throw new ErrorResponse(
 						'API did not recognize provided file meta.',
@@ -309,31 +327,49 @@ const request = async config => {
 						rawResponse, options
 					);
 				}
-				let prefix = new Uint8ClampedArray(authData.prefix.split('').map(e => e.charCodeAt(0)));
-				let suffix = new Uint8ClampedArray(authData.suffix.split('').map(e => e.charCodeAt(0)));
-				let body = new Uint8ClampedArray(prefix.byteLength + options.file.byteLength + suffix.byteLength);
-				body.set(prefix, 0);
-				body.set(new Uint8ClampedArray(options.file), prefix.byteLength);
-				body.set(suffix, prefix.byteLength + options.file.byteLength);
-				
-				// follow-up request
-				let uploadResponse = await fetch(authData.url, {
-					headers: {
-						[headerNames['contentType']]: authData.contentType,
-					},
-					method: 'post',
-					body: body.buffer
-				});
+				let uploadResponse, isUploadSuccessful, registerResponse;
+				if(hasDefinedKey(options, 'filePatch')) {
+					const uploadQuery = makeUrlQuery({ ...options, upload: authData.uploadKey }, filePatchQueryParamNames);
+					const uploadUrl = `https://${options.apiAuthorityPart}/${path}${uploadQuery}`;
 
-				if(uploadResponse.status === 201) {
-					let registerResponse = await fetch(url, {
+					delete fetchConfig.headers['Content-Type'];
+					// upload file patch request
+					uploadResponse = await fetch(uploadUrl, {
+						...fetchConfig,
+						method: 'PATCH',
+						body: options.filePatch,
+					});
+					isUploadSuccessful = uploadResponse.status === 204;
+				} else {
+					let prefix = new Uint8ClampedArray(authData.prefix.split('').map(e => e.charCodeAt(0)));
+					let suffix = new Uint8ClampedArray(authData.suffix.split('').map(e => e.charCodeAt(0)));
+					let body = new Uint8ClampedArray(prefix.byteLength + options.file.byteLength + suffix.byteLength);
+					body.set(prefix, 0);
+					body.set(new Uint8ClampedArray(options.file), prefix.byteLength);
+					body.set(suffix, prefix.byteLength + options.file.byteLength);
+					
+					// full file upload request
+					uploadResponse = await fetch(authData.url, {
+						headers: {
+							[acceptedHeaderNames['contentType']]: authData.contentType,
+						},
+						method: 'POST',
+						body: body.buffer
+					});
+					isUploadSuccessful = uploadResponse.status === 201;
+					
+					// register file request
+					registerResponse = await fetch(url, {
 						...fetchConfig,
 						body: `upload=${authData.uploadKey}`
 					});
-					if(!registerResponse.ok) {
+					if (!registerResponse.ok) {
 						return await throwErrorResponse(registerResponse, options, 'Upload stage 3: ');
 					}
-					response = new FileUploadResponse({}, options, rawResponse, uploadResponse, registerResponse);
+				}
+
+				if (isUploadSuccessful) {
+					response = new FileUploadResponse(fileUploadData, options, rawResponse, uploadResponse, registerResponse);
 				} else {
 					return await throwErrorResponse(uploadResponse, options, 'Upload stage 2: ');
 				}

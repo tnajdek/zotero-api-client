@@ -362,32 +362,48 @@ const api = function() {
 
 	/**
 	 * Configure api to upload or download an attachment file
-	 * Can be only used in conjuction with items() and post()/get()
-	 * Use items() to select attachment item for which file is uploaded/downloaded
-	 * Will populate format on download as well as Content-Type, If-None-Match headers
-	 * in case of an upload
-	 * @param  {String} fileName  - name of the file, should match values in attachment
-	 *                              item entry
-	 * @param  {ArrayBuffer} file - file to be uploaded
-	 * @param  {Number} mtime     - file's mtime, if not provided current time is used
-	 * @param  {Number} md5sum    - existing file md5sum, if matches will override existing file. Leave empty to perform new upload.
+	 * Can be only used in conjuction with items() and post()/get()/patch()
+	 * Method patch() can only be used to upload a binary patch, in this case last two argument must be provided.
+	 * Method post() is used for full uploads. If `md5sum` it will update existing file, otherwise it upload a new file.
+	 * Method get() is used for downloads, in this case skipa all arguments.
+	 * Use items() to select attachment item for which file is uploaded/downloaded.
+	 * Will populate format on download as well as Content-Type, If*Match headers in case of upload.
+	 * @param {String} [fileName] - For upload: name of the file, should match values in attachment item entry
+	 * @param {ArrayBuffer} [file] - New file to be uploaded
+	 * @param {Number} [mtime] - New file's mtime, leave empty to assume current date/time
+	 * @param {String} [md5sum] - md5sum of an existing file, required for uploads that update the file
+	 * @param {ArrayBuffer} patch - Binary patch, to be applied to the old file, to produce a new file
+	 * @param {String} [algorithm] - Algorithm used to compute a diff: xdelta, vcdiff or bsdiff
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const attachment = function(fileName, file, mtime = null, md5sum = null) {
+	const attachment = function (fileName, file, mtime, md5sum, patch, algorithm) {
 		let resource = {
 			...this.resource,
 			file: null
 		};
+
+		let bindParams = {};
+
+		if(md5sum) {
+			bindParams.ifMatch = md5sum;
+			if (patch && algorithm) {
+				bindParams.filePatch = patch;
+				bindParams.algorithm = algorithm;
+			}
+		} else {
+			bindParams.ifNoneMatch = '*';
+		}
+
 		if(fileName && file) {
 			return ef.bind(this)({
 				format: null,
-				[md5sum ? 'ifMatch' : 'ifNoneMatch']: md5sum || '*',
 				contentType: 'application/x-www-form-urlencoded',
 				fileName,
-				file,
 				resource,
-				mtime
+				file,
+				mtime,
+				...bindParams
 			})	
 		} else {
 			return ef.bind(this)({ format: null, resource });

@@ -1,5 +1,5 @@
 const parseIntHeaders = (headers, headerName) => {
-	const value = headers && headers.get(headerName);
+	const value = (headers && headers.get(headerName)) || null;
 	return value === null ? null : parseInt(value, 10);
 }
 
@@ -371,8 +371,13 @@ class FileUploadResponse extends ApiResponse {
 	* @see {@link module:zotero-api-client~ApiResponse#getVersion}
 	*/
 	getVersion() {
-		return this.registerResponse ?
-			parseIntHeaders(this.registerResponse?.headers, 'Last-Modified-Version') :
+		// full upload will have latest version in the final register response,
+		// partial upload could have latest version in the upload response
+		// (because that goes through API), however currently that's not the case.
+		// If file existed before, and currently for partial uploads, latest version
+		// will be in obtained from the initial response
+		return parseIntHeaders(this.registerResponse?.headers, 'Last-Modified-Version') ??
+			parseIntHeaders(this.uploadResponse?.headers, 'Last-Modified-Version') ??
 			parseIntHeaders(this.response?.headers, 'Last-Modified-Version');
 	}
 }

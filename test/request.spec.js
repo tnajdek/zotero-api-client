@@ -135,7 +135,10 @@ describe('ZoteroJS request', () => {
 		it('should get a single item', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/items/X42A7DEE',
-				singleGetResponseFixture
+				{
+					headers: { 'Last-Modified-Version': 1 },
+					body: singleGetResponseFixture
+				}
 			);
 
 			return request({
@@ -148,6 +151,7 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getResponseType(), 'SingleReadResponse');
 				assert.strictEqual(response.getLinks().self.href, 'https://api.zotero.org/users/475425/items/X42A7DEE');
 				assert.strictEqual(response.getMeta().parsedDate, '1993');
+				assert.strictEqual(response.getVersion(), 1);
 				assert.strictEqual(Object.keys(response.getLinks()).length, 2);
 				assert.strictEqual(response.getData().key, 'X42A7DEE');
 			});
@@ -1867,6 +1871,7 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(response, FileUrlResponse);
 				assert.strictEqual(response.getResponseType(), 'FileUrlResponse');
 				assert.strictEqual(response.getData(), 'https://files.zotero.org/some-file');
+				assert.isNull(response.getVersion());
 			});
 		});
 	})

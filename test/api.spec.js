@@ -92,6 +92,8 @@ describe('Zotero Api Client', () => {
 
 			api(KEY).library(LIBRARY_KEY).items().version(42).post([]);
 			assert.equal(lrc.ifUnmodifiedSinceVersion, 42);
+			api(KEY).library(LIBRARY_KEY).items().version(0).post([]);
+			assert.equal(lrc.ifUnmodifiedSinceVersion, 0);
 
 			api(KEY).library(LIBRARY_KEY).items('AABBCCDD').version(42).put({});
 			assert.equal(lrc.ifUnmodifiedSinceVersion, 42);
@@ -598,7 +600,7 @@ describe('Zotero Api Client', () => {
 	});
 
 	describe('Handles pretend calls', () => {
-			it('handles api.library.items(I).pretend()', () => {
+		it('handles api.library.items(I).pretend()', () => {
 			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).pretend();
 			assert.equal(lrc.method, 'get');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
@@ -661,6 +663,27 @@ describe('Zotero Api Client', () => {
 			let configuredApi = api(KEY).library(LIBRARY_KEY).settings(SETTING_KEY);
 			assert.throws(configuredApi.delete.bind(configuredApi, []), 'Arguments to delete() not supported when deleting settings');
 		});
+
+		it('throws when api.itemTypeFields() is called without an itemType', () => {
+			let configuredApi = api();
+			assert.throws(configuredApi.itemTypeFields.bind(configuredApi), 'itemTypeFields() requires an itemType argument');
+		});
+
+		it('throws when api.itemTypeCreatorTypes() is called without an itemType', () => {
+			let configuredApi = api();
+			assert.throws(configuredApi.itemTypeCreatorTypes.bind(configuredApi), 'itemTypeCreatorTypes() requires an itemType argument');
+		});
+
+		it('throws when api.template() is called without an itemType', () => {
+			let configuredApi = api();
+			assert.throws(configuredApi.template.bind(configuredApi), 'template() requires an itemType argument');
+		});
+
+		it('throws when api.version() is called with invalid argument', () => {
+			let configuredApi = api();
+			assert.throws(configuredApi.version.bind(configuredApi), 'version() requires a number argument');
+		});
+		
 	});
 
 	describe('Handles extensions', () => {

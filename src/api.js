@@ -140,9 +140,12 @@ const api = function() {
 	 * @chainable
 	 */
 	const itemTypeFields = function(itemType) {
+		if (!itemType) {
+			throw new Error('itemTypeFields() requires an itemType argument');
+		}
 		return efr.bind(this)({
 			itemTypeFields: null
-		}, itemType ? { itemType } : {});
+		}, { itemType });
 	};
 
 	/**
@@ -155,9 +158,12 @@ const api = function() {
 	 * @chainable
 	 */
 	const itemTypeCreatorTypes = function(itemType) {
+		if (!itemType) {
+			throw new Error('itemTypeCreatorTypes() requires an itemType argument');
+		}
 		return efr.bind(this)({
 			itemTypeCreatorTypes: null
-		}, itemType ? { itemType } : {});
+		}, { itemType });
 	};
 
 	/**
@@ -171,6 +177,9 @@ const api = function() {
 	 * @chainable
 	 */
 	const template = function(itemType, subType) {
+		if (!itemType) {
+			throw new Error('template() requires an itemType argument');
+		}
 		const subTypeOpts = {};
 		
 		if (subType && itemType === 'annotation') {
@@ -181,7 +190,7 @@ const api = function() {
 
 		return efr.bind(this)({
 			template: null
-		}, itemType ? { itemType, ...subTypeOpts } : {});
+		}, { itemType, ...subTypeOpts });
 	};
 
 	/**
@@ -354,10 +363,11 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const version = function(version = null) {
-		return ef.bind(this)({
-			version: version
-		})
+	const version = function(version) {
+		if(typeof(version) !== 'number' || isNaN(version)) {
+			throw new Error('version() requires a number argument');
+		}
+		return ef.bind(this)({ version });
 	};
 
 	/**
@@ -641,7 +651,6 @@ const api = function() {
 		var relevantSearchKey;
 		var requestConfig, keysToDelete;
 		switch(method) {
-			default:
 			case 'get':
 				requestConfig = { ...config, ...opts, method };
 				if('version' in requestConfig) {

@@ -371,17 +371,19 @@ const api = function() {
 	};
 
 	/**
-	 * Configure api to upload or download an attachment file
-	 * Can be only used in conjuction with items() and post()/get()/patch()
-	 * Method patch() can only be used to upload a binary patch, in this case last two argument must be provided.
-	 * Method post() is used for full uploads. If `md5sum` it will update existing file, otherwise it upload a new file.
-	 * Method get() is used for downloads, in this case skipa all arguments.
+	 * Configure api to upload or download an attachment file.
+	 * Can be only used in conjuction with items() and post()/get()/patch().
+	 * Method patch() can only be used to upload a binary patch, in this case last two argument
+	 * must be provided.
+	 * Method post() is used for full uploads. If `md5sum` is provided, it will update existing
+	 * file, otherwise it uploads a new file. Last two arguments are not used in this scenario.
+	 * Method get() is used for downloads, in this case skip all arguments.
 	 * Use items() to select attachment item for which file is uploaded/downloaded.
 	 * Will populate format on download as well as Content-Type, If*Match headers in case of upload.
 	 * @param {String} [fileName] - For upload: name of the file, should match values in attachment item entry
 	 * @param {ArrayBuffer} [file] - New file to be uploaded
 	 * @param {Number} [mtime] - New file's mtime, leave empty to assume current date/time
-	 * @param {String} [md5sum] - md5sum of an existing file, required for uploads that update the file
+	 * @param {String} [md5sum] - MD5 hash of an existing file, required for uploads that update existing file
 	 * @param {ArrayBuffer} patch - Binary patch, to be applied to the old file, to produce a new file
 	 * @param {String} [algorithm] - Algorithm used to compute a diff: xdelta, vcdiff or bsdiff
 	 * @return {Object} Partially configured api functions
@@ -421,12 +423,12 @@ const api = function() {
 	}
 
 	/**
-	 * Advanced, low-level function that will attempt to register existing 
-	 * file with given attachment-item based on known file metadata
-	 * Can be only used in conjuction with items() and post()
-	 * Use items() to select attachment item for which file is registered
-	 * Will populate Content-Type, If-Match headers
-	 * Will fail with a ErrorResponse if API does not return "exists"
+	 * Advanced function that will attempt to register existing file
+	 * with given attachment-item based on known file metadata.
+	 * Can be only used in conjuction with items() and post().
+	 * Use items() to select attachment item for which file is registered.
+	 * Will populate Content-Type, If-Match headers.
+	 * Will fail with a ErrorResponse if API does not return "exists".
 	 * @param  {String} fileName  - name of the file, should match values in attachment
 	 *                              item entry
 	 * @param  {Number} fileSize  - size of the existing file
@@ -584,7 +586,7 @@ const api = function() {
 	 * instead returning a "pretended" response where details for the actual
 	 * fetch that would have been used are included.
 	 * Usually used in advanced scenarios where config needs to be tweaked
-	 * manually before submitted to the request method or as a debugging tool.
+	 * manually before it is submitted to the request method or as a debugging tool.
 	 * @param  {String} verb - Defines which execution function is used to prepare
 	 *                         the request. Should be one of 'get', 'post', 'patch'
 	 *                         'put', 'delete'. Defaults to 'get'.

@@ -184,7 +184,7 @@ API Reference
         * [~schema()](#module_zotero-api-client..api..schema) ⇒ <code>Object</code>
         * [~itemTypeFields(itemType)](#module_zotero-api-client..api..itemTypeFields) ⇒ <code>Object</code>
         * [~itemTypeCreatorTypes(itemType)](#module_zotero-api-client..api..itemTypeCreatorTypes) ⇒ <code>Object</code>
-        * [~template(itemType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
+        * [~template(itemType, subType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
         * [~collections(items)](#module_zotero-api-client..api..collections) ⇒ <code>Object</code>
         * [~subcollections()](#module_zotero-api-client..api..subcollections) ⇒ <code>Object</code>
         * [~publications()](#module_zotero-api-client..api..publications) ⇒ <code>Object</code>
@@ -197,7 +197,7 @@ API Reference
         * [~deleted()](#module_zotero-api-client..api..deleted) ⇒ <code>Object</code>
         * [~groups()](#module_zotero-api-client..api..groups) ⇒ <code>Object</code>
         * [~version(version)](#module_zotero-api-client..api..version) ⇒ <code>Object</code>
-        * [~attachment(fileName, file, mtime, md5sum)](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
+        * [~attachment([fileName], [file], [mtime], [md5sum], patch, [algorithm])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
         * [~registerAttachment(fileName, fileSize, mtime, md5sum)](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
         * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
         * [~verifyKeyAccess()](#module_zotero-api-client..api..verifyKeyAccess) ⇒ <code>Object</code>
@@ -578,7 +578,7 @@ Wrapper function creates closure scope and calls api()
     * [~schema()](#module_zotero-api-client..api..schema) ⇒ <code>Object</code>
     * [~itemTypeFields(itemType)](#module_zotero-api-client..api..itemTypeFields) ⇒ <code>Object</code>
     * [~itemTypeCreatorTypes(itemType)](#module_zotero-api-client..api..itemTypeCreatorTypes) ⇒ <code>Object</code>
-    * [~template(itemType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
+    * [~template(itemType, subType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
     * [~collections(items)](#module_zotero-api-client..api..collections) ⇒ <code>Object</code>
     * [~subcollections()](#module_zotero-api-client..api..subcollections) ⇒ <code>Object</code>
     * [~publications()](#module_zotero-api-client..api..publications) ⇒ <code>Object</code>
@@ -591,7 +591,7 @@ Wrapper function creates closure scope and calls api()
     * [~deleted()](#module_zotero-api-client..api..deleted) ⇒ <code>Object</code>
     * [~groups()](#module_zotero-api-client..api..groups) ⇒ <code>Object</code>
     * [~version(version)](#module_zotero-api-client..api..version) ⇒ <code>Object</code>
-    * [~attachment(fileName, file, mtime, md5sum)](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
+    * [~attachment([fileName], [file], [mtime], [md5sum], patch, [algorithm])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
     * [~registerAttachment(fileName, fileSize, mtime, md5sum)](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
     * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
     * [~verifyKeyAccess()](#module_zotero-api-client..api..verifyKeyAccess) ⇒ <code>Object</code>
@@ -716,7 +716,7 @@ Can only be used in conjuction with get()
 
 <a name="module_zotero-api-client..api..template"></a>
 
-#### api~template(itemType) ⇒ <code>Object</code>
+#### api~template(itemType, subType) ⇒ <code>Object</code>
 Configure api to request template for a new item
 Can only be used in conjuction with get()
 
@@ -727,6 +727,7 @@ Can only be used in conjuction with get()
 | Param | Type | Description |
 | --- | --- | --- |
 | itemType | <code>String</code> | item type for which template will be                             requested, e.g. 'book' or 'journalType' |
+| subType | <code>String</code> | annotationType if itemType is 'annotation' 						   	   or linkMode if itemType is 'attachment' |
 
 <a name="module_zotero-api-client..api..collections"></a>
 
@@ -877,39 +878,45 @@ populate the If-Unmodified-Since-Version header.
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| version | <code>Number</code> | <code></code> | local version of the entity |
+| Param | Type | Description |
+| --- | --- | --- |
+| version | <code>Number</code> | local version of the entity |
 
 <a name="module_zotero-api-client..api..attachment"></a>
 
-#### api~attachment(fileName, file, mtime, md5sum) ⇒ <code>Object</code>
-Configure api to upload or download an attachment file
-Can be only used in conjuction with items() and post()/get()
-Use items() to select attachment item for which file is uploaded/downloaded
-Will populate format on download as well as Content-Type, If-None-Match headers
-in case of an upload
+#### api~attachment([fileName], [file], [mtime], [md5sum], patch, [algorithm]) ⇒ <code>Object</code>
+Configure api to upload or download an attachment file.
+Can be only used in conjuction with items() and post()/get()/patch().
+Method patch() can only be used to upload a binary patch, in this case last two argument
+must be provided.
+Method post() is used for full uploads. If `md5sum` is provided, it will update existing
+file, otherwise it uploads a new file. Last two arguments are not used in this scenario.
+Method get() is used for downloads, in this case skip all arguments.
+Use items() to select attachment item for which file is uploaded/downloaded.
+Will populate format on download as well as Content-Type, If*Match headers in case of upload.
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| fileName | <code>String</code> |  | name of the file, should match values in attachment                              item entry |
-| file | <code>ArrayBuffer</code> |  | file to be uploaded |
-| mtime | <code>Number</code> | <code></code> | file's mtime, if not provided current time is used |
-| md5sum | <code>Number</code> | <code></code> | existing file md5sum, if matches will override existing file. Leave empty to perform new upload. |
+| Param | Type | Description |
+| --- | --- | --- |
+| [fileName] | <code>String</code> | For upload: name of the file, should match values in attachment item entry |
+| [file] | <code>ArrayBuffer</code> | New file to be uploaded |
+| [mtime] | <code>Number</code> | New file's mtime, leave empty to assume current date/time |
+| [md5sum] | <code>String</code> | MD5 hash of an existing file, required for uploads that update existing file |
+| patch | <code>ArrayBuffer</code> | Binary patch, to be applied to the old file, to produce a new file |
+| [algorithm] | <code>String</code> | Algorithm used to compute a diff: xdelta, vcdiff or bsdiff |
 
 <a name="module_zotero-api-client..api..registerAttachment"></a>
 
 #### api~registerAttachment(fileName, fileSize, mtime, md5sum) ⇒ <code>Object</code>
-Advanced, low-level function that will attempt to register existing 
-file with given attachment-item based on known file metadata
-Can be only used in conjuction with items() and post()
-Use items() to select attachment item for which file is registered
-Will populate Content-Type, If-Match headers
-Will fail with a ErrorResponse if API does not return "exists"
+Advanced function that will attempt to register existing file
+with given attachment-item based on known file metadata.
+Can be only used in conjuction with items() and post().
+Use items() to select attachment item for which file is registered.
+Will populate Content-Type, If-Match headers.
+Will fail with a ErrorResponse if API does not return "exists".
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -1030,7 +1037,7 @@ Execution function. Prepares the request but does not execute fetch()
 instead returning a "pretended" response where details for the actual
 fetch that would have been used are included.
 Usually used in advanced scenarios where config needs to be tweaked
-manually before submitted to the request method or as a debugging tool.
+manually before it is submitted to the request method or as a debugging tool.
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Returns**: <code>Promise</code> - A promise that will eventually return PretendResponse.

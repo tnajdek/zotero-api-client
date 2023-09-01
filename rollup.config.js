@@ -16,7 +16,7 @@ const config = {
 		preset: 'smallest',
 		unknownGlobalSideEffects: false,
 		moduleSideEffects: (id) => {
-			if (id.includes('core-js/')) {
+			if (id.includes('cross-fetch/') || id.includes('core-js/')) {
 				return true;
 			}
 			return false;

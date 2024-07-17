@@ -173,6 +173,7 @@ API Reference
         * [.getResponseType()](#module_zotero-api-client..PretendResponse+getResponseType)
         * [.getVersion()](#module_zotero-api-client..PretendResponse+getVersion) ⇒ <code>Object</code>
     * [~ErrorResponse](#module_zotero-api-client..ErrorResponse) ⇐ <code>Error</code>
+        * [.getVersion()](#module_zotero-api-client..ErrorResponse+getVersion) ⇒ <code>number</code>
         * [.getResponseType()](#module_zotero-api-client..ErrorResponse+getResponseType)
     * [~api()](#module_zotero-api-client..api) ⇒ <code>Object</code>
         * [~api(key, opts)](#module_zotero-api-client..api..api) ⇒ <code>Object</code>
@@ -255,7 +256,7 @@ Meta data available in the response. Specialised classes provide extracted meta 
 <a name="module_zotero-api-client..ApiResponse+getVersion"></a>
 
 #### apiResponse.getVersion() ⇒ <code>number</code>
-Contents of "Last-Modified-Version" header in response if present. Specialised classes provide
+Value of "Last-Modified-Version" header in response if present. Specialised classes provide
 	  version depending on context
 
 **Kind**: instance method of [<code>ApiResponse</code>](#module_zotero-api-client..ApiResponse)  
@@ -555,6 +556,18 @@ Represents an error response from the api
 | reason | <code>String</code> | More detailed reason for the failure, if provided by the API |
 | options | <code>String</code> | Configuration object used for this request |
 
+
+* [~ErrorResponse](#module_zotero-api-client..ErrorResponse) ⇐ <code>Error</code>
+    * [.getVersion()](#module_zotero-api-client..ErrorResponse+getVersion) ⇒ <code>number</code>
+    * [.getResponseType()](#module_zotero-api-client..ErrorResponse+getResponseType)
+
+<a name="module_zotero-api-client..ErrorResponse+getVersion"></a>
+
+#### errorResponse.getVersion() ⇒ <code>number</code>
+Value of "Last-Modified-Version" header in response if present. This is generally only available if server responded with 412 due to version mismatch.
+
+**Kind**: instance method of [<code>ErrorResponse</code>](#module_zotero-api-client..ErrorResponse)  
+**Returns**: <code>number</code> - Version of the content in response  
 <a name="module_zotero-api-client..ErrorResponse+getResponseType"></a>
 
 #### errorResponse.getResponseType()

@@ -1436,6 +1436,9 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(opts.method, 'PUT');
 				return true;
 			}, {
+				headers: {
+					'Last-Modified-Version': 41
+				},
 				status: 412,
 				body: 'Item has been modified since specified version (expected 42, found 41)'
 			});
@@ -1453,6 +1456,7 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(error, ErrorResponse);
 				assert.strictEqual(error.message, '412: Precondition Failed');
 				assert.strictEqual(error.reason, 'Item has been modified since specified version (expected 42, found 41)');
+				assert.strictEqual(error.getVersion(), 41);
 			})
 		});
 

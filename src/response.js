@@ -56,7 +56,7 @@ class ApiResponse {
 	}
 
 	/**
-	* Contents of "Last-Modified-Version" header in response if present. Specialised classes provide
+	* Value of "Last-Modified-Version" header in response if present. Specialised classes provide
 	  version depending on context
 	* @return {?number} Version of the content in response
 	*/
@@ -470,6 +470,14 @@ class ErrorResponse extends Error {
 		this.reason = reason;
 		this.message = message;
 		this.options = options;
+	}
+
+	/**
+	* Value of "Last-Modified-Version" header in response if present. This is generally only available if server responded with 412 due to version mismatch.
+	* @return {?number} Version of the content in response
+	*/
+	getVersion() {
+		return parseIntHeaders(this.response?.headers, 'Last-Modified-Version');
 	}
 
 	/**

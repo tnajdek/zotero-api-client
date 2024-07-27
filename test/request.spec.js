@@ -831,6 +831,7 @@ describe('ZoteroJS request', () => {
 			}).catch(async error => {
 				assert.instanceOf(error, ErrorResponse);
 				assert.strictEqual(error.getResponseType(), 'ErrorResponse');
+				assert.isNull(error.getVersion());
 				assert.strictEqual(error.message, '404: Not Found');
 				assert.strictEqual(error.reason, 'These aren\'t the droids You are looking for');
 				assert.strictEqual(error.response.bodyUsed, false);
@@ -984,6 +985,8 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getData()[0].title, 'My Amazing Book');
 				assert.strictEqual(response.getData()[0].itemType, 'book');
 				assert.strictEqual(response.getData()[0].version, 1337);
+				assert.deepEqual(response.getLinks()[0], null);
+				assert.deepEqual(response.getMeta()[0], null);
 			});
 		});
 
@@ -1047,6 +1050,55 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getMeta()[0].parsedDate, "1987");
 				assert.strictEqual(response.getLinks()[0].self.href, "https://api.zotero.org/users/475425/items/AZBCAADA");
 			});
+		});
+
+		it('should accept response with new data but no meta or links', async () => {
+			const item = {
+				'version': 0,
+				'itemType': 'book',
+				'title': 'My Amazing Book'
+			};
+
+			fetchMock.post((url) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
+				return true;
+			}, {
+				headers: {
+					'Last-Modified-Version': 1337
+				},
+				body: {
+					...multiSuccessWriteResponseFixture,
+					successful: {
+						"0": {
+							data: {
+								...item,
+								version: 1337,
+								key: 'AZBCAADA',
+								dateAdded: "2018-07-05T09:24:36Z",
+								dateModified: "2018-07-05T09:24:36Z",
+								tags: [],
+								relations: {}
+							}
+						}
+					}
+				}
+			});
+
+			const response = await request({
+				method: 'post',
+				body: [item],
+				resource: {
+					library: 'u475425',
+					items: null
+				}
+			});
+			assert.instanceOf(response, MultiWriteResponse);
+			assert.strictEqual(response.getResponseType(), 'MultiWriteResponse');
+			assert.isOk(response.isSuccess());
+			assert.strictEqual(response.getData()[0].key, 'AZBCAADA');
+			assert.strictEqual(response.getData()[0].title, 'My Amazing Book');
+			assert.isNull(response.getMeta()[0]);
+			assert.isNull(response.getLinks()[0]);
 		});
 
 		it('should post multiple items and handle mixed response', () => {

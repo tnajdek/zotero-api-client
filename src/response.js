@@ -61,7 +61,7 @@ class ApiResponse {
 	* @return {?number} Version of the content in response
 	*/
 	getVersion() {
-		return parseIntHeaders(this.response?.headers, 'Last-Modified-Version');
+		return parseIntHeaders(this.response.headers, 'Last-Modified-Version');
 	}
 }
 
@@ -146,7 +146,7 @@ module:zotero-api-client~MultiReadResponse#getData}
 	* @return {string} Total number of results
 	*/
 	getTotalResults() {
-		return parseIntHeaders(this.response?.headers, 'Total-Results');
+		return parseIntHeaders(this.response.headers, 'Total-Results');
 	}
 
 	/**
@@ -154,7 +154,7 @@ module:zotero-api-client~MultiReadResponse#getData}
 	  the URL is the value, contains values for "next", "last" etc.
 	*/
 	getRelLinks() {
-		const links = this.response?.headers.get('link') ?? '';
+		const links = this.response.headers.get('link') ?? '';
 		const matches = Array.from(links.matchAll(/<(.*?)>;\s+rel="(.*?)"/ig));
 		return Array.from(matches).reduce((acc, [_match, url, rel]) => { // eslint-disable-line no-unused-vars
 			acc[rel] = url;
@@ -239,7 +239,7 @@ class MultiWriteResponse extends ApiResponse {
 			if("successful" in this.raw) {
 				const entry = this.raw.successful[index.toString()];
 				if(entry) {
-					return entry.links || {}
+					return entry.links || null;
 				}
 			}
 			return null;
@@ -254,7 +254,7 @@ class MultiWriteResponse extends ApiResponse {
 			if("successful" in this.raw) {
 				const entry = this.raw.successful[index.toString()];
 				if(entry) {
-					return entry.meta || {}
+					return entry.meta || null;
 				}
 			}
 			return null;
@@ -378,7 +378,7 @@ class FileUploadResponse extends ApiResponse {
 		// will be in obtained from the initial response
 		return parseIntHeaders(this.registerResponse?.headers, 'Last-Modified-Version') ??
 			parseIntHeaders(this.uploadResponse?.headers, 'Last-Modified-Version') ??
-			parseIntHeaders(this.response?.headers, 'Last-Modified-Version');
+			parseIntHeaders(this.response.headers, 'Last-Modified-Version');
 	}
 }
 
@@ -477,7 +477,7 @@ class ErrorResponse extends Error {
 	* @return {?number} Version of the content in response
 	*/
 	getVersion() {
-		return parseIntHeaders(this.response?.headers, 'Last-Modified-Version');
+		return parseIntHeaders(this.response.headers, 'Last-Modified-Version');
 	}
 
 	/**

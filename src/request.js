@@ -88,6 +88,8 @@ const resourcesSpecs = [
 
 const defaults = {
 	apiAuthorityPart: 'api.zotero.org',
+	apiPath: '',
+	apiScheme: 'https',
 	cache: 'default',
 	credentials: 'omit',
 	format: 'json',
@@ -171,6 +173,9 @@ const sleep = seconds => {
 /**
  * Executes request and returns a response. Not meant to be called directly, instead use {@link
    module:zotero-api-client~api}.
+ * @param {String} options.apiScheme						- Scheme part of the API URL
+ * @param {String} options.apiAuthorityPart					- Authority part of the API URL
+ * @param {String} options.apiPath							- Path part of the API URL
  * @param {String} options.authorization					- 'Authorization' header
  * @param {String} options.zoteroWriteToken					- 'Zotero-Write-Token' header 
  * @param {String} options.ifModifiedSinceVersion			- 'If-Modified-Since-Version' header
@@ -257,7 +262,7 @@ const request = async config => {
 	const headers = makeHeaders(options, acceptedHeaderNames);
 	const path = makeUrlPath(options.resource);
 	const query = makeUrlQuery(options, queryParamNames);
-	const url = `https://${options.apiAuthorityPart}/${path}${query}`;
+	const url = `${options.apiScheme}://${options.apiAuthorityPart}/${options.apiPath}${path}${query}`;
 	const fetchConfig = {};
 
 	for(let param of fetchParamNames) {
@@ -330,7 +335,7 @@ const request = async config => {
 				let uploadResponse, isUploadSuccessful, registerResponse;
 				if(hasDefinedKey(options, 'filePatch')) {
 					const uploadQuery = makeUrlQuery({ ...options, upload: authData.uploadKey }, filePatchQueryParamNames);
-					const uploadUrl = `https://${options.apiAuthorityPart}/${path}${uploadQuery}`;
+					const uploadUrl = `${options.apiScheme}://${options.apiAuthorityPart}/${options.apiPath}${path}${uploadQuery}`;
 
 					delete fetchConfig.headers['Content-Type'];
 					// upload file patch request

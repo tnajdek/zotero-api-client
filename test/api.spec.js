@@ -42,10 +42,42 @@ describe('Zotero Api Client', () => {
 
 		it('accepts api key and optional config', () => {
 			const request = api(KEY, {
-				apiAuthorityPart: 'some-other-api.zotero.org'
+				apiAuthorityPart: 'some-other-api.zotero.org',
+				apiPath: 'some-other-path/',
+				apiScheme: 'app',
 			}).getConfig();
 			assert.equal(request.zoteroApiKey, KEY);
 			assert.equal(request.apiAuthorityPart, 'some-other-api.zotero.org');
+			assert.equal(request.apiPath, 'some-other-path/');
+			assert.equal(request.apiScheme, 'app');
+		});
+
+		it('should correct apiPath missing a trailing slash', () => {
+			const request = api(KEY, {
+				apiPath: 'some-other-path'
+			}).getConfig();
+			assert.equal(request.apiPath, 'some-other-path/');
+		});
+
+		it('should correct apiPath begining with a slash', () => {
+			const request = api(KEY, {
+				apiPath: '/some-other-path'
+			}).getConfig();
+			assert.equal(request.apiPath, 'some-other-path/');
+		});
+
+		it('should correct apiScheme ', () => {
+			const request = api(KEY, {
+				apiScheme: 'app://'
+			}).getConfig();
+			assert.equal(request.apiScheme, 'app');
+		});	
+
+		it('rejects invalid apiScheme', () => {
+			assert.throws(() => {
+				api(KEY, { apiScheme: 'h$$p' });
+			}, 'apiScheme can only contain alphanumeric characters, plus (+), minus (-), and dot (.)');
+			
 		});
 
 		it('allows configuration via multiple api() calls', () => {

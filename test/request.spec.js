@@ -1931,4 +1931,22 @@ describe('ZoteroJS request', () => {
 			});
 		});
 	})
+
+	describe('Configuration', () => {
+		it('should honor api configuration', () => {
+			fetchMock.mock('begin:app://some-other-api.zotero.org:123/prefix/users/475425/items/ABCD1111', 200);
+			return request({
+				method: 'get',
+				resource: {
+					library: 'u475425',
+					items: 'ABCD1111'
+				},
+				apiAuthorityPart: 'some-other-api.zotero.org:123',
+				apiPath: 'prefix/',
+				apiScheme: 'app'
+			}).then(() => {
+				assert.isOk(fetchMock.done());
+			});
+		});
+	});
 });

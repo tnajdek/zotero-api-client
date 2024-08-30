@@ -1091,6 +1091,9 @@ Executes request and returns a response. Not meant to be called directly, instea
 
 | Param | Type | Description |
 | --- | --- | --- |
+| options.apiScheme | <code>String</code> | Scheme part of the API URL |
+| options.apiAuthorityPart | <code>String</code> | Authority part of the API URL |
+| options.apiPath | <code>String</code> | Path part of the API URL |
 | options.authorization | <code>String</code> | 'Authorization' header |
 | options.zoteroWriteToken | <code>String</code> | 'Zotero-Write-Token' header |
 | options.ifModifiedSinceVersion | <code>String</code> | 'If-Modified-Since-Version' header |

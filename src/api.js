@@ -22,7 +22,7 @@ const api = function() {
 	 * @chainable
 	 */
 	const api = function(key = '', opts = {}) {
-		let props = { ...opts };
+		let props = { ...processOpts(opts) };
 		
 		if(!('executors' in props) && (!this || !('executors' in this))) {
 			props.executors = [request];
@@ -648,13 +648,35 @@ const api = function() {
 		return ef.bind(this)(opts);
 	}
 
+	const processOpts = function (opts) {
+		let newOpts = { ...opts };
+		if ('apiScheme' in newOpts) {
+			//  only alphanumeric characters and the +, -, and . allowed
+			if (newOpts.apiScheme.endsWith('://')) {
+				newOpts.apiScheme = newOpts.apiScheme.substring(0, newOpts.apiScheme.length - 3);
+			}
+			if (!newOpts.apiScheme.match(/^[a-zA-Z0-9+\-.]+$/)) {
+				throw new Error('apiScheme can only contain alphanumeric characters, plus (+), minus (-), and dot (.)');
+			}
+		}
+		if ('apiPath' in newOpts) {
+			if (newOpts.apiPath.startsWith('/')) {
+				newOpts.apiPath = newOpts.apiPath.substring(1);
+			}
+			if (newOpts.apiPath.length > 0 && !newOpts.apiPath.endsWith('/')) {
+				newOpts.apiPath += '/';
+			}
+		}
+		return newOpts;
+	}
+
 	const prepareRequest = function(config, verb, opts, body) {
 		var method = verb.toLowerCase();
 		var relevantSearchKey;
 		var requestConfig, keysToDelete;
 		switch(method) {
 			case 'get':
-				requestConfig = { ...config, ...opts, method };
+				requestConfig = { ...config, ...processOpts(opts), method };
 				if('version' in requestConfig) {
 					requestConfig['ifModifiedSinceVersion'] = requestConfig['version'];
 					delete requestConfig['version'];

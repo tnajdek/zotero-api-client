@@ -14,6 +14,7 @@ const acceptedHeaderNames = {
 	ifUnmodifiedSinceVersion: 'If-Unmodified-Since-Version',
 	zoteroApiKey: 'Zotero-API-Key',
 	zoteroWriteToken: 'Zotero-Write-Token',
+	zoteroSchemaVersion: 'Zotero-Schema-Version',
 };
 
 const queryParamsWithArraySupport = [ "tag", "itemTag" ];

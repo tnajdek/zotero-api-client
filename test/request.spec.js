@@ -725,6 +725,7 @@ describe('ZoteroJS request', () => {
 					assert.strictEqual(opts.headers['If-Modified-Since-Version'], 1);
 					assert.strictEqual(opts.headers['If-Unmodified-Since-Version'], 1);
 					assert.strictEqual(opts.headers['Content-Type'], 'c');
+					assert.strictEqual(opts.headers['Zotero-Schema-Version'], 29);
 					return true;
 				}, {}
 			);
@@ -738,7 +739,8 @@ describe('ZoteroJS request', () => {
 				'zoteroWriteToken': 'b',
 				'ifModifiedSinceVersion': 1,
 				'ifUnmodifiedSinceVersion': 1,
-				'contentType': 'c'
+				'contentType': 'c',
+				'zoteroSchemaVersion': 29
 			});
 		});
 
@@ -751,6 +753,7 @@ describe('ZoteroJS request', () => {
 					assert.notProperty(opts.headers, 'If-Modified-Since-Version');
 					assert.notProperty(opts.headers, 'If-Unmodified-Since-Version');
 					assert.notProperty(opts.headers, 'Content-Type');
+					assert.notProperty(opts.headers, 'Zotero-Schema-Version');
 					return true;
 				}, {}
 			);

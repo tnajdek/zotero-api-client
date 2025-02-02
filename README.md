@@ -930,8 +930,8 @@ Will populate format on download as well as Content-Type, If*Match headers in ca
 <a name="module_zotero-api-client..api..registerAttachment"></a>
 
 #### api~registerAttachment(fileName, fileSize, mtime, md5sum) ⇒ <code>Object</code>
-Advanced function that will attempt to register existing file
-with given attachment-item based on known file metadata.
+Advanced function that will attempt to register existing file with given attachment-item
+based on known file metadata. Can also be used to rename an existing file.
 Can be only used in conjuction with items() and post().
 Use items() to select attachment item for which file is registered.
 Will populate Content-Type, If-Match headers.
@@ -943,7 +943,7 @@ Will fail with a ErrorResponse if API does not return "exists".
 
 | Param | Type | Description |
 | --- | --- | --- |
-| fileName | <code>String</code> | name of the file, should match values in attachment                              item entry |
+| fileName | <code>String</code> | name of the file, should match value in the item, unless renaming |
 | fileSize | <code>Number</code> | size of the existing file |
 | mtime | <code>Number</code> | mtime of the existing file |
 | md5sum | <code>String</code> | md5sum of the existing file |

@@ -423,14 +423,13 @@ const api = function() {
 	}
 
 	/**
-	 * Advanced function that will attempt to register existing file
-	 * with given attachment-item based on known file metadata.
+	 * Advanced function that will attempt to register existing file with given attachment-item
+	 * based on known file metadata. Can also be used to rename an existing file.
 	 * Can be only used in conjuction with items() and post().
 	 * Use items() to select attachment item for which file is registered.
 	 * Will populate Content-Type, If-Match headers.
 	 * Will fail with a ErrorResponse if API does not return "exists".
-	 * @param  {String} fileName  - name of the file, should match values in attachment
-	 *                              item entry
+	 * @param  {String} fileName  - name of the file, should match value in the item, unless renaming
 	 * @param  {Number} fileSize  - size of the existing file
 	 * @param  {Number} mtime     - mtime of the existing file
 	 * @param  {String} md5sum    - md5sum of the existing file

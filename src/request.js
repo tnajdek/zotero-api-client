@@ -52,11 +52,16 @@ const filePatchQueryParamNames = [
 
 const fetchParamNames = [
 	'body',
-	'cache',
+	'cache',	
 	'credentials',
+	'integrity',
+	'keepalive',
 	'method',
 	'mode',
+	'priority',
 	'redirect',
+	'referrer',
+	'referrerPolicy',
 	'signal',
 ];
 

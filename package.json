@@ -9,6 +9,7 @@
   "esnext": "src/main.js",
   "umd:main": "dist/zotero-api-client.js",
   "unpkg": "dist/zotero-api-client.js",
+  "types": "index.d.ts",
   "author": "Tom Najdek",
   "license": "AGPL-3.0",
   "engines": {
@@ -33,6 +34,7 @@
     "start": "npm run test-watch"
   },
   "files": [
+    "index.d.ts",
     "dist/**/*",
     "lib/**/*",
     "src/**/*"

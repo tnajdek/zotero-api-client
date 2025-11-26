@@ -107,7 +107,7 @@ class SingleReadResponse extends ApiResponse {
 }
 
 /**
- * @class represnets a response to a GET request containing multiple entities
+ * @class represents a response to a GET request containing multiple entities
  * @extends ApiResponse
  * @memberof module:zotero-api-client
  * @inner
@@ -178,7 +178,7 @@ class SingleWriteResponse extends ApiResponse {
 	}
 	/**
 	 * @return {Object} For put requests, this represents a complete, updated object.
-	 *                  For patch requests, this reprents only updated fields of the updated object.
+	 *                  For patch requests, this represents only updated fields of the updated object.
 	 */
 	getData() {
 		return {
@@ -263,7 +263,7 @@ class MultiWriteResponse extends ApiResponse {
 
 	/**
 	 * Returns all errors that have occurred.
-	 * @return {Object} Errors object where keys are indexes of the array of the original request and values are the erorrs occurred.
+	 * @return {Object} Errors object where keys are indexes of the array of the original request and values are the errors occurred.
 	 */
 	getErrors() {
 		const errors = {};
@@ -297,7 +297,7 @@ class MultiWriteResponse extends ApiResponse {
 	 * @param  {Number} index
 	 * @return {Object}
 	 * @throws {Error} If index is not present in the original request
-	 * @throws {Error} If error occured in the POST for selected entity. Error message will contain reason for failure.
+	 * @throws {Error} If error occurred in the POST for selected entity. Error message will contain reason for failure.
 	 */
 	getEntityByIndex(index) {
 		if(typeof index === 'string') {
@@ -322,7 +322,7 @@ class MultiWriteResponse extends ApiResponse {
 			throw new Error(`${this.raw.failed[index.toString()].code}: ${this.raw.failed[index.toString()].message}`);
 		}
 
-		throw new Error(`Index ${index} is not present in the reponse`);
+		throw new Error(`Index ${index} is not present in the response`);
 	}
 }
 
@@ -457,7 +457,7 @@ class PretendResponse extends ApiResponse {
  * @class Represents an error response from the api
  * @extends Error
  * @property {Object} response - Response object for the request, with untouched body
- * @property {String} message  - What error occurred, ususally contains response code and status
+ * @property {String} message  - What error occurred, usually contains response code and status
  * @property {String} reason   - More detailed reason for the failure, if provided by the API
  * @property {String} options  - Configuration object used for this request
  * @memberof module:zotero-api-client

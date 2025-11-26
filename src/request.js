@@ -34,6 +34,7 @@ const queryParamNames = [
 	'itemType',
 	'limit',
 	'linkMode',
+	'linkwrap',
 	'locale',
 	'q',
 	'qmode',
@@ -200,6 +201,7 @@ const sleep = seconds => {
  * @param {String} options.itemType							- 'itemType' query argument
  * @param {Number} options.limit							- 'limit' query argument
  * @param {String} options.linkMode							- 'linkMode' query argument
+ * @param {String} options.linkwrap 						- 'linkwrap' query argument
  * @param {String} options.locale							- 'locale' query argument
  * @param {String} options.q								- 'q' query argument
  * @param {String} options.qmode							- 'qmode' query argument

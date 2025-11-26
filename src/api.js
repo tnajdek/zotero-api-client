@@ -23,7 +23,7 @@ const api = function() {
 	 */
 	const api = function(key = '', opts = {}) {
 		let props = { ...processOpts(opts) };
-		
+
 		if(!('executors' in props) && (!this || !('executors' in this))) {
 			props.executors = [request];
 		}
@@ -31,7 +31,7 @@ const api = function() {
 		if(key) {
 			props.zoteroApiKey =  key;
 		}
-		
+
 		return ef.bind(this)(props)
 	}
 
@@ -39,7 +39,7 @@ const api = function() {
 	 * Configures which library api requests should use.
 	 * @chainable
 	 * @param {*} [typeOrKey] - Library key, e.g. g1234. Alternatively, if
-	 *                          second parameter is present, library type i.e
+	 *                          second parameter is present, library type i.e.
 	 *                          either 'group' or 'user'
 	 * @param {Number} [id]   - Only when first argument is a type, library id
 	 * @return {Object} Partially configured api functions
@@ -69,7 +69,7 @@ const api = function() {
 
 	/**
 	 * Configures api to use items or a specific item
-	 * Can be used in conjuction with library(), collections(), top(), trash(),
+	 * Can be used in conjunction with library(), collections(), top(), trash(),
 	 * children(), tags() and any execution function (e.g. get(), post())
 	 * @param  {String} items - Item key, if present, configure api to point at
 	 *                          this specific item
@@ -84,7 +84,7 @@ const api = function() {
 
 	/**
 	 * Configure api to request all item types
-	 * Can only be used in conjuction with get()
+	 * Can only be used in conjunction with get()
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -96,7 +96,7 @@ const api = function() {
 
 	/**
 	 * Configure api to request all item fields
-	 * Can only be used in conjuction with get()
+	 * Can only be used in conjunction with get()
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -108,7 +108,7 @@ const api = function() {
 
 	/**
 	 * Configure api to request localized creator fields
-	 * Can only be used in conjuction with get()
+	 * Can only be used in conjunction with get()
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -118,10 +118,10 @@ const api = function() {
 		});
 	};
 
-	
+
 	/**
 	 * Configure api to request schema
-	 * Can only be used in conjuction with get()
+	 * Can only be used in conjunction with get()
 	 * @returns {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -133,7 +133,7 @@ const api = function() {
 
 	/**
 	 * Configure api to request all valid fields for an item type
-	 * Can only be used in conjuction with get()
+	 * Can only be used in conjunction with get()
 	 * @param  {String} itemType - item type for which valid fields will be
 	 *                             requested, e.g. 'book' or 'journalType'
 	 * @return {Object} Partially configured api functions
@@ -150,9 +150,9 @@ const api = function() {
 
 	/**
 	 * Configure api to request valid creator types for an item type
-	 * Can only be used in conjuction with get()
+	 * Can only be used in conjunction with get()
 	 * @param  {String} itemType - item type for which valid creator types
-	 *                             will be requested, e.g. 'book' or 
+	 *                             will be requested, e.g. 'book' or
 	 *                             'journalType'
 	 * @return {Object} Partially configured api functions
 	 * @chainable
@@ -168,11 +168,11 @@ const api = function() {
 
 	/**
 	 * Configure api to request template for a new item
-	 * Can only be used in conjuction with get()
+	 * Can only be used in conjunction with get()
 	 * @param  {String} itemType - item type for which template will be
 	 *                             requested, e.g. 'book' or 'journalType'
 	 * @param  {String} subType -  annotationType if itemType is 'annotation'
-	 * 						   	   or linkMode if itemType is 'attachment'		
+	 * 						   	   or linkMode if itemType is 'attachment'
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -181,7 +181,7 @@ const api = function() {
 			throw new Error('template() requires an itemType argument');
 		}
 		const subTypeOpts = {};
-		
+
 		if (subType && itemType === 'annotation') {
 			subTypeOpts.annotationType = subType;
 		} else if (subType && itemType === 'attachment') {
@@ -195,7 +195,7 @@ const api = function() {
 
 	/**
 	 * Configure api to use collections or a specific collection
-	 * Can be used in conjuction with library(), items(), top(), tags() and
+	 * Can be used in conjunction with library(), items(), top(), tags() and
 	 * any of the execution function (e.g. get(), post())
 	 * @param  {String} items - Collection key, if present, configure api to
 	 *                          point to this specific collection
@@ -211,7 +211,7 @@ const api = function() {
 	/**
 	 * Configure api to use subcollections that reside underneath the specified
 	 * collection.
-	 * Should only be used in conjuction with both library() and collection()
+	 * Should only be used in conjunction with both library() and collection()
 	 * and any of the execution function (e.g. get(), post())
 	 * @return {Object} Partially configured api functions
 	 * @chainable
@@ -225,7 +225,7 @@ const api = function() {
 	/**
 	 * Configure api to narrow the request to only consider items filled under
 	 * "My Publications"
-	 * Should only be used in conjuction with both library() and items()
+	 * Should only be used in conjunction with both library() and items()
 	 * and any of the execution function (e.g. get(), post())
 	 * @return {Object} Partially configured api functions
 	 * @chainable
@@ -237,10 +237,10 @@ const api = function() {
 	};
 	/**
 	 * Configure api to request or delete tags or request a specific tag
-	 * Can be used in conjuction with library(), items(), collections() and
+	 * Can be used in conjunction with library(), items(), collections() and
 	 * any of the following execution functions: get(), delete() but only
 	 * if the first argument is not present. Otherwise can only be used in
-	 * conjuctin with get()
+	 * conjunction with get()
 	 * @param  {String} tags - name of a tag to request. If preset, configure
 	 *                         api to request specific tag.
 	 * @return {Object} Partially configured api functions
@@ -254,7 +254,7 @@ const api = function() {
 
 	/**
 	 * Configure api to use saved searches or a specific saved search
-	 * Can be used in conjuction with library() and any of the execution
+	 * Can be used in conjunction with library() and any of the execution
 	 * functions
 	 * @param  {String} searches - Search key, if present, configure api to point at
 	 *                             this specific saved search
@@ -269,8 +269,8 @@ const api = function() {
 
 	/**
 	 * Configure api to narrow the request only to the top level items
-	 * Can be used in conjuction with items() and collections() and only
-	 * with conjuction with a get() execution function
+	 * Can be used in conjunction with items() and collections() and only
+	 * with conjunction with a get() execution function
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -282,7 +282,7 @@ const api = function() {
 
 	/**
 	 * Configure api to narrow the request only to the items in the trash
-	 * Can be only used in conjuction with items() and get() execution
+	 * Can be only used in conjunction with items() and get() execution
 	 * function
 	 * @return {Object} Partially configured api functions
 	 * @chainable
@@ -296,7 +296,7 @@ const api = function() {
 	/**
 	 * Configure api to narrow the request only to the children of given
 	 * item
-	 * Can be only used in conjuction with items() and get() execution
+	 * Can be only used in conjunction with items() and get() execution
 	 * function
 	 * @return {Object} Partially configured api functions
 	 * @chainable
@@ -309,7 +309,7 @@ const api = function() {
 
 	/**
 	 * Configure api to request settings
-	 * Can only be used in conjuction with get(), put(), post() and delete()
+	 * Can only be used in conjunction with get(), put(), post() and delete()
 	 * For usage with put() and delete() settings key must be provided
 	 * For usage with post() settings key must not be included
 	 * @param  {String} settings - Settings key, if present, configure api to point at
@@ -326,7 +326,7 @@ const api = function() {
 
 	/**
 	 * Configure api to request deleted content
-	 * Can only be used in conjuction with get()
+	 * Can only be used in conjunction with get()
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -335,15 +335,15 @@ const api = function() {
 			...this.resource,
 			deleted: null
 		};
-		
+
 		return ef.bind(this)({ since, resource });
 	};
 
 	/**
-	 * Configure api to request user-accessible groups (i.e. The set of groups 
+	 * Configure api to request user-accessible groups (i.e. The set of groups
 	 * the current API key has access to, including public groups the key owner
 	 * belongs to even if the key doesn't have explicit permissions for them.)
-	 * Can only be used in conjuction with get()
+	 * Can only be used in conjunction with get()
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -355,9 +355,9 @@ const api = function() {
 
 	/**
 	 * Configure api to specify local version of given entity.
-	 * When used in conjuction with get() exec function, it will populate the
+	 * When used in conjunction with get() exec function, it will populate the
 	 * If-Modified-Since-Version header.
-	 * When used in conjuction with post(), put(), patch() or delete() it will
+	 * When used in conjunction with post(), put(), patch() or delete() it will
 	 * populate the If-Unmodified-Since-Version header.
 	 * @param  {Number} version - local version of the entity
 	 * @return {Object} Partially configured api functions
@@ -372,7 +372,7 @@ const api = function() {
 
 	/**
 	 * Configure api to upload or download an attachment file.
-	 * Can be only used in conjuction with items() and post()/get()/patch().
+	 * Can be only used in conjunction with items() and post()/get()/patch().
 	 * Method patch() can only be used to upload a binary patch, in this case last two argument
 	 * must be provided.
 	 * Method post() is used for full uploads. If `md5sum` is provided, it will update existing
@@ -416,7 +416,7 @@ const api = function() {
 				file,
 				mtime,
 				...bindParams
-			})	
+			})
 		} else {
 			return ef.bind(this)({ format: null, resource });
 		}
@@ -425,7 +425,7 @@ const api = function() {
 	/**
 	 * Advanced function that will attempt to register existing file with given attachment-item
 	 * based on known file metadata. Can also be used to rename an existing file.
-	 * Can be only used in conjuction with items() and post().
+	 * Can be only used in conjunction with items() and post().
 	 * Use items() to select attachment item for which file is registered.
 	 * Will populate Content-Type, If-Match headers.
 	 * Will fail with a ErrorResponse if API does not return "exists".
@@ -452,15 +452,15 @@ const api = function() {
 				mtime,
 				resource,
 				uploadRegisterOnly: true,
-			})	
+			})
 		} else {
-			throw new Error('Called registerAttachment() without specifing required parameters');
+			throw new Error('Called registerAttachment() without specifying required parameters');
 		}
 	}
 
 	/**
 	 * Configure api to request a temporary attachment file url
-	 * Can be only used in conjuction with items() and get()
+	 * Can be only used in conjunction with items() and get()
 	 * Use items() to select attachment item for which file is url is requested
 	 * Will populate format, redirect
 	 * @return {Object} Partially configured api functions
@@ -471,7 +471,7 @@ const api = function() {
 			...this.resource,
 			fileUrl: null
 		};
-		return ef.bind(this)({ 
+		return ef.bind(this)({
 			format: null,
 			resource
 		});
@@ -480,7 +480,7 @@ const api = function() {
 
 	/**
 	 * Configure api to request information on the API key.
-	 * Can only be used in conjuction with get()
+	 * Can only be used in conjunction with get()
 	 *
 	 * @return {Object} Partially configured api functions
 	 * @chainable
@@ -488,16 +488,16 @@ const api = function() {
 	const verifyKeyAccess = function() {
 		return efr.bind(this)({
 			verifyKeyAccess: null
-		})	
+		})
 	}
 
 	/**
 	 * Execution function. Specifies that the request should use a GET method.
-	 * @param  {Object} opts - Optional api configuration. If duplicate, 
+	 * @param  {Object} opts - Optional api configuration. If duplicate,
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
 	 *                         for request() function
-	 * @return {Promise} A promise that will eventually return either an 
+	 * @return {Promise} A promise that will eventually return either an
 	 *                   ApiResponse, SingleReadResponse or MultiReadResponse.
 	 *                   Might throw Error or ErrorResponse.
 	 */
@@ -508,7 +508,7 @@ const api = function() {
 	/**
 	 * Execution function. Specifies that the request should use a POST method.
 	 * @param  {Array} data  - An array of entities to post
-	 * @param  {Object} opts - Optional api configuration. If duplicate, 
+	 * @param  {Object} opts - Optional api configuration. If duplicate,
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
 	 *                         for request() function
@@ -523,7 +523,7 @@ const api = function() {
 	/**
 	 * Execution function. Specifies that the request should use a PUT method.
 	 * @param  {Object} data - An entity to put
-	 * @param  {Object} opts - Optional api configuration. If duplicate, 
+	 * @param  {Object} opts - Optional api configuration. If duplicate,
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
 	 *                         for request() function
@@ -538,7 +538,7 @@ const api = function() {
 	 * Execution function. Specifies that the request should use a PATCH
 	 * method.
 	 * @param  {Object} data - Partial entity data to patch
-	 * @param  {Object} opts - Optional api configuration. If duplicate, 
+	 * @param  {Object} opts - Optional api configuration. If duplicate,
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
 	 *                         for request() function
@@ -554,12 +554,12 @@ const api = function() {
 	 * method.
 	 * @param  {Array} keysToDelete - An array of keys to delete. Depending on
 	 *                                how api has been configured, these will
-	 *                                be item keys, collection keys, search 
+	 *                                be item keys, collection keys, search
 	 *                                keys or tag names. If not present, api
-	 *                                should be configured to use specific 
+	 *                                should be configured to use specific
 	 *                                item, collection, saved search or settings
 	 *                                key, in which case, that entity will be deleted
-	 * @param  {Object} opts - Optional api configuration. If duplicate, 
+	 * @param  {Object} opts - Optional api configuration. If duplicate,
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
 	 *                         for request() function
@@ -593,7 +593,7 @@ const api = function() {
 	 *                         function. For 'get' it is ignored, for 'post', 'patch'
 	 *                         and 'put' see 'data' of that execution function, for
 	 *                         'delete' see 'keysToDelete'
-	 * @param  {Object} opts - Optional api configuration. If duplicate, 
+	 * @param  {Object} opts - Optional api configuration. If duplicate,
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
 	 *                         for request() function
@@ -611,7 +611,7 @@ const api = function() {
 	 * @param  {function} extend  - function that installs alternative
 	 *                              or additional functionality of the api.
 	 *                              It should return bound api functions,
-	 *                              usually by caling arguments[0].ef()
+	 *                              usually by calling arguments[0].ef()
 	 * @return {Object} Extended/partially configured api functions
 	 */
 	const use = function(extend) {
@@ -716,7 +716,7 @@ const api = function() {
 						throw new Error('Arguments to delete() not supported when deleting settings');
 					}
 				} else {
-					throw new Error('Called delete() without first specifing what to delete')
+					throw new Error('Called delete() without first specifying what to delete')
 				}
 
 				if(keysToDelete) {

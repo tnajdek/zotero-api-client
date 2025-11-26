@@ -292,7 +292,7 @@ Represents a response to a GET request containing a single entity
 <a name="module_zotero-api-client..MultiReadResponse"></a>
 
 ### zotero-api-client~MultiReadResponse ⇐ <code>ApiResponse</code>
-represnets a response to a GET request containing multiple entities
+represents a response to a GET request containing multiple entities
 
 **Kind**: inner class of [<code>zotero-api-client</code>](#module_zotero-api-client)  
 **Extends**: <code>ApiResponse</code>  
@@ -358,7 +358,7 @@ Represents a response to a PUT or PATCH request
 #### singleWriteResponse.getData() ⇒ <code>Object</code>
 **Kind**: instance method of [<code>SingleWriteResponse</code>](#module_zotero-api-client..SingleWriteResponse)  
 **Returns**: <code>Object</code> - For put requests, this represents a complete, updated object.
-                 For patch requests, this reprents only updated fields of the updated object.  
+                 For patch requests, this represents only updated fields of the updated object.  
 <a name="module_zotero-api-client..MultiWriteResponse"></a>
 
 ### zotero-api-client~MultiWriteResponse ⇐ <code>ApiResponse</code>
@@ -412,7 +412,8 @@ if request was entirely successful (see isSuccess and getError) before using thi
 Returns all errors that have occurred.
 
 **Kind**: instance method of [<code>MultiWriteResponse</code>](#module_zotero-api-client..MultiWriteResponse)  
-**Returns**: <code>Object</code> - Errors object where keys are indexes of the array of the original request and values are the erorrs occurred.  
+**Returns**: <code>Object</code> - Errors object where keys are indexes of 
+the array of the original request and values are the errors occurred.  
 <a name="module_zotero-api-client..MultiWriteResponse+getEntityByKey"></a>
 
 #### multiWriteResponse.getEntityByKey(key)
@@ -438,7 +439,8 @@ Allows obtaining updated entity based on its index in the original request
 **Throws**:
 
 - <code>Error</code> If index is not present in the original request
-- <code>Error</code> If error occured in the POST for selected entity. Error message will contain reason for failure.
+- <code>Error</code> If error occurred in the POST for selected entity. 
+  Error message will contain reason for failure.
 
 
 | Param | Type |
@@ -466,12 +468,12 @@ Represents a response to a file upload request
 **Extends**: <code>ApiResponse</code>  
 **Properties**
 
-| Name | Type | Description |
-| --- | --- | --- |
+| Name | Type                | Description |
+| --- |---------------------| --- |
 | authResponse | <code>Object</code> | Response object for the stage 1 (upload authorisation)                                       request |
 | response | <code>Object</code> | alias for "authResponse" |
 | uploadResponse | <code>Object</code> | Response object for the stage 2 (file upload) request |
-| registerResponse | <code>Objext</code> | Response object for the stage 3 (upload registration)                                       request |
+| registerResponse | <code>Object</code> | Response object for the stage 3 (upload registration)                                       request |
 
 
 * [~FileUploadResponse](#module_zotero-api-client..FileUploadResponse) ⇐ <code>ApiResponse</code>
@@ -558,7 +560,7 @@ Represents an error response from the api
 | Name | Type | Description |
 | --- | --- | --- |
 | response | <code>Object</code> | Response object for the request, with untouched body |
-| message | <code>String</code> | What error occurred, ususally contains response code and status |
+| message | <code>String</code> | What error occurred, usually contains response code and status |
 | reason | <code>String</code> | More detailed reason for the failure, if provided by the API |
 | options | <code>String</code> | Configuration object used for this request |
 
@@ -658,7 +660,7 @@ Configures which library api requests should use.
 
 #### api~items(items) ⇒ <code>Object</code>
 Configures api to use items or a specific item
-Can be used in conjuction with library(), collections(), top(), trash(),
+Can be used in conjunction with library(), collections(), top(), trash(),
 children(), tags() and any execution function (e.g. get(), post())
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -673,7 +675,7 @@ children(), tags() and any execution function (e.g. get(), post())
 
 #### api~itemTypes() ⇒ <code>Object</code>
 Configure api to request all item types
-Can only be used in conjuction with get()
+Can only be used in conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -682,7 +684,7 @@ Can only be used in conjuction with get()
 
 #### api~itemFields() ⇒ <code>Object</code>
 Configure api to request all item fields
-Can only be used in conjuction with get()
+Can only be used in conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -691,7 +693,7 @@ Can only be used in conjuction with get()
 
 #### api~creatorFields() ⇒ <code>Object</code>
 Configure api to request localized creator fields
-Can only be used in conjuction with get()
+Can only be used in conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -700,7 +702,7 @@ Can only be used in conjuction with get()
 
 #### api~schema() ⇒ <code>Object</code>
 Configure api to request schema
-Can only be used in conjuction with get()
+Can only be used in conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -709,7 +711,7 @@ Can only be used in conjuction with get()
 
 #### api~itemTypeFields(itemType) ⇒ <code>Object</code>
 Configure api to request all valid fields for an item type
-Can only be used in conjuction with get()
+Can only be used in conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -723,7 +725,7 @@ Can only be used in conjuction with get()
 
 #### api~itemTypeCreatorTypes(itemType) ⇒ <code>Object</code>
 Configure api to request valid creator types for an item type
-Can only be used in conjuction with get()
+Can only be used in conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -737,7 +739,7 @@ Can only be used in conjuction with get()
 
 #### api~template(itemType, subType) ⇒ <code>Object</code>
 Configure api to request template for a new item
-Can only be used in conjuction with get()
+Can only be used in conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -752,7 +754,7 @@ Can only be used in conjuction with get()
 
 #### api~collections(items) ⇒ <code>Object</code>
 Configure api to use collections or a specific collection
-Can be used in conjuction with library(), items(), top(), tags() and
+Can be used in conjunction with library(), items(), top(), tags() and
 any of the execution function (e.g. get(), post())
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -768,7 +770,7 @@ any of the execution function (e.g. get(), post())
 #### api~subcollections() ⇒ <code>Object</code>
 Configure api to use subcollections that reside underneath the specified
 collection.
-Should only be used in conjuction with both library() and collection()
+Should only be used in conjunction with both library() and collection()
 and any of the execution function (e.g. get(), post())
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -779,7 +781,7 @@ and any of the execution function (e.g. get(), post())
 #### api~publications() ⇒ <code>Object</code>
 Configure api to narrow the request to only consider items filled under
 "My Publications"
-Should only be used in conjuction with both library() and items()
+Should only be used in conjunction with both library() and items()
 and any of the execution function (e.g. get(), post())
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -789,7 +791,7 @@ and any of the execution function (e.g. get(), post())
 
 #### api~tags(tags) ⇒ <code>Object</code>
 Configure api to request or delete tags or request a specific tag
-Can be used in conjuction with library(), items(), collections() and
+Can be used in conjunction with library(), items(), collections() and
 any of the following execution functions: get(), delete() but only
 if the first argument is not present. Otherwise can only be used in
 conjuctin with get()
@@ -806,7 +808,7 @@ conjuctin with get()
 
 #### api~searches(searches) ⇒ <code>Object</code>
 Configure api to use saved searches or a specific saved search
-Can be used in conjuction with library() and any of the execution
+Can be used in conjunction with library() and any of the execution
 functions
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -821,8 +823,8 @@ functions
 
 #### api~top() ⇒ <code>Object</code>
 Configure api to narrow the request only to the top level items
-Can be used in conjuction with items() and collections() and only
-with conjuction with a get() execution function
+Can be used in conjunction with items() and collections() and only
+with conjunction with a get() execution function
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -831,7 +833,7 @@ with conjuction with a get() execution function
 
 #### api~trash() ⇒ <code>Object</code>
 Configure api to narrow the request only to the items in the trash
-Can be only used in conjuction with items() and get() execution
+Can be only used in conjunction with items() and get() execution
 function
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -842,7 +844,7 @@ function
 #### api~children() ⇒ <code>Object</code>
 Configure api to narrow the request only to the children of given
 item
-Can be only used in conjuction with items() and get() execution
+Can be only used in conjunction with items() and get() execution
 function
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -852,7 +854,7 @@ function
 
 #### api~settings(settings) ⇒ <code>Object</code>
 Configure api to request settings
-Can only be used in conjuction with get(), put(), post() and delete()
+Can only be used in conjunction with get(), put(), post() and delete()
 For usage with put() and delete() settings key must be provided
 For usage with post() settings key must not be included
 
@@ -868,7 +870,7 @@ For usage with post() settings key must not be included
 
 #### api~deleted() ⇒ <code>Object</code>
 Configure api to request deleted content
-Can only be used in conjuction with get()
+Can only be used in conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -879,7 +881,7 @@ Can only be used in conjuction with get()
 Configure api to request user-accessible groups (i.e. The set of groups 
 the current API key has access to, including public groups the key owner
 belongs to even if the key doesn't have explicit permissions for them.)
-Can only be used in conjuction with get()
+Can only be used in conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -888,9 +890,9 @@ Can only be used in conjuction with get()
 
 #### api~version(version) ⇒ <code>Object</code>
 Configure api to specify local version of given entity.
-When used in conjuction with get() exec function, it will populate the
+When used in conjunction with get() exec function, it will populate the
 If-Modified-Since-Version header.
-When used in conjuction with post(), put(), patch() or delete() it will
+When used in conjunction with post(), put(), patch() or delete() it will
 populate the If-Unmodified-Since-Version header.
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -905,7 +907,7 @@ populate the If-Unmodified-Since-Version header.
 
 #### api~attachment([fileName], [file], [mtime], [md5sum], patch, [algorithm]) ⇒ <code>Object</code>
 Configure api to upload or download an attachment file.
-Can be only used in conjuction with items() and post()/get()/patch().
+Can be only used in conjunction with items() and post()/get()/patch().
 Method patch() can only be used to upload a binary patch, in this case last two argument
 must be provided.
 Method post() is used for full uploads. If `md5sum` is provided, it will update existing
@@ -932,7 +934,7 @@ Will populate format on download as well as Content-Type, If*Match headers in ca
 #### api~registerAttachment(fileName, fileSize, mtime, md5sum) ⇒ <code>Object</code>
 Advanced function that will attempt to register existing file with given attachment-item
 based on known file metadata. Can also be used to rename an existing file.
-Can be only used in conjuction with items() and post().
+Can be only used in conjunction with items() and post().
 Use items() to select attachment item for which file is registered.
 Will populate Content-Type, If-Match headers.
 Will fail with a ErrorResponse if API does not return "exists".
@@ -952,7 +954,7 @@ Will fail with a ErrorResponse if API does not return "exists".
 
 #### api~attachmentUrl() ⇒ <code>Object</code>
 Configure api to request a temporary attachment file url
-Can be only used in conjuction with items() and get()
+Can be only used in conjunction with items() and get()
 Use items() to select attachment item for which file is url is requested
 Will populate format, redirect
 
@@ -963,7 +965,7 @@ Will populate format, redirect
 
 #### api~verifyKeyAccess() ⇒ <code>Object</code>
 Configure api to request information on the API key.
-Can only be used in conjuction with get()
+Can only be used in conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -1078,9 +1080,9 @@ alternative/extended set of functions
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Returns**: <code>Object</code> - Extended/partially configured api functions  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| extend | <code>function</code> | function that installs alternative                              or additional functionality of the api.                              It should return bound api functions,                              usually by caling arguments[0].ef() |
+| Param  | Type                  | Description                                                                                                                                           |
+|--------|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| extend | <code>function</code> | function that installs alternative or additional functionality of the api. It should return bound api functions, usually by calling arguments[0].ef() |
 
 <a name="module_zotero-api-client..request"></a>
 

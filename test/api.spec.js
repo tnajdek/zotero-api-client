@@ -29,7 +29,7 @@ describe('Zotero Api Client', () => {
 		};
 	};
 	const api = _api(null, { executors: [mockRequest] }).api;
-	
+
 	beforeEach(() => {
 		lrc = null;
 	});
@@ -71,13 +71,12 @@ describe('Zotero Api Client', () => {
 				apiScheme: 'app://'
 			}).getConfig();
 			assert.equal(request.apiScheme, 'app');
-		});	
+		});
 
 		it('rejects invalid apiScheme', () => {
 			assert.throws(() => {
 				api(KEY, { apiScheme: 'h$$p' });
 			}, 'apiScheme can only contain alphanumeric characters, plus (+), minus (-), and dot (.)');
-			
 		});
 
 		it('allows configuration via multiple api() calls', () => {
@@ -144,7 +143,7 @@ describe('Zotero Api Client', () => {
 			const request = api(KEY).getConfig();
 			assert.equal(request.zoteroApiKey, KEY);
 		});
-		
+
 		it('handles api.library.items.get', () => {
 			api(KEY).library(LIBRARY_KEY).items().get();
 			assert.equal(lrc.method, 'get');
@@ -527,7 +526,7 @@ describe('Zotero Api Client', () => {
 			assert.isNull(lrc.format);
 			assert.isUndefined(lrc.body);
 		});
-		
+
 		it('handles api.library.items(I).attachment().get()', () => {
 			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).attachment().get();
 			assert.equal(lrc.method, 'get');
@@ -679,7 +678,7 @@ describe('Zotero Api Client', () => {
 
 		it('throws when delete is called incorrectly', () => {
 			let configuredApi = api();
-			assert.throws(configuredApi.delete.bind(configuredApi), 'Called delete() without first specifing what to delete');
+			assert.throws(configuredApi.delete.bind(configuredApi), 'Called delete() without first specifying what to delete');
 			assert.throws(configuredApi.delete.bind(configuredApi, 'foobar'), 'Called delete() with string, expected an Array');
 		});
 
@@ -687,7 +686,7 @@ describe('Zotero Api Client', () => {
 			let configuredApi = api(KEY).library(LIBRARY_KEY).items(ITEM_KEY);
 			assert.throws(
 				configuredApi.registerAttachment.bind(configuredApi, FILE_NAME),
-				'Called registerAttachment() without specifing required parameters'
+				'Called registerAttachment() without specifying required parameters'
 			);
 		});
 
@@ -715,7 +714,7 @@ describe('Zotero Api Client', () => {
 			let configuredApi = api();
 			assert.throws(configuredApi.version.bind(configuredApi), 'version() requires a number argument');
 		});
-		
+
 	});
 
 	describe('Handles extensions', () => {

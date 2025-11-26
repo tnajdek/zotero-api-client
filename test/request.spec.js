@@ -1202,7 +1202,7 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getLinks()[2], null);
 
 				assert.throws(response.getEntityByIndex.bind(response, 1), /400: Bad input/);
-				assert.throws(response.getEntityByIndex.bind(response, 10), /Index 10 is not present in the reponse/);
+				assert.throws(response.getEntityByIndex.bind(response, 10), /Index 10 is not present in the response/);
 				assert.throws(response.getEntityByKey.bind(response, 'ABCD5555'), /400: Bad input/);
 				assert.throws(response.getEntityByKey.bind(response, 'LORE1234'), /Key LORE1234 is not present in the request/);
 			});

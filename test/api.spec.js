@@ -673,7 +673,7 @@ describe('Zotero Api Client', () => {
 	describe('Handles invalid calls', () => {
 		it('throws when invalid library is specified', () => {
 			let configuredApi = api();
-			assert.throws(configuredApi.library.bind(configuredApi, 'foobar', 1), 'Unrecognized library type foobar');
+			assert.throws(configuredApi.library.bind(configuredApi, 'foobar', 1), 'Unrecognized library type "foobar"');
 		});
 
 		it('throws when delete is called incorrectly', () => {

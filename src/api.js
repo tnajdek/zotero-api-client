@@ -12,7 +12,7 @@ const api = function() {
 	/**
 	 * Entry point of the interface. Configures authentication.
 	 * Can be used to configure any other properties of the api
-	 * Returns a set of function that are bound to that configuration
+	 * Returns a set of functions that are bound to that configuration
 	 * and can be called to specify further api configuration.
 	 * @param  {String} key  - Authentication key
 	 * @param  {Object} opts - Optional api configuration. For a list of all
@@ -45,21 +45,21 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const library = function() {
-		var libraryKey;
+	const library = function(typeOrKey, id = null) {
+		let libraryKey;
 		if(arguments.length > 1) {
-			switch(arguments[0].toLowerCase()) {
+			switch(typeOrKey.toLowerCase()) {
 				case 'user':
-					libraryKey = `u${arguments[1]}`;
+					libraryKey = `u${id}`;
 				break;
 				case 'group':
-					libraryKey = `g${arguments[1]}`;
+					libraryKey = `g${id}`;
 				break;
 				default:
-					throw new Error(`Unrecognized library type ${arguments[0]}`);
+					throw new Error(`Unrecognized library type "${typeOrKey}"`);
 			}
 		} else {
-			libraryKey = arguments[0];
+			libraryKey = typeOrKey;
 		}
 
 		return efr.bind(this)({
@@ -169,10 +169,8 @@ const api = function() {
 	/**
 	 * Configure api to request template for a new item
 	 * Can only be used in conjunction with get()
-	 * @param  {String} itemType - item type for which template will be
-	 *                             requested, e.g. 'book' or 'journalType'
-	 * @param  {String} subType -  annotationType if itemType is 'annotation'
-	 * 						   	   or linkMode if itemType is 'attachment'
+	 * @param  {String} itemType - item type for which template will be requested, e.g. 'book' or 'journalType'
+	 * @param  {String} subType - annotationType if itemType is 'annotation' or linkMode if itemType is 'attachment'
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -197,7 +195,7 @@ const api = function() {
 	 * Configure api to use collections or a specific collection
 	 * Can be used in conjunction with library(), items(), top(), tags() and
 	 * any of the execution function (e.g. get(), post())
-	 * @param  {String} items - Collection key, if present, configure api to
+	 * @param  {String} collections - Collection key, if present, configure api to
 	 *                          point to this specific collection
 	 * @return {Object} Partially configured api functions
 	 * @chainable
@@ -239,10 +237,10 @@ const api = function() {
 	 * Configure api to request or delete tags or request a specific tag
 	 * Can be used in conjunction with library(), items(), collections() and
 	 * any of the following execution functions: get(), delete() but only
-	 * if the first argument is not present. Otherwise can only be used in
+	 * if the first argument is not present. Otherwise, can only be used in
 	 * conjunction with get()
-	 * @param  {String} tags - name of a tag to request. If preset, configure
-	 *                         api to request specific tag.
+	 * @param  {String} tags - name of a tag to request. If present, configure
+	 *                         api to request a specific tag.
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -310,9 +308,9 @@ const api = function() {
 	/**
 	 * Configure api to request settings
 	 * Can only be used in conjunction with get(), put(), post() and delete()
-	 * For usage with put() and delete() settings key must be provided
-	 * For usage with post() settings key must not be included
-	 * @param  {String} settings - Settings key, if present, configure api to point at
+	 * For usage with put() and delete() a settings key must be provided
+	 * For usage with post() a settings key must not be included
+	 * @param  {String} settings - Settings "key", if present, configures api to point at
 	 *                             this specific key within settings, e.g. `tagColors`.
 
 	 * @return {Object} Partially configured api functions
@@ -354,10 +352,10 @@ const api = function() {
 	};
 
 	/**
-	 * Configure api to specify local version of given entity.
-	 * When used in conjunction with get() exec function, it will populate the
+	 * Configure api to specify a local version of a given entity.
+	 * When used in conjunction with the get() exec function, it will populate the
 	 * If-Modified-Since-Version header.
-	 * When used in conjunction with post(), put(), patch() or delete() it will
+	 * When used in conjunction with post(), put(), patch() or delete(), it will
 	 * populate the If-Unmodified-Since-Version header.
 	 * @param  {Number} version - local version of the entity
 	 * @return {Object} Partially configured api functions
@@ -373,12 +371,12 @@ const api = function() {
 	/**
 	 * Configure api to upload or download an attachment file.
 	 * Can be only used in conjunction with items() and post()/get()/patch().
-	 * Method patch() can only be used to upload a binary patch, in this case last two argument
+	 * Method patch() can only be used to upload a binary patch, in this case the last two arguments
 	 * must be provided.
-	 * Method post() is used for full uploads. If `md5sum` is provided, it will update existing
-	 * file, otherwise it uploads a new file. Last two arguments are not used in this scenario.
+	 * Method post() is used for full uploads. If `md5sum` is provided, it will update an existing
+	 * file, otherwise it uploads a new file. The last two arguments are not used in this scenario.
 	 * Method get() is used for downloads, in this case skip all arguments.
-	 * Use items() to select attachment item for which file is uploaded/downloaded.
+	 * Use items() to select the attachment item for which the file is uploaded/downloaded.
 	 * Will populate format on download as well as Content-Type, If*Match headers in case of upload.
 	 * @param {String} [fileName] - For upload: name of the file, should match values in attachment item entry
 	 * @param {ArrayBuffer} [file] - New file to be uploaded
@@ -423,10 +421,10 @@ const api = function() {
 	}
 
 	/**
-	 * Advanced function that will attempt to register existing file with given attachment-item
+	 * Advanced function that will attempt to register an existing file with a given attachment item
 	 * based on known file metadata. Can also be used to rename an existing file.
 	 * Can be only used in conjunction with items() and post().
-	 * Use items() to select attachment item for which file is registered.
+	 * Use items() to select the attachment item for which a file is registered.
 	 * Will populate Content-Type, If-Match headers.
 	 * Will fail with a ErrorResponse if API does not return "exists".
 	 * @param  {String} fileName  - name of the file, should match value in the item, unless renaming
@@ -581,7 +579,7 @@ const api = function() {
 	};
 
 	/**
-	 * Execution function. Prepares the request but does not execute fetch()
+	 * Execution function. Prepares the request but does not execute fetch(),
 	 * instead returning a "pretended" response where details for the actual
 	 * fetch that would have been used are included.
 	 * Usually used in advanced scenarios where config needs to be tweaked
@@ -670,9 +668,8 @@ const api = function() {
 	}
 
 	const prepareRequest = function(config, verb, opts, body) {
-		var method = verb.toLowerCase();
-		var relevantSearchKey;
-		var requestConfig, keysToDelete;
+		const method = verb.toLowerCase();
+		let relevantSearchKey, requestConfig, keysToDelete;
 		switch(method) {
 			case 'get':
 				requestConfig = { ...config, ...processOpts(opts), method };

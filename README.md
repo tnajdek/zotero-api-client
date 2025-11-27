@@ -192,7 +192,7 @@ API Reference
         * [~itemTypeFields(itemType)](#module_zotero-api-client..api..itemTypeFields) ⇒ <code>Object</code>
         * [~itemTypeCreatorTypes(itemType)](#module_zotero-api-client..api..itemTypeCreatorTypes) ⇒ <code>Object</code>
         * [~template(itemType, subType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
-        * [~collections(items)](#module_zotero-api-client..api..collections) ⇒ <code>Object</code>
+        * [~collections(collections)](#module_zotero-api-client..api..collections) ⇒ <code>Object</code>
         * [~subcollections()](#module_zotero-api-client..api..subcollections) ⇒ <code>Object</code>
         * [~publications()](#module_zotero-api-client..api..publications) ⇒ <code>Object</code>
         * [~tags(tags)](#module_zotero-api-client..api..tags) ⇒ <code>Object</code>
@@ -216,7 +216,7 @@ API Reference
         * [~getConfig()](#module_zotero-api-client..api..getConfig) ⇒ <code>Object</code>
         * [~pretend(verb, data, opts)](#module_zotero-api-client..api..pretend) ⇒ <code>Promise</code>
         * [~use(extend)](#module_zotero-api-client..api..use) ⇒ <code>Object</code>
-    * [~request()](#module_zotero-api-client..request) ⇒ <code>Object</code>
+    * [~request(config)](#module_zotero-api-client..request) ⇒ <code>Object</code>
 
 <a name="module_zotero-api-client..ApiResponse"></a>
 
@@ -292,7 +292,7 @@ Represents a response to a GET request containing a single entity
 <a name="module_zotero-api-client..MultiReadResponse"></a>
 
 ### zotero-api-client~MultiReadResponse ⇐ <code>ApiResponse</code>
-represnets a response to a GET request containing multiple entities
+represents a response to a GET request containing multiple entities
 
 **Kind**: inner class of [<code>zotero-api-client</code>](#module_zotero-api-client)  
 **Extends**: <code>ApiResponse</code>  
@@ -358,7 +358,7 @@ Represents a response to a PUT or PATCH request
 #### singleWriteResponse.getData() ⇒ <code>Object</code>
 **Kind**: instance method of [<code>SingleWriteResponse</code>](#module_zotero-api-client..SingleWriteResponse)  
 **Returns**: <code>Object</code> - For put requests, this represents a complete, updated object.
-                 For patch requests, this reprents only updated fields of the updated object.  
+                 For patch requests, this represents only updated fields of the updated object.  
 <a name="module_zotero-api-client..MultiWriteResponse"></a>
 
 ### zotero-api-client~MultiWriteResponse ⇐ <code>ApiResponse</code>
@@ -412,7 +412,7 @@ if request was entirely successful (see isSuccess and getError) before using thi
 Returns all errors that have occurred.
 
 **Kind**: instance method of [<code>MultiWriteResponse</code>](#module_zotero-api-client..MultiWriteResponse)  
-**Returns**: <code>Object</code> - Errors object where keys are indexes of the array of the original request and values are the erorrs occurred.  
+**Returns**: <code>Object</code> - Errors object where keys are indexes of the array of the original request and values are the errors occurred.  
 <a name="module_zotero-api-client..MultiWriteResponse+getEntityByKey"></a>
 
 #### multiWriteResponse.getEntityByKey(key)
@@ -438,7 +438,7 @@ Allows obtaining updated entity based on its index in the original request
 **Throws**:
 
 - <code>Error</code> If index is not present in the original request
-- <code>Error</code> If error occured in the POST for selected entity. Error message will contain reason for failure.
+- <code>Error</code> If error occurred in the POST for selected entity. Error message will contain reason for failure.
 
 
 | Param | Type |
@@ -558,7 +558,7 @@ Represents an error response from the api
 | Name | Type | Description |
 | --- | --- | --- |
 | response | <code>Object</code> | Response object for the request, with untouched body |
-| message | <code>String</code> | What error occurred, ususally contains response code and status |
+| message | <code>String</code> | What error occurred, usually contains response code and status |
 | reason | <code>String</code> | More detailed reason for the failure, if provided by the API |
 | options | <code>String</code> | Configuration object used for this request |
 
@@ -598,7 +598,7 @@ Wrapper function creates closure scope and calls api()
     * [~itemTypeFields(itemType)](#module_zotero-api-client..api..itemTypeFields) ⇒ <code>Object</code>
     * [~itemTypeCreatorTypes(itemType)](#module_zotero-api-client..api..itemTypeCreatorTypes) ⇒ <code>Object</code>
     * [~template(itemType, subType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
-    * [~collections(items)](#module_zotero-api-client..api..collections) ⇒ <code>Object</code>
+    * [~collections(collections)](#module_zotero-api-client..api..collections) ⇒ <code>Object</code>
     * [~subcollections()](#module_zotero-api-client..api..subcollections) ⇒ <code>Object</code>
     * [~publications()](#module_zotero-api-client..api..publications) ⇒ <code>Object</code>
     * [~tags(tags)](#module_zotero-api-client..api..tags) ⇒ <code>Object</code>
@@ -628,7 +628,7 @@ Wrapper function creates closure scope and calls api()
 #### api~api(key, opts) ⇒ <code>Object</code>
 Entry point of the interface. Configures authentication.
 Can be used to configure any other properties of the api
-Returns a set of function that are bound to that configuration
+Returns a set of functions that are bound to that configuration
 and can be called to specify further api configuration.
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -649,10 +649,10 @@ Configures which library api requests should use.
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| [typeOrKey] | <code>\*</code> | Library key, e.g. g1234. Alternatively, if                          second parameter is present, library type i.e.                          either 'group' or 'user' |
-| [id] | <code>Number</code> | Only when first argument is a type, library id |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [typeOrKey] | <code>\*</code> |  | Library key, e.g. g1234. Alternatively, if                          second parameter is present, library type i.e.                          either 'group' or 'user' |
+| [id] | <code>Number</code> | <code></code> | Only when first argument is a type, library id |
 
 <a name="module_zotero-api-client..api..items"></a>
 
@@ -745,12 +745,12 @@ Can only be used in conjunction with get()
 
 | Param | Type | Description |
 | --- | --- | --- |
-| itemType | <code>String</code> | item type for which template will be                             requested, e.g. 'book' or 'journalType' |
-| subType | <code>String</code> | annotationType if itemType is 'annotation' 						   	   or linkMode if itemType is 'attachment' |
+| itemType | <code>String</code> | item type for which template will be requested, e.g. 'book' or 'journalType' |
+| subType | <code>String</code> | annotationType if itemType is 'annotation' or linkMode if itemType is 'attachment' |
 
 <a name="module_zotero-api-client..api..collections"></a>
 
-#### api~collections(items) ⇒ <code>Object</code>
+#### api~collections(collections) ⇒ <code>Object</code>
 Configure api to use collections or a specific collection
 Can be used in conjunction with library(), items(), top(), tags() and
 any of the execution function (e.g. get(), post())
@@ -761,7 +761,7 @@ any of the execution function (e.g. get(), post())
 
 | Param | Type | Description |
 | --- | --- | --- |
-| items | <code>String</code> | Collection key, if present, configure api to                          point to this specific collection |
+| collections | <code>String</code> | Collection key, if present, configure api to                          point to this specific collection |
 
 <a name="module_zotero-api-client..api..subcollections"></a>
 
@@ -791,7 +791,7 @@ and any of the execution function (e.g. get(), post())
 Configure api to request or delete tags or request a specific tag
 Can be used in conjunction with library(), items(), collections() and
 any of the following execution functions: get(), delete() but only
-if the first argument is not present. Otherwise can only be used in
+if the first argument is not present. Otherwise, can only be used in
 conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -800,7 +800,7 @@ conjunction with get()
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| tags | <code>String</code> | <code></code> | name of a tag to request. If preset, configure                         api to request specific tag. |
+| tags | <code>String</code> | <code></code> | name of a tag to request. If present, configure                         api to request a specific tag. |
 
 <a name="module_zotero-api-client..api..searches"></a>
 
@@ -853,8 +853,8 @@ function
 #### api~settings(settings) ⇒ <code>Object</code>
 Configure api to request settings
 Can only be used in conjunction with get(), put(), post() and delete()
-For usage with put() and delete() settings key must be provided
-For usage with post() settings key must not be included
+For usage with put() and delete() a settings key must be provided
+For usage with post() a settings key must not be included
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -862,7 +862,7 @@ For usage with post() settings key must not be included
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| settings | <code>String</code> | <code></code> | Settings key, if present, configure api to point at                             this specific key within settings, e.g. `tagColors`. |
+| settings | <code>String</code> | <code></code> | Settings "key", if present, configures api to point at                             this specific key within settings, e.g. `tagColors`. |
 
 <a name="module_zotero-api-client..api..deleted"></a>
 
@@ -887,10 +887,10 @@ Can only be used in conjunction with get()
 <a name="module_zotero-api-client..api..version"></a>
 
 #### api~version(version) ⇒ <code>Object</code>
-Configure api to specify local version of given entity.
-When used in conjunction with get() exec function, it will populate the
+Configure api to specify a local version of a given entity.
+When used in conjunction with the get() exec function, it will populate the
 If-Modified-Since-Version header.
-When used in conjunction with post(), put(), patch() or delete() it will
+When used in conjunction with post(), put(), patch() or delete(), it will
 populate the If-Unmodified-Since-Version header.
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -906,12 +906,12 @@ populate the If-Unmodified-Since-Version header.
 #### api~attachment([fileName], [file], [mtime], [md5sum], patch, [algorithm]) ⇒ <code>Object</code>
 Configure api to upload or download an attachment file.
 Can be only used in conjunction with items() and post()/get()/patch().
-Method patch() can only be used to upload a binary patch, in this case last two argument
+Method patch() can only be used to upload a binary patch, in this case the last two arguments
 must be provided.
-Method post() is used for full uploads. If `md5sum` is provided, it will update existing
-file, otherwise it uploads a new file. Last two arguments are not used in this scenario.
+Method post() is used for full uploads. If `md5sum` is provided, it will update an existing
+file, otherwise it uploads a new file. The last two arguments are not used in this scenario.
 Method get() is used for downloads, in this case skip all arguments.
-Use items() to select attachment item for which file is uploaded/downloaded.
+Use items() to select the attachment item for which the file is uploaded/downloaded.
 Will populate format on download as well as Content-Type, If*Match headers in case of upload.
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -930,10 +930,10 @@ Will populate format on download as well as Content-Type, If*Match headers in ca
 <a name="module_zotero-api-client..api..registerAttachment"></a>
 
 #### api~registerAttachment(fileName, fileSize, mtime, md5sum) ⇒ <code>Object</code>
-Advanced function that will attempt to register existing file with given attachment-item
+Advanced function that will attempt to register an existing file with a given attachment item
 based on known file metadata. Can also be used to rename an existing file.
 Can be only used in conjunction with items() and post().
-Use items() to select attachment item for which file is registered.
+Use items() to select the attachment item for which a file is registered.
 Will populate Content-Type, If-Match headers.
 Will fail with a ErrorResponse if API does not return "exists".
 
@@ -1052,7 +1052,7 @@ manually before submitted to the request method or as a debugging tool.
 <a name="module_zotero-api-client..api..pretend"></a>
 
 #### api~pretend(verb, data, opts) ⇒ <code>Promise</code>
-Execution function. Prepares the request but does not execute fetch()
+Execution function. Prepares the request but does not execute fetch(),
 instead returning a "pretended" response where details for the actual
 fetch that would have been used are included.
 Usually used in advanced scenarios where config needs to be tweaked
@@ -1084,7 +1084,7 @@ alternative/extended set of functions
 
 <a name="module_zotero-api-client..request"></a>
 
-### zotero-api-client~request() ⇒ <code>Object</code>
+### zotero-api-client~request(config) ⇒ <code>Object</code>
 Executes request and returns a response. Not meant to be called directly, instead use [api](#module_zotero-api-client..api).
 
 **Kind**: inner method of [<code>zotero-api-client</code>](#module_zotero-api-client)  
@@ -1097,58 +1097,60 @@ Executes request and returns a response. Not meant to be called directly, instea
 
 | Param | Type | Description |
 | --- | --- | --- |
-| options.apiScheme | <code>String</code> | Scheme part of the API URL |
-| options.apiAuthorityPart | <code>String</code> | Authority part of the API URL |
-| options.apiPath | <code>String</code> | Path part of the API URL |
-| options.authorization | <code>String</code> | 'Authorization' header |
-| options.zoteroWriteToken | <code>String</code> | 'Zotero-Write-Token' header |
-| options.ifModifiedSinceVersion | <code>String</code> | 'If-Modified-Since-Version' header |
-| options.ifUnmodifiedSinceVersion | <code>String</code> | 'If-Unmodified-Since-Version' header |
-| options.contentType | <code>String</code> | 'Content-Type' header |
-| options.collectionKey | <code>String</code> | 'collectionKey' query argument |
-| options.content | <code>String</code> | 'content' query argument |
-| options.direction | <code>String</code> | 'direction' query argument |
-| options.format | <code>String</code> | 'format' query argument |
-| options.include | <code>String</code> | 'include' query argument |
-| options.includeTrashed | <code>String</code> | 'includeTrashed' query argument |
-| options.itemKey | <code>String</code> | 'itemKey' query argument |
-| options.itemQ | <code>String</code> | 'itemQ' query argument |
-| options.itemQMode | <code>String</code> | 'itemQMode' query argument |
-| options.itemTag | <code>String</code> \| <code>Array.&lt;String&gt;</code> | 'itemTag' query argument |
-| options.itemType | <code>String</code> | 'itemType' query argument |
-| options.limit | <code>Number</code> | 'limit' query argument |
-| options.linkMode | <code>String</code> | 'linkMode' query argument |
-| options.locale | <code>String</code> | 'locale' query argument |
-| options.q | <code>String</code> | 'q' query argument |
-| options.qmode | <code>String</code> | 'qmode' query argument |
-| options.searchKey | <code>String</code> | 'searchKey' query argument |
-| options.since | <code>Number</code> | 'since' query argument |
-| options.sort | <code>String</code> | 'sort' query argument |
-| options.start | <code>Number</code> | 'start' query argument |
-| options.style | <code>String</code> | 'style' query argument |
-| options.tag | <code>String</code> \| <code>Array.&lt;String&gt;</code> | 'tag' query argument |
-| options.pretend | <code>Boolean</code> | triggers pretend mode where fetch request                                        					  is prepared and returned without execution |
-| options.resource.top | <code>String</code> | use 'top' resource |
-| options.resource.trash | <code>String</code> | use 'trash' resource |
-| options.resource.children | <code>String</code> | use 'children' resource |
-| options.resource.groups | <code>String</code> | use 'groups' resource |
-| options.resource.itemTypes | <code>String</code> | use 'itemTypes' resource |
-| options.resource.itemFields | <code>String</code> | use 'itemFields' resource |
-| options.resource.creatorFields | <code>String</code> | use 'creatorFields' resource |
-| options.resource.itemTypeFields | <code>String</code> | use 'itemTypeFields' resource |
-| options.resource.itemTypeCreatorTypes | <code>String</code> | use 'itemTypeCreatorTypes' resource |
-| options.resource.library | <code>String</code> | use 'library' resource |
-| options.resource.collections | <code>String</code> | use 'collections' resource |
-| options.resource.items | <code>String</code> | use 'items' resource |
-| options.resource.searches | <code>String</code> | use 'searches' resource |
-| options.resource.tags | <code>String</code> | use 'tags' resource |
-| options.resource.template | <code>String</code> | use 'template' resource |
-| options.method | <code>String</code> | forwarded to fetch() |
-| options.body | <code>String</code> | forwarded to fetch() |
-| options.mode | <code>String</code> | forwarded to fetch() |
-| options.cache | <code>String</code> | forwarded to fetch() |
-| options.credentials | <code>String</code> | forwarded to fetch() |
-| options.uploadRegisterOnly | <code>Boolean</code> | this file upload should only perform stage 1                                           				  error if file with provided meta does not exist |
-| options.retry | <code>Number</code> | retry this many times after transient error. |
-| options.retryDelay | <code>Number</code> | wait this many seconds before retry. If not set                                         					  an exponential backoff algorithm will be used |
+| config | <code>Object</code> | Configuration object |
+| config.apiScheme | <code>String</code> | Scheme part of the API URL |
+| config.apiAuthorityPart | <code>String</code> | Authority part of the API URL |
+| config.apiPath | <code>String</code> | Path part of the API URL |
+| config.authorization | <code>String</code> | 'Authorization' header |
+| config.zoteroWriteToken | <code>String</code> | 'Zotero-Write-Token' header |
+| config.ifModifiedSinceVersion | <code>String</code> | 'If-Modified-Since-Version' header |
+| config.ifUnmodifiedSinceVersion | <code>String</code> | 'If-Unmodified-Since-Version' header |
+| config.contentType | <code>String</code> | 'Content-Type' header |
+| config.collectionKey | <code>String</code> | 'collectionKey' query argument |
+| config.content | <code>String</code> | 'content' query argument |
+| config.direction | <code>String</code> | 'direction' query argument |
+| config.format | <code>String</code> | 'format' query argument |
+| config.include | <code>String</code> | 'include' query argument |
+| config.includeTrashed | <code>String</code> | 'includeTrashed' query argument |
+| config.itemKey | <code>String</code> | 'itemKey' query argument |
+| config.itemQ | <code>String</code> | 'itemQ' query argument |
+| config.itemQMode | <code>String</code> | 'itemQMode' query argument |
+| config.itemTag | <code>String</code> \| <code>Array.&lt;String&gt;</code> | 'itemTag' query argument |
+| config.itemType | <code>String</code> | 'itemType' query argument |
+| config.limit | <code>Number</code> | 'limit' query argument |
+| config.linkMode | <code>String</code> | 'linkMode' query argument |
+| config.linkwrap | <code>String</code> | 'linkwrap' query argument |
+| config.locale | <code>String</code> | 'locale' query argument |
+| config.q | <code>String</code> | 'q' query argument |
+| config.qmode | <code>String</code> | 'qmode' query argument |
+| config.searchKey | <code>String</code> | 'searchKey' query argument |
+| config.since | <code>Number</code> | 'since' query argument |
+| config.sort | <code>String</code> | 'sort' query argument |
+| config.start | <code>Number</code> | 'start' query argument |
+| config.style | <code>String</code> | 'style' query argument |
+| config.tag | <code>String</code> \| <code>Array.&lt;String&gt;</code> | 'tag' query argument |
+| config.pretend | <code>Boolean</code> | triggers pretend mode where fetch request is prepared and returned without execution |
+| config.resource.top | <code>String</code> | use 'top' resource |
+| config.resource.trash | <code>String</code> | use 'trash' resource |
+| config.resource.children | <code>String</code> | use 'children' resource |
+| config.resource.groups | <code>String</code> | use 'groups' resource |
+| config.resource.itemTypes | <code>String</code> | use 'itemTypes' resource |
+| config.resource.itemFields | <code>String</code> | use 'itemFields' resource |
+| config.resource.creatorFields | <code>String</code> | use 'creatorFields' resource |
+| config.resource.itemTypeFields | <code>String</code> | use 'itemTypeFields' resource |
+| config.resource.itemTypeCreatorTypes | <code>String</code> | use 'itemTypeCreatorTypes' resource |
+| config.resource.library | <code>String</code> | use 'library' resource |
+| config.resource.collections | <code>String</code> | use 'collections' resource |
+| config.resource.items | <code>String</code> | use 'items' resource |
+| config.resource.searches | <code>String</code> | use 'searches' resource |
+| config.resource.tags | <code>String</code> | use 'tags' resource |
+| config.resource.template | <code>String</code> | use 'template' resource |
+| config.method | <code>String</code> | forwarded to fetch() |
+| config.body | <code>String</code> | forwarded to fetch() |
+| config.mode | <code>String</code> | forwarded to fetch() |
+| config.cache | <code>String</code> | forwarded to fetch() |
+| config.credentials | <code>String</code> | forwarded to fetch() |
+| config.uploadRegisterOnly | <code>Boolean</code> | this file upload should only perform stage 1 |
+| config.retry | <code>Number</code> | retry this many times after transient error |
+| config.retryDelay | <code>Number</code> | wait this many seconds before retry. If not set an exponential backoff algorithm will be used |
 

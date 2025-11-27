@@ -53,7 +53,7 @@ const filePatchQueryParamNames = [
 
 const fetchParamNames = [
 	'body',
-	'cache',	
+	'cache',
 	'credentials',
 	'integrity',
 	'keepalive',
@@ -67,7 +67,7 @@ const fetchParamNames = [
 ];
 
 const resourcesSpecs = [
-	//name in resource, name in the url (usually the same but there are exceptions)
+	//name in resource, name in the url (usually the same, but there are exceptions)
 	{ 'name': 'library', urlPart: 'library', isKeyResource: true },
 	{ 'name': 'collections', urlPart: 'collections', isKeyResource: true },
 	{ 'name': 'publications', urlPart: 'publications', isKeyResource: false },
@@ -128,7 +128,7 @@ const makeUrlPath = resource => {
 					path.push(resourceValue);
 				}
 			}
-		}	
+		}
 	}
 	return path.join('/');
 };
@@ -163,12 +163,11 @@ const hasDefinedKey = (object, key) => {
 
 const throwErrorResponse = async (rawResponse, options, requestDesc) => {
 	let clonedRawResponse = rawResponse.clone();
-	let reason = null;
-	reason = await clonedRawResponse.text();
+	let reason = await clonedRawResponse.text();
 	throw new ErrorResponse(`${requestDesc}${rawResponse.status}: ${rawResponse.statusText}`, reason, rawResponse, options);
 }
 
-const isTransientFailure = response => response.status == 408 || response.status >= 500;
+const isTransientFailure = response => response.status === 408 || response.status >= 500;
 const sleep = seconds => {
 	return new Promise(resolve => {
 		setTimeout(() => {
@@ -180,65 +179,63 @@ const sleep = seconds => {
 /**
  * Executes request and returns a response. Not meant to be called directly, instead use {@link
    module:zotero-api-client~api}.
- * @param {String} options.apiScheme						- Scheme part of the API URL
- * @param {String} options.apiAuthorityPart					- Authority part of the API URL
- * @param {String} options.apiPath							- Path part of the API URL
- * @param {String} options.authorization					- 'Authorization' header
- * @param {String} options.zoteroWriteToken					- 'Zotero-Write-Token' header 
- * @param {String} options.ifModifiedSinceVersion			- 'If-Modified-Since-Version' header
- * @param {String} options.ifUnmodifiedSinceVersion			- 'If-Unmodified-Since-Version' header
- * @param {String} options.contentType						- 'Content-Type' header
- * @param {String} options.collectionKey					- 'collectionKey' query argument
- * @param {String} options.content							- 'content' query argument
- * @param {String} options.direction						- 'direction' query argument
- * @param {String} options.format							- 'format' query argument
- * @param {String} options.include							- 'include' query argument
- * @param {String} options.includeTrashed					- 'includeTrashed' query argument
- * @param {String} options.itemKey							- 'itemKey' query argument
- * @param {String} options.itemQ							- 'itemQ' query argument
- * @param {String} options.itemQMode						- 'itemQMode' query argument
- * @param {String|String[]} options.itemTag					- 'itemTag' query argument
- * @param {String} options.itemType							- 'itemType' query argument
- * @param {Number} options.limit							- 'limit' query argument
- * @param {String} options.linkMode							- 'linkMode' query argument
- * @param {String} options.linkwrap 						- 'linkwrap' query argument
- * @param {String} options.locale							- 'locale' query argument
- * @param {String} options.q								- 'q' query argument
- * @param {String} options.qmode							- 'qmode' query argument
- * @param {String} options.searchKey						- 'searchKey' query argument
- * @param {Number} options.since							- 'since' query argument
- * @param {String} options.sort								- 'sort' query argument
- * @param {Number} options.start							- 'start' query argument
- * @param {String} options.style							- 'style' query argument
- * @param {String|String[]} options.tag						- 'tag' query argument
- * @param {Boolean} options.pretend							- triggers pretend mode where fetch request
- *                                        					  is prepared and returned without execution
- * @param {String} options.resource.top					    - use 'top' resource  
- * @param {String} options.resource.trash					- use 'trash' resource  
- * @param {String} options.resource.children				- use 'children' resource  	
- * @param {String} options.resource.groups					- use 'groups' resource  
- * @param {String} options.resource.itemTypes				- use 'itemTypes' resource  	
- * @param {String} options.resource.itemFields				- use 'itemFields' resource  	
- * @param {String} options.resource.creatorFields			- use 'creatorFields' resource  		
- * @param {String} options.resource.itemTypeFields			- use 'itemTypeFields' resource  		
- * @param {String} options.resource.itemTypeCreatorTypes	- use 'itemTypeCreatorTypes' resource  				
- * @param {String} options.resource.library					- use 'library' resource  
- * @param {String} options.resource.collections				- use 'collections' resource  	
- * @param {String} options.resource.items					- use 'items' resource  
- * @param {String} options.resource.searches				- use 'searches' resource  	
- * @param {String} options.resource.tags					- use 'tags' resource  
- * @param {String} options.resource.template				- use 'template' resource  	
- * @param {String} options.method 							- forwarded to fetch()
- * @param {String} options.body 							- forwarded to fetch()
- * @param {String} options.mode 							- forwarded to fetch()
- * @param {String} options.cache 							- forwarded to fetch()
- * @param {String} options.credentials 						- forwarded to fetch()
- * @param {Boolean} options.uploadRegisterOnly				- this file upload should only perform stage 1
- *                                           				  error if file with provided meta does not exist
- * @param {Number} options.retry							- retry this many times after transient error.
- * @param {Number} options.retryDelay						- wait this many seconds before retry. If not set
- *                                         					  an exponential backoff algorithm will be used
- * 
+ * @param {Object} config - Configuration object
+ * @param {String} config.apiScheme - Scheme part of the API URL
+ * @param {String} config.apiAuthorityPart - Authority part of the API URL
+ * @param {String} config.apiPath - Path part of the API URL
+ * @param {String} config.authorization - 'Authorization' header
+ * @param {String} config.zoteroWriteToken - 'Zotero-Write-Token' header
+ * @param {String} config.ifModifiedSinceVersion - 'If-Modified-Since-Version' header
+ * @param {String} config.ifUnmodifiedSinceVersion - 'If-Unmodified-Since-Version' header
+ * @param {String} config.contentType - 'Content-Type' header
+ * @param {String} config.collectionKey - 'collectionKey' query argument
+ * @param {String} config.content - 'content' query argument
+ * @param {String} config.direction - 'direction' query argument
+ * @param {String} config.format - 'format' query argument
+ * @param {String} config.include - 'include' query argument
+ * @param {String} config.includeTrashed - 'includeTrashed' query argument
+ * @param {String} config.itemKey - 'itemKey' query argument
+ * @param {String} config.itemQ - 'itemQ' query argument
+ * @param {String} config.itemQMode - 'itemQMode' query argument
+ * @param {String|String[]} config.itemTag - 'itemTag' query argument
+ * @param {String} config.itemType - 'itemType' query argument
+ * @param {Number} config.limit - 'limit' query argument
+ * @param {String} config.linkMode - 'linkMode' query argument
+ * @param {String} config.linkwrap - 'linkwrap' query argument
+ * @param {String} config.locale - 'locale' query argument
+ * @param {String} config.q - 'q' query argument
+ * @param {String} config.qmode - 'qmode' query argument
+ * @param {String} config.searchKey - 'searchKey' query argument
+ * @param {Number} config.since - 'since' query argument
+ * @param {String} config.sort - 'sort' query argument
+ * @param {Number} config.start - 'start' query argument
+ * @param {String} config.style - 'style' query argument
+ * @param {String|String[]} config.tag - 'tag' query argument
+ * @param {Boolean} config.pretend - triggers pretend mode where fetch request is prepared and returned without execution
+ * @param {String} config.resource.top - use 'top' resource
+ * @param {String} config.resource.trash - use 'trash' resource
+ * @param {String} config.resource.children - use 'children' resource
+ * @param {String} config.resource.groups - use 'groups' resource
+ * @param {String} config.resource.itemTypes - use 'itemTypes' resource
+ * @param {String} config.resource.itemFields - use 'itemFields' resource
+ * @param {String} config.resource.creatorFields - use 'creatorFields' resource
+ * @param {String} config.resource.itemTypeFields - use 'itemTypeFields' resource
+ * @param {String} config.resource.itemTypeCreatorTypes - use 'itemTypeCreatorTypes' resource
+ * @param {String} config.resource.library - use 'library' resource
+ * @param {String} config.resource.collections - use 'collections' resource
+ * @param {String} config.resource.items - use 'items' resource
+ * @param {String} config.resource.searches - use 'searches' resource
+ * @param {String} config.resource.tags - use 'tags' resource
+ * @param {String} config.resource.template - use 'template' resource
+ * @param {String} config.method - forwarded to fetch()
+ * @param {String} config.body - forwarded to fetch()
+ * @param {String} config.mode - forwarded to fetch()
+ * @param {String} config.cache - forwarded to fetch()
+ * @param {String} config.credentials - forwarded to fetch()
+ * @param {Boolean} config.uploadRegisterOnly - this file upload should only perform stage 1
+ * @param {Number} config.retry - retry this many times after transient error
+ * @param {Number} config.retryDelay - wait this many seconds before retry. If not set an exponential backoff algorithm will be used
+ *
  * @return {Object} Returns a Promise that will eventually return a response object
  * @throws {Error} If options specify impossible configuration
  * @throws {ErrorResponse} If API responds with a non-ok response
@@ -246,7 +243,7 @@ const sleep = seconds => {
  * @inner
  */
 const request = async config => {
-	var response;
+	let response;
 
 	if('response' in config && config.response) {
 		return config;
@@ -257,7 +254,7 @@ const request = async config => {
 	if (hasDefinedKey(options, 'body') && (hasDefinedKey(options, 'file') || hasDefinedKey(options, 'oldFile'))) {
 		throw new Error('Cannot use both "file" and "body" in a single request.');
 	}
-	
+
 	if (['POST', 'PUT', 'PATCH'].includes(options.method.toUpperCase()) && !('contentType' in config)) {
 		options.contentType = 'application/json';
 	}
@@ -277,7 +274,7 @@ const request = async config => {
 		if(param === 'body' && hasDefinedKey(options, param)) {
 			fetchConfig[param] = JSON.stringify(options[param]);
 		} else {
-			fetchConfig[param] = options[param];	
+			fetchConfig[param] = options[param];
 		}
 	}
 
@@ -295,16 +292,16 @@ const request = async config => {
 	if(options.uploadRegisterOnly === true) {
 		const { fileName, fileSize, md5sum, mtime } = options;
 		fileUploadData = { fileName, md5sum, mtime, fileSize };
-		fetchConfig['body'] = `md5=${md5sum}&filename=${fileName}&filesize=${fileSize}&mtime=${mtime}`;	
+		fetchConfig['body'] = `md5=${md5sum}&filename=${fileName}&filesize=${fileSize}&mtime=${mtime}`;
 	}
 
-	// checking against access-control-allow-methods seems to be case sensitive
+	// checking against access-control-allow-methods seems to be case-sensitive
 	fetchConfig.method = fetchConfig.method.toUpperCase();
 	fetchConfig.headers = headers;
 
 	options.retryCount = 0;
 	if(options.pretend) {
-		const response = new PretendResponse({ url, fetchConfig }, options);
+		const response = new PretendResponse({ url, fetchConfig }, options, null);
 		return { response, ...config, source: 'request' };
 	}
 
@@ -332,7 +329,7 @@ const request = async config => {
 			let authData = await rawResponse.json();
 			if('exists' in authData && authData.exists) {
 				response = new FileUploadResponse({ ...fileUploadData, ...authData }, options, rawResponse);
-			} else {	
+			} else {
 				if(options.uploadRegisterOnly === true) {
 					throw new ErrorResponse(
 						'API did not recognize provided file meta.',
@@ -360,7 +357,7 @@ const request = async config => {
 					body.set(prefix, 0);
 					body.set(new Uint8ClampedArray(options.file), prefix.byteLength);
 					body.set(suffix, prefix.byteLength + options.file.byteLength);
-					
+
 					// full file upload request
 					uploadResponse = await fetch(authData.url, {
 						headers: {
@@ -370,7 +367,7 @@ const request = async config => {
 						body: body.buffer
 					});
 					isUploadSuccessful = uploadResponse.status === 201;
-					
+
 					// register file request
 					registerResponse = await fetch(url, {
 						...fetchConfig,

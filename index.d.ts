@@ -57,6 +57,7 @@ export interface RequestOptions {
   itemType?: string;
   limit?: number | string;
   linkMode?: string;
+  linkwrap?: string;
   locale?: string;
   q?: string;
   qmode?: string;

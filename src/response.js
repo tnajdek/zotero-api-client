@@ -17,49 +17,49 @@ class ApiResponse {
 	}
 
 	/**
-	* Name of the class, useful to determine instance of which specialised class
+	 * Name of the class, useful to determine instance of which specialised class
 	  has been returned
-	* @return {string} name of the class
-	*/
+	 * @return {string} name of the class
+	 */
 	getResponseType() {
 		return 'ApiResponse';
 	}
 
 	/**
-	* Content of the response. Specialised classes provide extracted data depending on context.
-	* @return {object}
-	*/
+	 * Content of the response. Specialised classes provide extracted data depending on context.
+	 * @return {object}
+	 */
 	getData() {
 		return this.raw;
 	}
 
 	/**
-	* Links available in the response. Specialised classes provide extracted links depending on context.
-	* @return {object}
-	*/
+	 * Links available in the response. Specialised classes provide extracted links depending on context.
+	 * @return {object}
+	 */
 	getLinks() {
-		if('links' in this.raw) {
+		if ('links' in this.raw) {
 			return this.raw.links;
 		}
 		return null;
 	}
 
 	/**
-	* Meta data available in the response. Specialised classes provide extracted meta data depending on context.
-	* @return {object}
-	*/
+	 * Meta data available in the response. Specialised classes provide extracted meta data depending on context.
+	 * @return {object}
+	 */
 	getMeta() {
-		if('meta' in this.raw) {
+		if ('meta' in this.raw) {
 			return this.raw.meta;
 		}
 		return null;
 	}
 
 	/**
-	* Value of "Last-Modified-Version" header in response if present. Specialised classes provide
+	 * Value of the "Last-Modified-Version" header in response if present. Specialised classes provide
 	  version depending on context
-	* @return {?number} Version of the content in response
-	*/
+	 * @return {?number} Version of the content in response
+	 */
 	getVersion() {
 		return parseIntHeaders(this.response.headers, 'Last-Modified-Version');
 	}
@@ -67,14 +67,15 @@ class ApiResponse {
 
 class SchemaResponse extends ApiResponse {
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'SchemaResponse';
 	}
+
 	/**
-	* @returns {number} Version of the schema
-	*/
+	 * @returns {number} Version of the schema
+	 */
 	getVersion() {
 		return this.raw.version;
 	}
@@ -92,8 +93,8 @@ class SchemaResponse extends ApiResponse {
  */
 class SingleReadResponse extends ApiResponse {
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'SingleReadResponse';
 	}
@@ -114,52 +115,57 @@ class SingleReadResponse extends ApiResponse {
  */
 class MultiReadResponse extends ApiResponse {
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'MultiReadResponse';
 	}
+
 	/**
 	 * @return {Array} a list of entities returned in this response
 	 */
 	getData() {
-		return this.raw.map(r => 'data' in r ? r.data : 'tag' in r ? { tag: r.tag } : r);
+		return this.raw.map(r => 'data' in r ? r.data : 'tag' in r ? {tag: r.tag} : r);
 	}
 
 	/**
-	* @return {Array} a list of links, indexes of the array match indexes of entities in {@link
+	 * @return {Array} a list of links, indexes of the array match indexes of entities in {@link
 module:zotero-api-client~MultiReadResponse#getData}
-	*/
+	 */
 	getLinks() {
 		return this.raw.map(r => 'links' in r && r.links || null);
 	}
 
 	/**
-	* @return {Array} a list of meta data, indexes of the array match indexes of entities in {@link
+	 * @return {Array} a list of meta-data, indexes of the array match indexes of entities in {@link
 module:zotero-api-client~MultiReadResponse#getData}
-	*/
+	 */
 	getMeta() {
 		return this.raw.map(r => 'meta' in r && r.meta || null);
 	}
 
 	/**
-	* @return {string} Total number of results
-	*/
+	 * @return {?number} Total number of results
+	 */
 	getTotalResults() {
 		return parseIntHeaders(this.response.headers, 'Total-Results');
 	}
 
 	/**
-	* @return {object} Parsed content of "Link" header as object where value of "rel" is a key and
-	  the URL is the value, contains values for "next", "last" etc.
-	*/
+	 * @return {object} Parsed content of "Link" header as an object where value of "rel" is a key and
+	  the URL is the value. For paginated responses contain URLs for "first", "next", "prev" and "last".
+	 */
 	getRelLinks() {
 		const links = this.response.headers.get('link') ?? '';
 		const matches = Array.from(links.matchAll(/<(.*?)>;\s+rel="(.*?)"/ig));
-		return Array.from(matches).reduce((acc, [_match, url, rel]) => { // eslint-disable-line no-unused-vars
-			acc[rel] = url;
-			return acc;
-		}, {});
+		return Array
+			.from(matches)
+			.reduce((acc, match) => { // eslint-disable-line no-unused-vars
+				const url = match[1];
+				const rel = match[2];
+				acc[rel] = url;
+				return acc;
+			}, {});
 	}
 }
 
@@ -171,11 +177,12 @@ module:zotero-api-client~MultiReadResponse#getData}
  */
 class SingleWriteResponse extends ApiResponse {
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'SingleWriteResponse';
 	}
+
 	/**
 	 * @return {Object} For put requests, this represents a complete, updated object.
 	 *                  For patch requests, this represents only updated fields of the updated object.
@@ -196,11 +203,12 @@ class SingleWriteResponse extends ApiResponse {
  */
 class MultiWriteResponse extends ApiResponse {
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'MultiWriteResponse';
 	}
+
 	/**
 	 * @return {Boolean} Indicates whether all write operations were successful
 	 */
@@ -211,13 +219,13 @@ class MultiWriteResponse extends ApiResponse {
 	/**
 	 * Returns all entities POSTed in an array. Entities that have been written successfully
 	 * are returned updated, other entities are returned unchanged. It is advised to verify
-	 * if request was entirely successful (see isSuccess and getError) before using this method.
+	 * if the request was entirely successful (see isSuccess and getError) before using this method.
 	 * @return {Array} A modified list of all entities posted.
 	 */
 	getData() {
 		return this.options.body.map((item, index) => {
 			index = index.toString();
-			if(index in this.raw.success) {
+			if (index in this.raw.success) {
 				const remoteItem = this.raw.successful && this.raw.successful[index] || {};
 				return {
 					...item,
@@ -232,13 +240,13 @@ class MultiWriteResponse extends ApiResponse {
 	}
 
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getLinks}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getLinks}
+	 */
 	getLinks() {
 		return this.options.body.map((_, index) => {
-			if("successful" in this.raw) {
+			if ("successful" in this.raw) {
 				const entry = this.raw.successful[index.toString()];
-				if(entry) {
+				if (entry) {
 					return entry.links || null;
 				}
 			}
@@ -247,13 +255,13 @@ class MultiWriteResponse extends ApiResponse {
 	}
 
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getMeta}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getMeta}
+	 */
 	getMeta() {
 		return this.options.body.map((_, index) => {
-			if("successful" in this.raw) {
+			if ("successful" in this.raw) {
 				const entry = this.raw.successful[index.toString()];
-				if(entry) {
+				if (entry) {
 					return entry.meta || null;
 				}
 			}
@@ -267,7 +275,7 @@ class MultiWriteResponse extends ApiResponse {
 	 */
 	getErrors() {
 		const errors = {};
-		for(let i of Object.keys(this.raw.failed)) {
+		for (let i of Object.keys(this.raw.failed)) {
 			errors[parseInt(i, 10)] = this.raw.failed[i];
 		}
 
@@ -275,7 +283,7 @@ class MultiWriteResponse extends ApiResponse {
 	}
 
 	/**
-	 * Allows obtaining updated entity based on its key, otherwise identical to getEntityByIndex
+	 * Allows getting an updated entity based on its key, otherwise identical to getEntityByIndex
 	 * @param  {String} key
 	 * @throws {Error} If key is not present in the request
 	 * @see {@link module:zotero-api-client.getEntityByIndex}
@@ -285,7 +293,7 @@ class MultiWriteResponse extends ApiResponse {
 			return entity.key === key
 		});
 
-		if(index > -1) {
+		if (index > -1) {
 			return this.getEntityByIndex(index);
 		}
 
@@ -293,32 +301,32 @@ class MultiWriteResponse extends ApiResponse {
 	}
 
 	/**
-	 * Allows obtaining updated entity based on its index in the original request
-	 * @param  {Number} index
+	 * Allows getting an updated entity based on its index in the original request
+	 * @param  {Number|String} index
 	 * @return {Object}
 	 * @throws {Error} If index is not present in the original request
-	 * @throws {Error} If error occurred in the POST for selected entity. Error message will contain reason for failure.
+	 * @throws {Error} If error occurred in the POST for selected entity. Error message will contain the reason for failure.
 	 */
 	getEntityByIndex(index) {
-		if(typeof index === 'string') {
+		if (typeof index === 'string') {
 			index = parseInt(index, 10);
 		}
 
-		if(index.toString() in this.raw.success) {
+		if (index.toString() in this.raw.success) {
 			const remoteItem = this.raw.successful && this.raw.successful[index.toString()] || {};
 			return {
 				...this.options.body[index],
 				...remoteItem.data,
 				key: this.raw.success[index],
 				version: this.getVersion()
-			}	
+			}
 		}
 
-		if(index.toString() in this.raw.unchanged) {
+		if (index.toString() in this.raw.unchanged) {
 			return this.options.body[index];
 		}
 
-		if(index.toString() in this.raw.failed) {
+		if (index.toString() in this.raw.failed) {
 			throw new Error(`${this.raw.failed[index.toString()].code}: ${this.raw.failed[index.toString()].message}`);
 		}
 
@@ -334,8 +342,8 @@ class MultiWriteResponse extends ApiResponse {
  */
 class DeleteResponse extends ApiResponse {
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'DeleteResponse';
 	}
@@ -344,12 +352,10 @@ class DeleteResponse extends ApiResponse {
 /**
  * @class Represents a response to a file upload request
  * @extends ApiResponse
- * @property {Object} authResponse     - Response object for the stage 1 (upload authorisation)
- *                                       request
- * @property {Object} response 	       - alias for "authResponse" 
- * @property {Object} uploadResponse   - Response object for the stage 2 (file upload) request
- * @property {Objext} registerResponse - Response object for the stage 3 (upload registration)
- *                                       request
+ * @property {Object} authResponse     - Response object for stage 1 (upload authorisation) request
+ * @property {Object} response 	       - alias for "authResponse"
+ * @property {Object} uploadResponse   - Response object for stage 2 (file upload) request
+ * @property {Object} registerResponse - Response object for stage 3 (upload registration) request
  * @memberof module:zotero-api-client
  * @inner
  */
@@ -361,20 +367,20 @@ class FileUploadResponse extends ApiResponse {
 	}
 
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'FileUploadResponse';
 	}
 
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getVersion}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getVersion}
+	 */
 	getVersion() {
-		// full upload will have latest version in the final register response,
-		// partial upload could have latest version in the upload response
-		// (because that goes through API), however currently that's not the case.
-		// If file existed before, and currently for partial uploads, latest version
+		// full upload will have the latest version in the final register response,
+		// partial upload could have the latest version in the upload response
+		// (because that goes through API), however, currently that's not the case.
+		// If a file existed before, and currently for partial uploads, the latest version
 		// will be in obtained from the initial response
 		return parseIntHeaders(this.registerResponse?.headers, 'Last-Modified-Version') ??
 			parseIntHeaders(this.uploadResponse?.headers, 'Last-Modified-Version') ??
@@ -390,8 +396,8 @@ class FileUploadResponse extends ApiResponse {
  */
 class FileDownloadResponse extends ApiResponse {
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'FileDownloadResponse';
 	}
@@ -405,15 +411,15 @@ class FileDownloadResponse extends ApiResponse {
  */
 class FileUrlResponse extends ApiResponse {
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'FileUrlResponse';
 	}
 }
 
 /**
- * @class Represents a raw response, e.g. to data requests with format other than json
+ * @class Represents a raw response, e.g. to data requests with format other than JSON
  * @extends ApiResponse
  * @memberof module:zotero-api-client
  * @inner
@@ -424,8 +430,8 @@ class RawApiResponse extends ApiResponse {
 	}
 
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'RawApiResponse';
 	}
@@ -439,15 +445,15 @@ class RawApiResponse extends ApiResponse {
  */
 class PretendResponse extends ApiResponse {
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'PretendResponse';
 	}
 
 	/**
-	* @return {Object} For pretended request version will always be null.
-	*/
+	 * @return {Object} For pretended request version will always be null.
+	 */
 	getVersion() {
 		return null;
 	}
@@ -473,21 +479,23 @@ class ErrorResponse extends Error {
 	}
 
 	/**
-	* Value of "Last-Modified-Version" header in response if present. This is generally only available if server responded with 412 due to version mismatch.
-	* @return {?number} Version of the content in response
-	*/
+	 * Value of the "Last-Modified-Version" header in response if present. This is generally only available if the server responded with 412 due to a version mismatch.
+	 * @return {?number} Version of the content in response
+	 */
 	getVersion() {
 		return parseIntHeaders(this.response.headers, 'Last-Modified-Version');
 	}
 
 	/**
-	* @see {@link module:zotero-api-client~ApiResponse#getResponseType}
-	*/
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
 	getResponseType() {
 		return 'ErrorResponse';
 	}
 }
 
-export { ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse,
-FileUploadResponse, FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse,
-RawApiResponse, SchemaResponse, SingleReadResponse, SingleWriteResponse };
+export {
+	ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse,
+	FileUploadResponse, FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse,
+	RawApiResponse, SchemaResponse, SingleReadResponse, SingleWriteResponse
+};

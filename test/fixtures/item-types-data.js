@@ -1,10 +1,10 @@
 export default [
-  {
-    "itemType": "book",
-    "localized": "Book"
-  },
-  {
-    "itemType": "note",
-    "localized": "Note"
-  }
+	{
+		"itemType": "book",
+		"localized": "Book"
+	},
+	{
+		"itemType": "note",
+		"localized": "Note"
+	}
 ]

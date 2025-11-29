@@ -150,7 +150,7 @@ API Reference
         * [.getData()](#module_zotero-api-client..MultiReadResponse+getData) ⇒ <code>Array</code>
         * [.getLinks()](#module_zotero-api-client..MultiReadResponse+getLinks) ⇒ <code>Array</code>
         * [.getMeta()](#module_zotero-api-client..MultiReadResponse+getMeta) ⇒ <code>Array</code>
-        * [.getTotalResults()](#module_zotero-api-client..MultiReadResponse+getTotalResults) ⇒ <code>string</code>
+        * [.getTotalResults()](#module_zotero-api-client..MultiReadResponse+getTotalResults) ⇒ <code>number</code>
         * [.getRelLinks()](#module_zotero-api-client..MultiReadResponse+getRelLinks) ⇒ <code>object</code>
     * [~SingleWriteResponse](#module_zotero-api-client..SingleWriteResponse) ⇐ <code>ApiResponse</code>
         * [.getResponseType()](#module_zotero-api-client..SingleWriteResponse+getResponseType)
@@ -262,7 +262,7 @@ Meta data available in the response. Specialised classes provide extracted meta 
 <a name="module_zotero-api-client..ApiResponse+getVersion"></a>
 
 #### apiResponse.getVersion() ⇒ <code>number</code>
-Value of "Last-Modified-Version" header in response if present. Specialised classes provide
+Value of the "Last-Modified-Version" header in response if present. Specialised classes provide
 	  version depending on context
 
 **Kind**: instance method of [<code>ApiResponse</code>](#module_zotero-api-client..ApiResponse)  
@@ -302,7 +302,7 @@ represents a response to a GET request containing multiple entities
     * [.getData()](#module_zotero-api-client..MultiReadResponse+getData) ⇒ <code>Array</code>
     * [.getLinks()](#module_zotero-api-client..MultiReadResponse+getLinks) ⇒ <code>Array</code>
     * [.getMeta()](#module_zotero-api-client..MultiReadResponse+getMeta) ⇒ <code>Array</code>
-    * [.getTotalResults()](#module_zotero-api-client..MultiReadResponse+getTotalResults) ⇒ <code>string</code>
+    * [.getTotalResults()](#module_zotero-api-client..MultiReadResponse+getTotalResults) ⇒ <code>number</code>
     * [.getRelLinks()](#module_zotero-api-client..MultiReadResponse+getRelLinks) ⇒ <code>object</code>
 
 <a name="module_zotero-api-client..MultiReadResponse+getResponseType"></a>
@@ -324,18 +324,18 @@ represents a response to a GET request containing multiple entities
 
 #### multiReadResponse.getMeta() ⇒ <code>Array</code>
 **Kind**: instance method of [<code>MultiReadResponse</code>](#module_zotero-api-client..MultiReadResponse)  
-**Returns**: <code>Array</code> - a list of meta data, indexes of the array match indexes of entities in [getData](#module_zotero-api-client..MultiReadResponse+getData)  
+**Returns**: <code>Array</code> - a list of meta-data, indexes of the array match indexes of entities in [getData](#module_zotero-api-client..MultiReadResponse+getData)  
 <a name="module_zotero-api-client..MultiReadResponse+getTotalResults"></a>
 
-#### multiReadResponse.getTotalResults() ⇒ <code>string</code>
+#### multiReadResponse.getTotalResults() ⇒ <code>number</code>
 **Kind**: instance method of [<code>MultiReadResponse</code>](#module_zotero-api-client..MultiReadResponse)  
-**Returns**: <code>string</code> - Total number of results  
+**Returns**: <code>number</code> - Total number of results  
 <a name="module_zotero-api-client..MultiReadResponse+getRelLinks"></a>
 
 #### multiReadResponse.getRelLinks() ⇒ <code>object</code>
 **Kind**: instance method of [<code>MultiReadResponse</code>](#module_zotero-api-client..MultiReadResponse)  
-**Returns**: <code>object</code> - Parsed content of "Link" header as object where value of "rel" is a key and
-	  the URL is the value, contains values for "next", "last" etc.  
+**Returns**: <code>object</code> - Parsed content of "Link" header as an object where value of "rel" is a key and
+	  the URL is the value. For paginated responses contain URLs for "first", "next", "prev" and "last".  
 <a name="module_zotero-api-client..SingleWriteResponse"></a>
 
 ### zotero-api-client~SingleWriteResponse ⇐ <code>ApiResponse</code>
@@ -392,7 +392,7 @@ Represents a response to a POST request
 #### multiWriteResponse.getData() ⇒ <code>Array</code>
 Returns all entities POSTed in an array. Entities that have been written successfully
 are returned updated, other entities are returned unchanged. It is advised to verify
-if request was entirely successful (see isSuccess and getError) before using this method.
+if the request was entirely successful (see isSuccess and getError) before using this method.
 
 **Kind**: instance method of [<code>MultiWriteResponse</code>](#module_zotero-api-client..MultiWriteResponse)  
 **Returns**: <code>Array</code> - A modified list of all entities posted.  
@@ -416,7 +416,7 @@ Returns all errors that have occurred.
 <a name="module_zotero-api-client..MultiWriteResponse+getEntityByKey"></a>
 
 #### multiWriteResponse.getEntityByKey(key)
-Allows obtaining updated entity based on its key, otherwise identical to getEntityByIndex
+Allows getting an updated entity based on its key, otherwise identical to getEntityByIndex
 
 **Kind**: instance method of [<code>MultiWriteResponse</code>](#module_zotero-api-client..MultiWriteResponse)  
 **Throws**:
@@ -432,18 +432,18 @@ Allows obtaining updated entity based on its key, otherwise identical to getEnti
 <a name="module_zotero-api-client..MultiWriteResponse+getEntityByIndex"></a>
 
 #### multiWriteResponse.getEntityByIndex(index) ⇒ <code>Object</code>
-Allows obtaining updated entity based on its index in the original request
+Allows getting an updated entity based on its index in the original request
 
 **Kind**: instance method of [<code>MultiWriteResponse</code>](#module_zotero-api-client..MultiWriteResponse)  
 **Throws**:
 
 - <code>Error</code> If index is not present in the original request
-- <code>Error</code> If error occurred in the POST for selected entity. Error message will contain reason for failure.
+- <code>Error</code> If error occurred in the POST for selected entity. Error message will contain the reason for failure.
 
 
 | Param | Type |
 | --- | --- |
-| index | <code>Number</code> | 
+| index | <code>Number</code> \| <code>String</code> | 
 
 <a name="module_zotero-api-client..DeleteResponse"></a>
 
@@ -468,10 +468,10 @@ Represents a response to a file upload request
 
 | Name | Type | Description |
 | --- | --- | --- |
-| authResponse | <code>Object</code> | Response object for the stage 1 (upload authorisation)                                       request |
+| authResponse | <code>Object</code> | Response object for stage 1 (upload authorisation) request |
 | response | <code>Object</code> | alias for "authResponse" |
-| uploadResponse | <code>Object</code> | Response object for the stage 2 (file upload) request |
-| registerResponse | <code>Objext</code> | Response object for the stage 3 (upload registration)                                       request |
+| uploadResponse | <code>Object</code> | Response object for stage 2 (file upload) request |
+| registerResponse | <code>Object</code> | Response object for stage 3 (upload registration) request |
 
 
 * [~FileUploadResponse](#module_zotero-api-client..FileUploadResponse) ⇐ <code>ApiResponse</code>
@@ -515,7 +515,7 @@ Represents a response containing temporary url for file download
 <a name="module_zotero-api-client..RawApiResponse"></a>
 
 ### zotero-api-client~RawApiResponse ⇐ <code>ApiResponse</code>
-Represents a raw response, e.g. to data requests with format other than json
+Represents a raw response, e.g. to data requests with format other than JSON
 
 **Kind**: inner class of [<code>zotero-api-client</code>](#module_zotero-api-client)  
 **Extends**: <code>ApiResponse</code>  
@@ -570,7 +570,7 @@ Represents an error response from the api
 <a name="module_zotero-api-client..ErrorResponse+getVersion"></a>
 
 #### errorResponse.getVersion() ⇒ <code>number</code>
-Value of "Last-Modified-Version" header in response if present. This is generally only available if server responded with 412 due to version mismatch.
+Value of the "Last-Modified-Version" header in response if present. This is generally only available if the server responded with 412 due to a version mismatch.
 
 **Kind**: instance method of [<code>ErrorResponse</code>](#module_zotero-api-client..ErrorResponse)  
 **Returns**: <code>number</code> - Version of the content in response  

@@ -1,6 +1,6 @@
 /* eslint-env mocha */
 import fetchMock from 'fetch-mock';
-import { assert } from 'chai';
+import {assert} from 'chai';
 import _request from '../src/request.js';
 import {
 	ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
@@ -15,7 +15,7 @@ import searchesResponseFixture from './fixtures/searches-data-response.js';
 import itemTypesDataFixture from './fixtures/item-types-data.js';
 import multiMixedWriteResponseFixture from './fixtures/multi-mixed-write-response.js';
 import multiSuccessWriteResponseFixture from './fixtures/multi-success-write-response.js';
-import settingsReponseFixture from './fixtures/settings-response.js';
+import settingsResponseFixture from './fixtures/settings-response.js';
 import keysCurrentResponse from './fixtures/keys-current-response.js';
 import userGroupsFixture from './fixtures/user-groups-response.js';
 
@@ -65,7 +65,7 @@ describe('ZoteroJS request', () => {
 		it('should get schema', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/schema',
-				{ version: 26, itemTypes: [], meta: {}, csl: {}, locales: {}, }
+				{version: 26, itemTypes: [], meta: {}, csl: {}, locales: {},}
 			);
 
 			return request({
@@ -112,9 +112,9 @@ describe('ZoteroJS request', () => {
 							['annotationType', 'highlight']
 						].every(([q, v]) => url.match(new RegExp(`\\b${q}=${v}\\b`)));
 				}, {
-				itemType: 'annotation',
-				annotationType: 'highlight'
-			}
+					itemType: 'annotation',
+					annotationType: 'highlight'
+				}
 			);
 
 			return request({
@@ -136,7 +136,7 @@ describe('ZoteroJS request', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/items/X42A7DEE',
 				{
-					headers: { 'Last-Modified-Version': 1 },
+					headers: {'Last-Modified-Version': 1},
 					body: singleGetResponseFixture
 				}
 			);
@@ -595,7 +595,7 @@ describe('ZoteroJS request', () => {
 		it('should get settings', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/settings',
-				settingsReponseFixture
+				settingsResponseFixture
 			);
 
 			return request({
@@ -613,7 +613,7 @@ describe('ZoteroJS request', () => {
 		it('should get individual keys from settings', () => {
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/settings/tagColors',
-				settingsReponseFixture.tagColors
+				settingsResponseFixture.tagColors
 			);
 
 			return request({
@@ -689,7 +689,7 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(response, PretendResponse);
 				assert.strictEqual(response.getResponseType(), 'PretendResponse');
 				assert.isNull(response.getVersion());
-				const { url, fetchConfig } = response.getData();
+				const {url, fetchConfig} = response.getData();
 				assert.include(url, 'https://api.zotero.org/users/475425/collections/N7W92H48/items/top')
 				assert.include(url, 'format=json')
 				assert.include(url, 'start=100')
@@ -706,7 +706,7 @@ describe('ZoteroJS request', () => {
 			);
 
 			return request({
-				resource: { verifyKeyAccess: null }
+				resource: {verifyKeyAccess: null}
 			}).then(response => {
 				assert.instanceOf(response, ApiResponse);
 				assert.strictEqual(response.getResponseType(), 'ApiResponse');
@@ -903,11 +903,11 @@ describe('ZoteroJS request', () => {
 			fetchMock.mock('begin:https://api.zotero.org/users/475425/items/top', {
 				status: 500,
 				body: 'Nope'
-			}, { repeat: 2 });
+			}, {repeat: 2});
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/items/top',
 				multiGetResponseFixture,
-				{ repeat: 1 }
+				{repeat: 1}
 			);
 
 			return request({
@@ -928,11 +928,11 @@ describe('ZoteroJS request', () => {
 			fetchMock.mock('begin:https://api.zotero.org/users/475425/items/top', {
 				status: 500,
 				body: 'Nope'
-			}, { repeat: 5 });
+			}, {repeat: 5});
 			fetchMock.mock(
 				'begin:https://api.zotero.org/users/475425/items/top',
 				multiGetResponseFixture,
-				{ repeat: 1 }
+				{repeat: 1}
 			);
 
 			return request({
@@ -1516,7 +1516,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should forward previous response if present (play nicely with other executors)', () => {
-			const previousResponse = new ApiResponse({ foo: 'bar' }, {}, {});
+			const previousResponse = new ApiResponse({foo: 'bar'}, {}, {});
 			return request({
 				method: 'get',
 				resource: {
@@ -1623,7 +1623,7 @@ describe('ZoteroJS request', () => {
 					status: 201
 				};
 			});
-			return request({ ...fileUploadRequest }).then(response => {
+			return request({...fileUploadRequest}).then(response => {
 				assert.instanceOf(response, FileUploadResponse);
 				assert.strictEqual(response.getResponseType(), 'FileUploadResponse');
 				assert.strictEqual(response.getVersion(), 42);
@@ -1731,7 +1731,7 @@ describe('ZoteroJS request', () => {
 					status: 201
 				};
 			});
-			return request({ ...filePatchFullRequest }).then(response => {
+			return request({...filePatchFullRequest}).then(response => {
 				assert.instanceOf(response, FileUploadResponse);
 				assert.strictEqual(response.getResponseType(), 'FileUploadResponse');
 				assert.strictEqual(response.getVersion(), 42);
@@ -1744,9 +1744,9 @@ describe('ZoteroJS request', () => {
 				headers: {
 					'Last-Modified-Version': 42,
 				},
-				body: { exists: 1 }
+				body: {exists: 1}
 			});
-			return request({ ...fileUploadRequest })
+			return request({...fileUploadRequest})
 				.then(response => {
 					assert.instanceOf(response, FileUploadResponse);
 					assert.strictEqual(response.getVersion(), 42);
@@ -1770,7 +1770,7 @@ describe('ZoteroJS request', () => {
 				status: 409,
 				body: 'The target library is locked.'
 			});
-			return request({ ...fileUploadRequest })
+			return request({...fileUploadRequest})
 				.then(() => {
 					throw new Error('fail');
 				}).catch(error => {
@@ -1791,7 +1791,7 @@ describe('ZoteroJS request', () => {
 				status: 400,
 				body: 'Something wrong'
 			});
-			return request({ ...fileUploadRequest })
+			return request({...fileUploadRequest})
 				.then(() => {
 					throw new Error('fail');
 				}).catch(error => {
@@ -1817,7 +1817,7 @@ describe('ZoteroJS request', () => {
 			fetchMock.once('https://storage.zotero.org', {
 				status: 201
 			});
-			return request({ ...fileUploadRequest })
+			return request({...fileUploadRequest})
 				.then(() => {
 					throw new Error('fail');
 				}).catch(error => {
@@ -1851,11 +1851,11 @@ describe('ZoteroJS request', () => {
 					headers: {
 						'Last-Modified-Version': 42,
 					},
-					body: { exists: 1 }
+					body: {exists: 1}
 				};
 			});
 
-			return request({ ...fileRegisterRequest })
+			return request({...fileRegisterRequest})
 				.then(response => {
 					assert.instanceOf(response, FileUploadResponse);
 					assert.strictEqual(response.getVersion(), 42);
@@ -1871,7 +1871,7 @@ describe('ZoteroJS request', () => {
 				'suffix': 'some suffix',
 				'uploadKey': 'some key',
 			});
-			return request({ ...fileRegisterRequest })
+			return request({...fileRegisterRequest})
 				.then(() => {
 					throw new Error('fail');
 				}).catch(error => {

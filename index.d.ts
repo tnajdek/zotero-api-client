@@ -1,5 +1,12 @@
 export type HttpVerb = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
+export type RelLinks = {
+    next?: string;
+    previous?: string;
+    last?: string;
+    alternate?: string;
+};
+
 export interface ResourceSelection {
   library?: string; // e.g. "u123" or "g456"
   collections?: string | null;
@@ -135,7 +142,7 @@ export class MultiReadResponse<TData = any> extends ApiResponse<TData[]> {
   getLinks(): Array<any>;
   getMeta(): Array<any>;
   getTotalResults(): number | null;
-  getRelLinks(): Record<string, string>;
+  getRelLinks(): RelLinks
 }
 
 export class SingleWriteResponse<TPatch extends object = any> extends ApiResponse<Required<TPatch>> {

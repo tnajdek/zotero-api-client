@@ -8,7 +8,7 @@ import request from './request.js';
  * Wrapper function creates closure scope and calls api()
  * @return {Object} Partially configured api functions
  */
-const api = function() {
+const api = function () {
 	/**
 	 * Entry point of the interface. Configures authentication.
 	 * Can be used to configure any other properties of the api
@@ -21,15 +21,15 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const api = function(key = '', opts = {}) {
-		let props = { ...processOpts(opts) };
+	const api = function (key = '', opts = {}) {
+		let props = {...processOpts(opts)};
 
-		if(!('executors' in props) && (!this || !('executors' in this))) {
+		if (!('executors' in props) && (!this || !('executors' in this))) {
 			props.executors = [request];
 		}
 
-		if(key) {
-			props.zoteroApiKey =  key;
+		if (key) {
+			props.zoteroApiKey = key;
 		}
 
 		return ef.bind(this)(props)
@@ -45,16 +45,16 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const library = function(typeOrKey, id = null) {
+	const library = function (typeOrKey, id = null) {
 		let libraryKey;
-		if(arguments.length > 1) {
-			switch(typeOrKey.toLowerCase()) {
+		if (arguments.length > 1) {
+			switch (typeOrKey.toLowerCase()) {
 				case 'user':
 					libraryKey = `u${id}`;
-				break;
+					break;
 				case 'group':
 					libraryKey = `g${id}`;
-				break;
+					break;
 				default:
 					throw new Error(`Unrecognized library type "${typeOrKey}"`);
 			}
@@ -76,7 +76,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const items = function(items = null) {
+	const items = function (items = null) {
 		return efr.bind(this)({
 			items
 		})
@@ -88,7 +88,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const itemTypes = function() {
+	const itemTypes = function () {
 		return efr.bind(this)({
 			itemTypes: null
 		});
@@ -100,7 +100,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const itemFields = function() {
+	const itemFields = function () {
 		return efr.bind(this)({
 			itemFields: null
 		});
@@ -112,7 +112,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const creatorFields = function() {
+	const creatorFields = function () {
 		return efr.bind(this)({
 			creatorFields: null
 		});
@@ -125,7 +125,7 @@ const api = function() {
 	 * @returns {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const schema = function() {
+	const schema = function () {
 		return efr.bind(this)({
 			schema: null
 		});
@@ -139,13 +139,13 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const itemTypeFields = function(itemType) {
+	const itemTypeFields = function (itemType) {
 		if (!itemType) {
 			throw new Error('itemTypeFields() requires an itemType argument');
 		}
 		return efr.bind(this)({
 			itemTypeFields: null
-		}, { itemType });
+		}, {itemType});
 	};
 
 	/**
@@ -157,13 +157,13 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const itemTypeCreatorTypes = function(itemType) {
+	const itemTypeCreatorTypes = function (itemType) {
 		if (!itemType) {
 			throw new Error('itemTypeCreatorTypes() requires an itemType argument');
 		}
 		return efr.bind(this)({
 			itemTypeCreatorTypes: null
-		}, { itemType });
+		}, {itemType});
 	};
 
 	/**
@@ -174,7 +174,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const template = function(itemType, subType) {
+	const template = function (itemType, subType) {
 		if (!itemType) {
 			throw new Error('template() requires an itemType argument');
 		}
@@ -188,7 +188,7 @@ const api = function() {
 
 		return efr.bind(this)({
 			template: null
-		}, { itemType, ...subTypeOpts });
+		}, {itemType, ...subTypeOpts});
 	};
 
 	/**
@@ -200,7 +200,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const collections = function(collections) {
+	const collections = function (collections) {
 		return efr.bind(this)({
 			collections: collections || null
 		})
@@ -214,7 +214,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const subcollections = function() {
+	const subcollections = function () {
 		return efr.bind(this)({
 			subcollections: null
 		})
@@ -228,7 +228,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const publications = function() {
+	const publications = function () {
 		return efr.bind(this)({
 			publications: null
 		})
@@ -244,7 +244,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const tags = function(tags = null) {
+	const tags = function (tags = null) {
 		return efr.bind(this)({
 			tags
 		})
@@ -259,7 +259,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const searches = function(searches = null) {
+	const searches = function (searches = null) {
 		return efr.bind(this)({
 			searches: searches
 		})
@@ -272,7 +272,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const top = function() {
+	const top = function () {
 		return efr.bind(this)({
 			top: null
 		})
@@ -285,7 +285,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const trash = function() {
+	const trash = function () {
 		return efr.bind(this)({
 			trash: null
 		})
@@ -299,7 +299,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const children = function() {
+	const children = function () {
 		return efr.bind(this)({
 			children: null
 		})
@@ -316,7 +316,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const settings = function(settings = null) {
+	const settings = function (settings = null) {
 		return efr.bind(this)({
 			settings
 		});
@@ -328,13 +328,13 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const deleted = function(since) {
+	const deleted = function (since) {
 		const resource = {
 			...this.resource,
 			deleted: null
 		};
 
-		return ef.bind(this)({ since, resource });
+		return ef.bind(this)({since, resource});
 	};
 
 	/**
@@ -345,7 +345,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const groups = function() {
+	const groups = function () {
 		return efr.bind(this)({
 			groups: null
 		});
@@ -361,11 +361,11 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const version = function(version) {
-		if(typeof(version) !== 'number' || isNaN(version)) {
+	const version = function (version) {
+		if (typeof (version) !== 'number' || isNaN(version)) {
 			throw new Error('version() requires a number argument');
 		}
-		return ef.bind(this)({ version });
+		return ef.bind(this)({version});
 	};
 
 	/**
@@ -395,7 +395,7 @@ const api = function() {
 
 		let bindParams = {};
 
-		if(md5sum) {
+		if (md5sum) {
 			bindParams.ifMatch = md5sum;
 			if (patch && algorithm) {
 				bindParams.filePatch = patch;
@@ -405,7 +405,7 @@ const api = function() {
 			bindParams.ifNoneMatch = '*';
 		}
 
-		if(fileName && file) {
+		if (fileName && file) {
 			return ef.bind(this)({
 				format: null,
 				contentType: 'application/x-www-form-urlencoded',
@@ -416,7 +416,7 @@ const api = function() {
 				...bindParams
 			})
 		} else {
-			return ef.bind(this)({ format: null, resource });
+			return ef.bind(this)({format: null, resource});
 		}
 	}
 
@@ -434,12 +434,12 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const registerAttachment = function(fileName, fileSize, mtime, md5sum) {
+	const registerAttachment = function (fileName, fileSize, mtime, md5sum) {
 		let resource = {
 			...this.resource,
 			file: null
 		};
-		if(fileName && typeof(fileSize) !== 'undefined' && typeof(mtime) !== 'undefined' && md5sum) {
+		if (fileName && typeof (fileSize) !== 'undefined' && typeof (mtime) !== 'undefined' && md5sum) {
 			return ef.bind(this)({
 				contentType: 'application/x-www-form-urlencoded',
 				fileName,
@@ -464,7 +464,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const attachmentUrl = function() {
+	const attachmentUrl = function () {
 		let resource = {
 			...this.resource,
 			fileUrl: null
@@ -483,7 +483,7 @@ const api = function() {
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const verifyKeyAccess = function() {
+	const verifyKeyAccess = function () {
 		return efr.bind(this)({
 			verifyKeyAccess: null
 		})
@@ -499,7 +499,7 @@ const api = function() {
 	 *                   ApiResponse, SingleReadResponse or MultiReadResponse.
 	 *                   Might throw Error or ErrorResponse.
 	 */
-	const get = function(opts) {
+	const get = function (opts) {
 		return execute(prepareRequest(this, 'get', opts));
 	};
 
@@ -513,7 +513,7 @@ const api = function() {
 	 * @return {Promise} A promise that will eventually return MultiWriteResponse.
 	 *                   Might throw Error or ErrorResponse
 	 */
-	const post = function(data, opts) {
+	const post = function (data, opts) {
 		return execute(prepareRequest(this, 'post', opts, data));
 
 	};
@@ -528,7 +528,7 @@ const api = function() {
 	 * @return {Promise} A promise that will eventually return SingleWriteResponse.
 	 *                   Might throw Error or ErrorResponse
 	 */
-	const put = function(data, opts) {
+	const put = function (data, opts) {
 		return execute(prepareRequest(this, 'put', opts, data));
 	};
 
@@ -543,7 +543,7 @@ const api = function() {
 	 * @return {Promise} A promise that will eventually return SingleWriteResponse.
 	 *                   Might throw Error or ErrorResponse
 	 */
-	const patch = function(data, opts) {
+	const patch = function (data, opts) {
 		return execute(prepareRequest(this, 'patch', opts, data));
 	};
 
@@ -564,7 +564,7 @@ const api = function() {
 	 * @return {Promise} A promise that will eventually return DeleteResponse.
 	 *                   Might throw Error or ErrorResponse
 	 */
-	const del = function(keysToDelete, opts) {
+	const del = function (keysToDelete, opts) {
 		return execute(prepareRequest(this, 'delete', opts, keysToDelete));
 	};
 
@@ -574,7 +574,7 @@ const api = function() {
 	 * manually before submitted to the request method or as a debugging tool.
 	 * @return {Object} current config
 	 */
-	const getConfig = function() {
+	const getConfig = function () {
 		return this;
 	};
 
@@ -598,8 +598,8 @@ const api = function() {
 	 * @return {Promise} A promise that will eventually return PretendResponse.
 	 *                   Might throw Error or ErrorResponse
 	 */
-	const pretend = function(verb = 'get', data, opts) {
-		return execute(prepareRequest(this, verb, { ...opts, pretend: true }, data));
+	const pretend = function (verb = 'get', data, opts) {
+		return execute(prepareRequest(this, verb, {...opts, pretend: true}, data));
 	};
 
 	/**
@@ -612,7 +612,7 @@ const api = function() {
 	 *                              usually by calling arguments[0].ef()
 	 * @return {Object} Extended/partially configured api functions
 	 */
-	const use = function(extend) {
+	const use = function (extend) {
 		return extend({
 			config: this,
 			functions,
@@ -629,24 +629,24 @@ const api = function() {
 		searches, settings, subcollections, tags, template, top, trash, use, verifyKeyAccess, version,
 	}
 
-	const ef = function(opts) {
-		let context = { ...this, ...opts };
+	const ef = function (opts) {
+		let context = {...this, ...opts};
 		let enhancedFunctions = {};
-		for(let fname in functions) {
+		for (let fname in functions) {
 			enhancedFunctions[fname] = functions[fname].bind(context)
 		}
 
 		return enhancedFunctions;
 	}
 
-	const efr = function(resource, opts) {
-		resource = { ...this.resource, ...resource };
-		opts = { ...opts, resource};
+	const efr = function (resource, opts) {
+		resource = {...this.resource, ...resource};
+		opts = {...opts, resource};
 		return ef.bind(this)(opts);
 	}
 
 	const processOpts = function (opts) {
-		let newOpts = { ...opts };
+		let newOpts = {...opts};
 		if ('apiScheme' in newOpts) {
 			//  only alphanumeric characters and the +, -, and . allowed
 			if (newOpts.apiScheme.endsWith('://')) {
@@ -667,13 +667,13 @@ const api = function() {
 		return newOpts;
 	}
 
-	const prepareRequest = function(config, verb, opts, body) {
+	const prepareRequest = function (config, verb, opts, body) {
 		const method = verb.toLowerCase();
 		let relevantSearchKey, requestConfig, keysToDelete;
-		switch(method) {
+		switch (method) {
 			case 'get':
-				requestConfig = { ...config, ...processOpts(opts), method };
-				if('version' in requestConfig) {
+				requestConfig = {...config, ...processOpts(opts), method};
+				if ('version' in requestConfig) {
 					requestConfig['ifModifiedSinceVersion'] = requestConfig['version'];
 					delete requestConfig['version'];
 				}
@@ -681,42 +681,42 @@ const api = function() {
 			case 'post':
 			case 'put':
 			case 'patch':
-				requestConfig = { ...config, ...opts, body, method };
-				if('version' in requestConfig) {
+				requestConfig = {...config, ...opts, body, method};
+				if ('version' in requestConfig) {
 					requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
 					delete requestConfig['version'];
 				}
 				return requestConfig;
 			case 'delete':
-				requestConfig = { ...config, ...opts, method };
+				requestConfig = {...config, ...opts, method};
 				keysToDelete = body;
 
-				if(keysToDelete && !Array.isArray(keysToDelete)) {
+				if (keysToDelete && !Array.isArray(keysToDelete)) {
 					throw new Error(`Called delete() with ${typeof keysToDelete}, expected an Array`);
 				}
 
-				if('version' in requestConfig) {
+				if ('version' in requestConfig) {
 					requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
 					delete requestConfig['version'];
 				}
 
-				if('resource' in requestConfig && 'items' in requestConfig.resource) {
+				if ('resource' in requestConfig && 'items' in requestConfig.resource) {
 					relevantSearchKey = 'itemKey';
-				} else if('resource' in requestConfig && 'collections' in requestConfig.resource) {
+				} else if ('resource' in requestConfig && 'collections' in requestConfig.resource) {
 					relevantSearchKey = 'collectionKey';
-				} else if('resource' in requestConfig && 'tags' in requestConfig.resource) {
+				} else if ('resource' in requestConfig && 'tags' in requestConfig.resource) {
 					relevantSearchKey = 'tag';
-				} else if('resource' in requestConfig && 'searches' in requestConfig.resource) {
+				} else if ('resource' in requestConfig && 'searches' in requestConfig.resource) {
 					relevantSearchKey = 'searchKey';
-				} else if('resource' in requestConfig && 'settings' in requestConfig.resource) {
-					if(keysToDelete) {
+				} else if ('resource' in requestConfig && 'settings' in requestConfig.resource) {
+					if (keysToDelete) {
 						throw new Error('Arguments to delete() not supported when deleting settings');
 					}
 				} else {
 					throw new Error('Called delete() without first specifying what to delete')
 				}
 
-				if(keysToDelete) {
+				if (keysToDelete) {
 					requestConfig[relevantSearchKey] = [
 						...(requestConfig[relevantSearchKey] || []),
 						...keysToDelete

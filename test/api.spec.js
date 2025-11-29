@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-import { assert } from 'chai';
+import {assert} from 'chai';
 import _api from '../src/api.js';
 import _request from '../src/request.js';
 
@@ -28,7 +28,7 @@ describe('Zotero Api Client', () => {
 			response: 'response' in opts && opts.response || null
 		};
 	};
-	const api = _api(null, { executors: [mockRequest] }).api;
+	const api = _api(null, {executors: [mockRequest]}).api;
 
 	beforeEach(() => {
 		lrc = null;
@@ -75,7 +75,7 @@ describe('Zotero Api Client', () => {
 
 		it('rejects invalid apiScheme', () => {
 			assert.throws(() => {
-				api(KEY, { apiScheme: 'h$$p' });
+				api(KEY, {apiScheme: 'h$$p'});
 			}, 'apiScheme can only contain alphanumeric characters, plus (+), minus (-), and dot (.)');
 		});
 
@@ -348,7 +348,7 @@ describe('Zotero Api Client', () => {
 
 	describe('Construct write requests', () => {
 		it('handles api.library.items().post([I1b, I2b])', () => {
-			let body = [{ key: 'ITEM1111' }, { key: 'ITEM2222' }];
+			let body = [{key: 'ITEM1111'}, {key: 'ITEM2222'}];
 			api(KEY).library(LIBRARY_KEY).items().post(body);
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
@@ -357,7 +357,7 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('handles api.library.items(I1).put(I1b)', () => {
-			let body = { key: 'ITEM1111', thing: 'updated' };
+			let body = {key: 'ITEM1111', thing: 'updated'};
 			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).put(body);
 			assert.equal(lrc.method, 'put');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
@@ -366,7 +366,7 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('handles api.library.items(I1).patch(I1pb)', () => {
-			let body = { key: 'ITEM1111', thing: 'updated' };
+			let body = {key: 'ITEM1111', thing: 'updated'};
 			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).patch(body);
 			assert.equal(lrc.method, 'patch');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
@@ -391,7 +391,7 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('handles api.library.collections().post([C1b, C2b])', () => {
-			let body = [{ key: 'COLLECT1' }, { key: 'COLLECT2' }];
+			let body = [{key: 'COLLECT1'}, {key: 'COLLECT2'}];
 			api(KEY).library(LIBRARY_KEY).collections().post(body);
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
@@ -400,7 +400,7 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('handles api.library.collections(C1).put(C1b)', () => {
-			let body = { key: 'COLLECT1', thing: 'updated' };
+			let body = {key: 'COLLECT1', thing: 'updated'};
 			api(KEY).library(LIBRARY_KEY).collections(COLLECTION_KEY).put(body);
 			assert.equal(lrc.method, 'put');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
@@ -425,7 +425,7 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('handles api.library.searches.post([S1b, S2b])', () => {
-			let body = [{ key: 'SEARCH11' }, { key: 'SEARCH22' }];
+			let body = [{key: 'SEARCH11'}, {key: 'SEARCH22'}];
 			api(KEY).library(LIBRARY_KEY).searches().post(body);
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
@@ -452,10 +452,14 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('handles api.library.settings().post(SE1)', () => {
-			const body = { tagColors: { value: [ {
-				name: "test-tag",
-				color: "#FFC0CB"
-			} ] } };
+			const body = {
+				tagColors: {
+					value: [{
+						name: "test-tag",
+						color: "#FFC0CB"
+					}]
+				}
+			};
 			api(KEY).library(LIBRARY_KEY).settings().post(body);
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
@@ -464,7 +468,7 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('handles api.library.settings(KEY).put', () => {
-			const body = { value: "foobar" };
+			const body = {value: "foobar"};
 			api(KEY).library(LIBRARY_KEY).settings(SETTING_KEY).put(body);
 			assert.equal(lrc.method, 'put');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
@@ -640,8 +644,8 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('handles api.library.items().pretend(post, [I1b, I2b])', () => {
-			const body = [{ key: 'ITEM1111' }, { key: 'ITEM2222' }];
-			api(KEY).library(LIBRARY_KEY).items().pretend('post', body, { format: 'atom' });
+			const body = [{key: 'ITEM1111'}, {key: 'ITEM2222'}];
+			api(KEY).library(LIBRARY_KEY).items().pretend('post', body, {format: 'atom'});
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.isNull(lrc.resource.items);
@@ -720,8 +724,8 @@ describe('Zotero Api Client', () => {
 	describe('Handles extensions', () => {
 		it('allows additional executors', async () => {
 			const extension = args => {
-				const { config, ef } = args;
-				const executor = () => ({ response: 'good'});
+				const {config, ef} = args;
+				const executor = () => ({response: 'good'});
 				return ef.bind(config)({
 					executors: [executor, ...config.executors]
 				});
@@ -734,8 +738,8 @@ describe('Zotero Api Client', () => {
 
 		it('allows configuration via multiple api() calls while preserving additional executors', async () => {
 			const extension = args => {
-				const { config, ef } = args;
-				const executor = () => ({ response: 'good'});
+				const {config, ef} = args;
+				const executor = () => ({response: 'good'});
 				return ef.bind(config)({
 					executors: [executor, ...config.executors]
 				});
@@ -747,8 +751,8 @@ describe('Zotero Api Client', () => {
 
 		it('allows additional functions', async () => {
 			const extension = args => {
-				const { config, ef, functions } = args;
-				functions.foo = function() {
+				const {config, ef, functions} = args;
+				functions.foo = function () {
 					return ef.bind(this)({
 						isFoo: true
 					})
@@ -768,8 +772,8 @@ describe('Zotero Api Client', () => {
 
 		it('allows configuration via multiple api() calls while preserving extension functions', async () => {
 			const extension = args => {
-				const { config, ef, functions } = args;
-				functions.foo = function() {
+				const {config, ef, functions} = args;
+				functions.foo = function () {
 					return ef.bind(this)({
 						isFoo: true
 					})

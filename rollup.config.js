@@ -42,25 +42,33 @@ const config = {
 			extensions: ['.js'],
 			babelHelpers: 'runtime'
 		}),
-		filesize({ showMinifiedSize: false, showGzippedSize: !!process.env.DEBUG }),
+		filesize({showMinifiedSize: false, showGzippedSize: !!process.env.DEBUG}),
 	]
 };
 
-if(process.env.DEBUG) {
+if (process.env.DEBUG) {
 	config.plugins.splice(-1, 0, sizes());
 }
 
 
 export default [
-	{ ...config, input: 'src/main.js', output: { ...config.output, file: 'lib/main.cjs' } },
-	{ ...config,
+	{...config, input: 'src/main.js', output: {...config.output, file: 'lib/main.cjs'}},
+	{
+		...config,
 		input: 'src/main-node.js',
-		output: { ...config.output, file: 'lib/main-node.cjs' },
+		output: {...config.output, file: 'lib/main-node.cjs'},
 	},
-	{ ...config, 
+	{
+		...config,
 		external: [],
 		input: 'src/main.js',
-		output: { ...config.output, compact: true, name: 'ZoteroApiClient', format: 'umd', file: 'dist/zotero-api-client.js' },
-		plugins: [ ...config.plugins, terser() ]
+		output: {
+			...config.output,
+			compact: true,
+			name: 'ZoteroApiClient',
+			format: 'umd',
+			file: 'dist/zotero-api-client.js'
+		},
+		plugins: [...config.plugins, terser()]
 	},
 ];

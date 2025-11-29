@@ -1,7 +1,7 @@
 export default {
-  "success": {
-    "0": "AZBCAADA"
-  },
-  "unchanged": {},
-  "failed": {}
+	"success": {
+		"0": "AZBCAADA"
+	},
+	"unchanged": {},
+	"failed": {}
 }

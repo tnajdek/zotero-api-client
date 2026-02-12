@@ -238,7 +238,7 @@ const sleep = seconds => {
  * @param {Number} config.retry - retry this many times after transient error
  * @param {Number} config.retryDelay - wait this many seconds before retry. If not set an exponential backoff algorithm will be used
  *
- * @return {Object} Returns a Promise that will eventually return a response object
+ * @return {Promise} Returns a Promise that will eventually return a response object
  * @throws {Error} If options specify impossible configuration
  * @throws {ErrorResponse} If API responds with a non-ok response
  * @memberof module:zotero-api-client
@@ -402,7 +402,7 @@ const request = async config => {
 		if (options.format === 'json') {
 			try {
 				content = await rawResponse.json();
-			} catch (_) {
+			} catch {
 				content = null;
 			}
 			switch (options.method.toUpperCase()) {

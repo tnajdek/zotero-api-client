@@ -219,7 +219,7 @@ class MultiWriteResponse extends ApiResponse {
 	/**
 	 * Returns all entities POSTed in an array. Entities that have been written successfully
 	 * are returned updated, other entities are returned unchanged. It is advised to verify
-	 * if the request was entirely successful (see isSuccess and getError) before using this method.
+	 * if the request was entirely successful (see isSuccess and getErrors) before using this method.
 	 * @return {Array} A modified list of all entities posted.
 	 */
 	getData() {
@@ -285,8 +285,9 @@ class MultiWriteResponse extends ApiResponse {
 	/**
 	 * Allows getting an updated entity based on its key, otherwise identical to getEntityByIndex
 	 * @param  {String} key
+	 * @return {Object}
 	 * @throws {Error} If key is not present in the request
-	 * @see {@link module:zotero-api-client.getEntityByIndex}
+	 * @see {@link module:zotero-api-client~MultiWriteResponse#getEntityByIndex}
 	 */
 	getEntityByKey(key) {
 		let index = this.options.body.findIndex(entity => {
@@ -465,7 +466,7 @@ class PretendResponse extends ApiResponse {
  * @property {Object} response - Response object for the request, with untouched body
  * @property {String} message  - What error occurred, usually contains response code and status
  * @property {String} reason   - More detailed reason for the failure, if provided by the API
- * @property {String} options  - Configuration object used for this request
+ * @property {Object} options  - Configuration object used for this request
  * @memberof module:zotero-api-client
  * @inner
  */

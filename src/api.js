@@ -37,9 +37,8 @@ const api = function () {
 
 	/**
 	 * Configures which library api requests should use.
-	 * @chainable
 	 * @param {*} [typeOrKey] - Library key, e.g. g1234. Alternatively, if
-	 *                          second parameter is present, library type i.e.
+	 *                           the second parameter is present, library type i.e.
 	 *                          either 'group' or 'user'
 	 * @param {Number} [id]   - Only when first argument is a type, library id
 	 * @return {Object} Partially configured api functions
@@ -209,7 +208,7 @@ const api = function () {
 	/**
 	 * Configure api to use subcollections that reside underneath the specified
 	 * collection.
-	 * Should only be used in conjunction with both library() and collection()
+	 * Should only be used in conjunction with both library() and collections()
 	 * and any of the execution function (e.g. get(), post())
 	 * @return {Object} Partially configured api functions
 	 * @chainable
@@ -221,7 +220,7 @@ const api = function () {
 	};
 
 	/**
-	 * Configure api to narrow the request to only consider items filled under
+	 * Configure api to narrow the request to only consider items filed under
 	 * "My Publications"
 	 * Should only be used in conjunction with both library() and items()
 	 * and any of the execution function (e.g. get(), post())
@@ -325,6 +324,7 @@ const api = function () {
 	/**
 	 * Configure api to request deleted content
 	 * Can only be used in conjunction with get()
+	 * @param  {Number} since - library version to request deletions since
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -382,7 +382,7 @@ const api = function () {
 	 * @param {ArrayBuffer} [file] - New file to be uploaded
 	 * @param {Number} [mtime] - New file's mtime, leave empty to assume current date/time
 	 * @param {String} [md5sum] - MD5 hash of an existing file, required for uploads that update existing file
-	 * @param {ArrayBuffer} patch - Binary patch, to be applied to the old file, to produce a new file
+	 * @param {ArrayBuffer} [patch] - Binary patch, to be applied to the old file, to produce a new file
 	 * @param {String} [algorithm] - Algorithm used to compute a diff: xdelta, vcdiff or bsdiff
 	 * @return {Object} Partially configured api functions
 	 * @chainable
@@ -459,8 +459,8 @@ const api = function () {
 	/**
 	 * Configure api to request a temporary attachment file url
 	 * Can be only used in conjunction with items() and get()
-	 * Use items() to select attachment item for which file is url is requested
-	 * Will populate format, redirect
+	 * Use items() to select the attachment item for which file url is requested
+	 * Will populate format, redirect.
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */

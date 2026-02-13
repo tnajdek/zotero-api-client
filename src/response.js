@@ -160,7 +160,7 @@ module:zotero-api-client~MultiReadResponse#getData}
 		const matches = Array.from(links.matchAll(/<(.*?)>;\s+rel="(.*?)"/ig));
 		return Array
 			.from(matches)
-			.reduce((acc, match) => { // eslint-disable-line no-unused-vars
+			.reduce((acc, match) => {
 				const url = match[1];
 				const rel = match[2];
 				acc[rel] = url;

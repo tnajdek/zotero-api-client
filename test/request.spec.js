@@ -1,4 +1,3 @@
-/* eslint-env mocha */
 import fetchMock from 'fetch-mock';
 import {assert} from 'chai';
 import _request from '../src/request.js';
@@ -28,23 +27,22 @@ const FILE_PATCH = new Uint8Array(28);
 const API_KEY = 'test';
 
 const request = async (opts) => {
-	var config = await _request(opts);
+	const config = await _request(opts);
 	return 'response' in config && config.response || undefined;
 }
 
 describe('ZoteroJS request', () => {
 	beforeEach(() => {
-		fetchMock.config.overwriteRoutes = false;
-		fetchMock.catch(request => {
-			throw (new Error(`A request to ${request} was not expected`));
+		fetchMock.mockGlobal().catch(({url}) => {
+			throw (new Error(`A request to ${url} was not expected`));
 		});
 	});
 
-	afterEach(() => fetchMock.restore());
+	afterEach(() => fetchMock.hardReset());
 
 	describe('Meta read requests', () => {
 		it('should get item types', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/itemTypes',
 				itemTypesDataFixture
 			);
@@ -63,7 +61,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get schema', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/schema',
 				{version: 26, itemTypes: [], meta: {}, csl: {}, locales: {},}
 			);
@@ -83,7 +81,7 @@ describe('ZoteroJS request', () => {
 		})
 
 		it('should get item template', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				/https:\/\/api.zotero.org\/items\/new\/?.*?itemType=book/i,
 				{
 					itemType: 'book',
@@ -104,8 +102,8 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get annotation template', () => {
-			fetchMock.mock(
-				url => {
+			fetchMock.route(
+				({url}) => {
 					return url.startsWith('https://api.zotero.org/items/new') &&
 						[
 							['itemType', 'annotation'],
@@ -133,7 +131,7 @@ describe('ZoteroJS request', () => {
 
 	describe('Item read requests', () => {
 		it('should get a single item', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/items/X42A7DEE',
 				{
 					headers: {'Last-Modified-Version': 1},
@@ -158,9 +156,9 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get /top items from a user library', () => {
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/top'));
-				assert.strictEqual(opts.method, 'GET');
+				assert.strictEqual(opts.method, 'get');
 				return true;
 			}, {
 				headers: {
@@ -193,7 +191,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get /top items from a group library', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/groups/123456/items/top',
 				multiGetResponseFixture
 			);
@@ -211,7 +209,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get items from the trash', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/items/trash',
 				multiGetResponseFixture
 			);
@@ -229,7 +227,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get subcollections from the collection', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/collections/N7W92H48/collections',
 				multiGetResponseFixture
 			);
@@ -247,7 +245,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get items from the collection', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/collections/N7W92H48/items',
 				multiGetResponseFixture
 			);
@@ -265,7 +263,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get /top items from the collection', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/collections/N7W92H48/items/top',
 				multiGetResponseFixture
 			);
@@ -284,7 +282,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get items from My Publications', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/publications/items',
 				multiGetResponseFixture
 			);
@@ -302,7 +300,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get a single tag by name', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				/https:\/\/api\.zotero\.org\/users\/475425\/tags\?.*?tag=Fiction.*?/,
 				tagsResponseFixture.slice(-1)
 			);
@@ -320,7 +318,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get a single search', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/searches',
 				searchesResponseFixture
 			);
@@ -338,8 +336,8 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should handle sorting and pagination', () => {
-			fetchMock.mock(
-				url => {
+			fetchMock.route(
+				({url}) => {
 					let parsedUrl = new URL(url);
 					parsedUrl = parsedUrl.search.slice(1);
 					parsedUrl = parsedUrl.split('&');
@@ -376,15 +374,13 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should handle searching by itemKey', () => {
-			fetchMock.mock(
-				url => {
+			fetchMock.route(
+				({url}) => {
 					let parsedUrl = new URL(url);
 					parsedUrl = parsedUrl.search.slice(1);
 					parsedUrl = parsedUrl.split('&');
-					if (!parsedUrl.includes('itemKey=N7W92H48')) {
-						return false;
-					}
-					return true;
+					return parsedUrl.includes('itemKey=N7W92H48');
+					
 				},
 				[multiGetResponseFixture[0]]
 			);
@@ -402,9 +398,9 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should handle multiple response with missing headers', () => {
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/top'));
-				assert.strictEqual(opts.method, 'GET');
+				assert.strictEqual(opts.method, 'get');
 				return true;
 			}, {
 				headers: {},
@@ -429,7 +425,7 @@ describe('ZoteroJS request', () => {
 
 	describe('Misc read requests', () => {
 		it('should get a single search', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/searches',
 				searchesResponseFixture
 			);
@@ -447,7 +443,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get searches', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/searches',
 				searchesResponseFixture
 			);
@@ -464,7 +460,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get a set of all tags in the library', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/tags',
 				tagsResponseFixture
 			);
@@ -482,7 +478,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get a set of tags for top items in the library', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/items/top/tags',
 				tagsResponseFixture
 			);
@@ -502,7 +498,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get a set of tags for top items in a collection', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/collections/N7W92H48/items/top/tags',
 				tagsResponseFixture
 			);
@@ -523,7 +519,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get a set of tags for trashed items', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/items/trash/tags',
 				tagsResponseFixture
 			);
@@ -543,7 +539,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get a set of tags for items in "My Publications"', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/publications/items/tags',
 				tagsResponseFixture
 			);
@@ -563,8 +559,8 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get a set of tags for filtered by itemsQ and itemsTag', () => {
-			fetchMock.mock(
-				url => {
+			fetchMock.route(
+				({url}) => {
 					assert.isOk(
 						url.startsWith('https://api.zotero.org/users/475425/items/tags')
 					);
@@ -593,7 +589,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get settings', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/settings',
 				settingsResponseFixture
 			);
@@ -611,7 +607,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get individual keys from settings', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/settings/tagColors',
 				settingsResponseFixture.tagColors
 			);
@@ -629,7 +625,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should get user-accessible groups', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/groups',
 				userGroupsFixture
 			);
@@ -700,7 +696,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should verify key access', () => {
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/keys/current',
 				keysCurrentResponse
 			);
@@ -717,15 +713,16 @@ describe('ZoteroJS request', () => {
 
 	describe('Get requests with extra params', () => {
 		it('should include headers in the request', () => {
-			fetchMock.mock(
-				(url, opts) => {
+			// fetch-mock v12 normalizes header names to lowercase and values to strings
+			fetchMock.route(
+				({ options: opts}) => {
 					assert.property(opts, 'headers');
-					assert.strictEqual(opts.headers['Authorization'], 'a');
-					assert.strictEqual(opts.headers['Zotero-Write-Token'], 'b');
-					assert.strictEqual(opts.headers['If-Modified-Since-Version'], 1);
-					assert.strictEqual(opts.headers['If-Unmodified-Since-Version'], 1);
-					assert.strictEqual(opts.headers['Content-Type'], 'c');
-					assert.strictEqual(opts.headers['Zotero-Schema-Version'], 29);
+					assert.strictEqual(opts.headers['authorization'], 'a');
+					assert.strictEqual(opts.headers['zotero-write-token'], 'b');
+					assert.strictEqual(opts.headers['if-modified-since-version'], '1');
+					assert.strictEqual(opts.headers['if-unmodified-since-version'], '1');
+					assert.strictEqual(opts.headers['content-type'], 'c');
+					assert.strictEqual(opts.headers['zotero-schema-version'], '29');
 					return true;
 				}, {}
 			);
@@ -745,15 +742,15 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should not include unnecessary headers', () => {
-			fetchMock.mock(
-				(url, opts) => {
+			fetchMock.route(
+				({options: opts}) => {
 					assert.property(opts, 'headers');
-					assert.notProperty(opts.headers, 'Authorization');
-					assert.notProperty(opts.headers, 'Zotero-Write-Token');
-					assert.notProperty(opts.headers, 'If-Modified-Since-Version');
-					assert.notProperty(opts.headers, 'If-Unmodified-Since-Version');
-					assert.notProperty(opts.headers, 'Content-Type');
-					assert.notProperty(opts.headers, 'Zotero-Schema-Version');
+					assert.notProperty(opts.headers, 'authorization');
+					assert.notProperty(opts.headers, 'zotero-write-token');
+					assert.notProperty(opts.headers, 'if-modified-since-version');
+					assert.notProperty(opts.headers, 'if-unmodified-since-version');
+					assert.notProperty(opts.headers, 'content-type');
+					assert.notProperty(opts.headers, 'zotero-schema-version');
 					return true;
 				}, {}
 			);
@@ -766,8 +763,8 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should include query params in the request', () => {
-			fetchMock.mock(
-				url => {
+			fetchMock.route(
+				({url}) => {
 					return [
 						'collectionKey', 'content', 'direction', 'format', 'include', 'includeTrashed',
 						'itemKey', 'itemType', 'limit', 'q', 'qmode', 'searchKey', 'since', 'sort',
@@ -819,7 +816,7 @@ describe('ZoteroJS request', () => {
 
 	describe('Failing, empty & raw response get requests', () => {
 		it('should throw ErrorResponse for non ok results', () => {
-			fetchMock.mock('begin:https://api.zotero.org/', {
+			fetchMock.route('begin:https://api.zotero.org/', {
 				status: 404,
 				body: 'These aren\'t the droids You are looking for'
 			});
@@ -842,10 +839,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should handly empty-body 304 response', () => {
-			fetchMock.mock('begin:https://api.zotero.org/', {
-				status: 304,
-				body: ''
-			});
+			fetchMock.route('begin:https://api.zotero.org/', new Response(null, {status: 304}));
 
 			return request({
 				resource: {
@@ -862,7 +856,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should return raw response for non-json requests', () => {
-			fetchMock.mock('begin:https://api.zotero.org/', {
+			fetchMock.route('begin:https://api.zotero.org/', {
 				status: 200,
 				body: '<xml></xml>'
 			});
@@ -882,7 +876,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should be possible to make an empty requests', () => {
-			fetchMock.mock('https://api.zotero.org/', {
+			fetchMock.route('https://api.zotero.org/', {
 				status: 200,
 				body: 'Nothing to see here.'
 			});
@@ -900,11 +894,11 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should retry request on error if configured to do so', async () => {
-			fetchMock.mock('begin:https://api.zotero.org/users/475425/items/top', {
+			fetchMock.route('begin:https://api.zotero.org/users/475425/items/top', {
 				status: 500,
 				body: 'Nope'
 			}, {repeat: 2});
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/items/top',
 				multiGetResponseFixture,
 				{repeat: 1}
@@ -925,11 +919,11 @@ describe('ZoteroJS request', () => {
 		}, 4000) // timeout 4s: first retry after 1 sec, second after further 2 sec, 1 sec for everything else
 
 		it('should retry request on error immediately configured to do so', async () => {
-			fetchMock.mock('begin:https://api.zotero.org/users/475425/items/top', {
+			fetchMock.route('begin:https://api.zotero.org/users/475425/items/top', {
 				status: 500,
 				body: 'Nope'
 			}, {repeat: 5});
-			fetchMock.mock(
+			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/items/top',
 				multiGetResponseFixture,
 				{repeat: 1}
@@ -953,10 +947,10 @@ describe('ZoteroJS request', () => {
 
 	describe('Item write & delete requests', () => {
 		it('should post a single item', () => {
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
-				assert.strictEqual(opts.method, 'POST');
-				assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
+				assert.strictEqual(opts.method, 'post');
+				assert.propertyVal(opts.headers, 'content-type', 'application/json');
 				return true;
 			}, {
 				headers: {
@@ -1000,7 +994,7 @@ describe('ZoteroJS request', () => {
 				'title': 'My Amazing Book'
 			};
 
-			fetchMock.post((url) => {
+			fetchMock.post(({url}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
 				return true;
 			}, {
@@ -1062,7 +1056,7 @@ describe('ZoteroJS request', () => {
 				'title': 'My Amazing Book'
 			};
 
-			fetchMock.post((url) => {
+			fetchMock.post(({url}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
 				return true;
 			}, {
@@ -1143,10 +1137,10 @@ describe('ZoteroJS request', () => {
 				relations: {}
 			};
 
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items'));
-				assert.strictEqual(opts.method, 'POST');
-				assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
+				assert.strictEqual(opts.method, 'post');
+				assert.propertyVal(opts.headers, 'content-type', 'application/json');
 				return true;
 			}, {
 				headers: {
@@ -1209,10 +1203,10 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should update put a single, complete item', () => {
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-				assert.strictEqual(opts.method, 'PUT');
-				assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
+				assert.strictEqual(opts.method, 'put');
+				assert.propertyVal(opts.headers, 'content-type', 'application/json');
 				return true;
 			}, {
 				status: 204,
@@ -1247,10 +1241,10 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should patch a single item', () => {
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-				assert.strictEqual(opts.method, 'PATCH');
-				assert.propertyVal(opts.headers, 'Content-Type', 'application/json');
+				assert.strictEqual(opts.method, 'patch');
+				assert.propertyVal(opts.headers, 'content-type', 'application/json');
 				return true;
 			}, {
 				status: 204,
@@ -1282,10 +1276,10 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should delete a single item', () => {
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-				assert.strictEqual(opts.method, 'DELETE');
-				assert.notProperty(opts.headers, 'Content-Type');
+				assert.strictEqual(opts.method, 'delete');
+				assert.notProperty(opts.headers, 'content-type');
 				return true;
 			}, {
 				status: 204,
@@ -1311,8 +1305,8 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should delete multiple items', () => {
-			fetchMock.mock((url, opts) => {
-				assert.strictEqual(opts.method, 'DELETE');
+			fetchMock.route(({url, options: opts}) => {
+				assert.strictEqual(opts.method, 'delete');
 				let parsedUrl = new URL(url);
 				parsedUrl = parsedUrl.search.slice(1);
 				parsedUrl = parsedUrl.split('&');
@@ -1341,9 +1335,9 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should post updated library settings', () => {
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings'));
-				assert.strictEqual(opts.method, 'POST');
+				assert.strictEqual(opts.method, 'post');
 				assert.equal(opts.body, JSON.stringify(newSettings));
 				return true;
 			}, {
@@ -1377,9 +1371,9 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should put individual updated keys into library settings', () => {
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings/tagColors'));
-				assert.strictEqual(opts.method, 'PUT');
+				assert.strictEqual(opts.method, 'put');
 				assert.equal(opts.body, JSON.stringify(newSettings));
 				return true;
 			}, {
@@ -1411,9 +1405,9 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should delete individual keys from library settings', () => {
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/settings/tagColors'));
-				assert.strictEqual(opts.method, 'DELETE');
+				assert.strictEqual(opts.method, 'delete');
 				return true;
 			}, {
 				status: 204,
@@ -1437,11 +1431,11 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should override default headers based on config', () => {
-			fetchMock.mock(
-				(url, opts) => {
+			fetchMock.route(
+				({ options: opts}) => {
 					assert.property(opts, 'headers');
-					assert.strictEqual(opts.method, 'PUT');
-					assert.strictEqual(opts.headers['Content-Type'], 'text-plain');
+					assert.strictEqual(opts.method, 'put');
+					assert.strictEqual(opts.headers['content-type'], 'text-plain');
 					return true;
 				}, {}
 			);
@@ -1460,9 +1454,9 @@ describe('ZoteroJS request', () => {
 
 	describe('Failing write & delete requests', () => {
 		it('should throw ErrorResponse for error post responses', () => {
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-				assert.strictEqual(opts.method, 'PUT');
+				assert.strictEqual(opts.method, 'put');
 				return true;
 			}, {
 				status: 400,
@@ -1486,9 +1480,9 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should throw ErrorResponse for error put responses', () => {
-			fetchMock.mock((url, opts) => {
+			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111'));
-				assert.strictEqual(opts.method, 'PUT');
+				assert.strictEqual(opts.method, 'put');
 				return true;
 			}, {
 				headers: {
@@ -1581,7 +1575,7 @@ describe('ZoteroJS request', () => {
 		};
 		it('should upload a new file', () => {
 			let counter = 0;
-			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', (url, options) => {
+			fetchMock.route('https://api.zotero.org/users/475425/items/ABCD1111/file', ({url, options}) => {
 				var config = options.body.split('&').reduce(
 					(acc, val) => {
 						acc[val.split('=')[0]] = val.split('=')[1];
@@ -1616,7 +1610,7 @@ describe('ZoteroJS request', () => {
 				}
 			});
 			// second request: upload file to storage
-			fetchMock.once('https://storage.zotero.org', (url, options) => {
+			fetchMock.once('https://storage.zotero.org', ({ options}) => {
 				assert.strictEqual(counter, 1);
 				assert.strictEqual(options.body.byteLength, 33);
 				return {
@@ -1633,21 +1627,21 @@ describe('ZoteroJS request', () => {
 
 		it('should update a file, using partial upload', () => {
 			let counter = 0;
-			fetchMock.mock('begin:https://api.zotero.org/users/475425/items/ABCD1111/file', (url, options) => {
-				const config = (counter === 0 || counter == 2) && options.body.split('&').reduce(
+			fetchMock.route('begin:https://api.zotero.org/users/475425/items/ABCD1111/file', ({url, options}) => {
+				const config = (counter === 0 || counter === 2) && options.body.split('&').reduce(
 					(acc, val) => {
 						acc[val.split('=')[0]] = val.split('=')[1];
 						return acc
 					}, {}
 				);
 				const parsedUrl = new URL(url);
-				assert.strictEqual(options.headers['Zotero-API-Key'], API_KEY);
+				assert.strictEqual(options.headers['zotero-api-key'], API_KEY);
 				switch (counter++) {
 					case 0:
 						// first request: upload authorization
-						assert.strictEqual(options.method, 'POST');
-						assert.strictEqual(options.headers['If-Match'], FILE_MD5);
-						assert.strictEqual(options.headers['Content-Type'], 'application/x-www-form-urlencoded');
+						assert.strictEqual(options.method, 'post');
+						assert.strictEqual(options.headers['if-match'], FILE_MD5);
+						assert.strictEqual(options.headers['content-type'], 'application/x-www-form-urlencoded');
 						assert.propertyVal(config, 'md5', NEW_FILE_MD5);
 						assert.propertyVal(config, 'filename', FILE_NAME);
 						assert.propertyVal(config, 'filesize', NEW_FILE.byteLength.toString());
@@ -1666,10 +1660,10 @@ describe('ZoteroJS request', () => {
 						};
 					case 1:
 						// second (last) request: upload file patch
-						assert.strictEqual(options.method, 'PATCH');
+						assert.strictEqual(options.method, 'patch');
 						assert.strictEqual(parsedUrl.searchParams.get('algorithm'), 'xdelta');
 						assert.strictEqual(parsedUrl.searchParams.get('upload'), 'some key');
-						assert.strictEqual(options.headers['If-Match'], FILE_MD5);
+						assert.strictEqual(options.headers['if-match'], FILE_MD5);
 						assert.strictEqual(options.body.byteLength, 28); // xdelta patch size
 						return {
 							status: 204
@@ -1688,7 +1682,7 @@ describe('ZoteroJS request', () => {
 
 		it('should update a file, using full upload', () => {
 			let counter = 0;
-			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', (url, options) => {
+			fetchMock.route('https://api.zotero.org/users/475425/items/ABCD1111/file', ({url, options}) => {
 				var config = options.body.split('&').reduce(
 					(acc, val) => {
 						acc[val.split('=')[0]] = val.split('=')[1];
@@ -1698,9 +1692,9 @@ describe('ZoteroJS request', () => {
 				switch (counter++) {
 					case 0:
 						// first request: upload authorization
-						assert.strictEqual(options.method, 'POST');
-						assert.strictEqual(options.headers['If-Match'], FILE_MD5);
-						assert.strictEqual(options.headers['Content-Type'], 'application/x-www-form-urlencoded');
+						assert.strictEqual(options.method, 'post');
+						assert.strictEqual(options.headers['if-match'], FILE_MD5);
+						assert.strictEqual(options.headers['content-type'], 'application/x-www-form-urlencoded');
 						assert.propertyVal(config, 'md5', NEW_FILE_MD5);
 						assert.propertyVal(config, 'filename', FILE_NAME);
 						assert.propertyVal(config, 'filesize', NEW_FILE.byteLength.toString());
@@ -1724,7 +1718,7 @@ describe('ZoteroJS request', () => {
 						throw (new Error(`Counted ${counter} requests to ${url}. Only expected 2 requests.`));
 				}
 			});
-			fetchMock.once('https://storage.zotero.org', (url, options) => {
+			fetchMock.once('https://storage.zotero.org', ({ options}) => {
 				assert.strictEqual(counter, 1);
 				assert.strictEqual(options.body.byteLength, NEW_FILE.byteLength + 'some prefix'.length + 'some suffix'.length);
 				return {
@@ -1766,7 +1760,7 @@ describe('ZoteroJS request', () => {
 		});
 
 		it('should handle error reponse in stage 1', () => {
-			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', {
+			fetchMock.route('https://api.zotero.org/users/475425/items/ABCD1111/file', {
 				status: 409,
 				body: 'The target library is locked.'
 			});
@@ -1780,7 +1774,7 @@ describe('ZoteroJS request', () => {
 				});
 		});
 		it('should handle error reponse in stage 2', () => {
-			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', {
+			fetchMock.route('https://api.zotero.org/users/475425/items/ABCD1111/file', {
 				'url': 'https://storage.zotero.org',
 				'contentType': 'text/plain',
 				'prefix': 'some prefix',
@@ -1802,8 +1796,8 @@ describe('ZoteroJS request', () => {
 		});
 		it('should handle error reponse in stage 3', () => {
 			let counter = 0;
-			fetchMock.mock('https://api.zotero.org/users/475425/items/ABCD1111/file', () => {
-				return counter++ == 0 ? {
+			fetchMock.route('https://api.zotero.org/users/475425/items/ABCD1111/file', () => {
+				return counter++ === 0 ? {
 					'url': 'https://storage.zotero.org',
 					'contentType': 'text/plain',
 					'prefix': 'some prefix',
@@ -1845,7 +1839,7 @@ describe('ZoteroJS request', () => {
 		};
 
 		it('should only attempt to register file if requested', () => {
-			fetchMock.once('https://api.zotero.org/users/475425/items/ABCD1111/file', (url, options) => {
+			fetchMock.once('https://api.zotero.org/users/475425/items/ABCD1111/file', ({ options}) => {
 				assert.strictEqual(options.body, 'md5=9edb2ca32f7b57662acbc112a80cc59d&filename=test.txt&filesize=424242&mtime=12345');
 				return {
 					headers: {
@@ -1937,7 +1931,7 @@ describe('ZoteroJS request', () => {
 
 	describe('Configuration', () => {
 		it('should honor api configuration', () => {
-			fetchMock.mock('begin:app://some-other-api.zotero.org:123/prefix/users/475425/items/ABCD1111', 200);
+			fetchMock.route('begin:app://some-other-api.zotero.org:123/prefix/users/475425/items/ABCD1111', 200);
 			return request({
 				method: 'get',
 				resource: {
@@ -1948,7 +1942,7 @@ describe('ZoteroJS request', () => {
 				apiPath: 'prefix/',
 				apiScheme: 'app'
 			}).then(() => {
-				assert.isOk(fetchMock.done());
+				assert.isOk(fetchMock.callHistory.done());
 			});
 		});
 	});

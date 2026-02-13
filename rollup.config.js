@@ -1,5 +1,4 @@
 import babel from '@rollup/plugin-babel';
-import filesize from 'rollup-plugin-filesize';
 import replace from '@rollup/plugin-replace';
 import sizes from 'rollup-plugin-sizes';
 import commonjs from '@rollup/plugin-commonjs';
@@ -41,8 +40,7 @@ const config = {
 			include: ['src/*.js'],
 			extensions: ['.js'],
 			babelHelpers: 'runtime'
-		}),
-		filesize({showMinifiedSize: false, showGzippedSize: !!process.env.DEBUG}),
+		})
 	]
 };
 

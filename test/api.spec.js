@@ -1,4 +1,3 @@
-/* eslint-env mocha */
 import {assert} from 'chai';
 import _api from '../src/api.js';
 import _request from '../src/request.js';

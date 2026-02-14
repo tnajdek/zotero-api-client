@@ -2,11 +2,13 @@
   "name": "zotero-api-client",
   "version": "0.47.0",
   "description": "A lightweight, minimalistic Zotero API client",
-  "repository": "https://github.com/tnajdek/zotero-api-client.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tnajdek/zotero-api-client.git"
+  },
   "type": "module",
   "main": "lib/main-node.cjs",
   "browser": "lib/main.cjs",
-  "esnext": "src/main.js",
   "umd:main": "dist/zotero-api-client.js",
   "unpkg": "dist/zotero-api-client.js",
   "types": "index.d.ts",
@@ -15,12 +17,14 @@
   "engines": {
     "node": ">= 18.0.0"
   },
-  "browserify": {
-    "transform": [
-      "babelify"
-    ]
-  },
-  "browserslist": "firefox >= 68, chrome >= 67, edge >= 15, safari >= 11, last 2 versions, not dead, not ie 11, not ie 10",
+  "browserslist": [
+    "firefox >= 68",
+    "chrome >= 67",
+    "edge >= 15",
+    "safari >= 11",
+    "last 2 versions",
+    "not dead"
+  ],
   "scripts": {
     "readme": "jsdoc2md --template docs/README.md --no-cache --configure .jsdoc.json src/*.js > README.md",
     "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules --no-warnings=ExperimentalWarning\" jest",

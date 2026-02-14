@@ -19,7 +19,7 @@ A lightweight, minimalistic Zotero API client developed in JavaScript with the f
 
 * Version management: version headers need to be provided explicitly
 * Caching: each call to `get()`, `post()`, etc., actually calls the API
-* Abstraction: there are no **Item** or **Collection** objects. API response is returned with a minimal layer to automate common tasks and offers unrestricted access to the response raw JSON data.
+* Abstraction: there are no **Item** or **Collection** objects. The API response is returned with a minimal layer to automate common tasks and offers unrestricted access to the raw response JSON data.
 
 Getting The Library
 ===================
@@ -65,7 +65,7 @@ A simple example of reading items from the public/test user library:
    const items = response.getData();
    ```
 
-4. Print the titles of all items in the library to the console:
+4. Print the titles of all items in the collection to the console:
 
    ```javascript
    console.log(items.map(i => i.title));
@@ -78,7 +78,7 @@ The library is composed of three layers:
 
 - **`api` function**: This is the only interface exported for use.
 - **Request engine**: This component does the heavy lifting and should not be used directly.
-- **ApiResponse class**: Thin wrapper around the response. Multiple specialised variants exist for handling different response types.
+- **ApiResponse class**: A thin wrapper around the response. Multiple specialised variants exist for handling different response types.
 
 
 API interface
@@ -95,7 +95,6 @@ This produces an API client already configured with your credentials and user li
 
 ```javascript
 const collectionsResponse = await myapi.collections().get();
-
 ```
 
 Items in that library:
@@ -106,9 +105,9 @@ const itemsResponse = await myapi.items().get();
 
 Or items in a specific collection:
 
-````js
+```js
 const collectionItemsResponse = await myapi.collections('EXAMPLE1').items().get();
-````
+```
 
 There are two types of API functions:
 

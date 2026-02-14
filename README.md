@@ -19,7 +19,7 @@ A lightweight, minimalistic Zotero API client developed in JavaScript with the f
 
 * Version management: version headers need to be provided explicitly
 * Caching: each call to `get()`, `post()`, etc., actually calls the API
-* Abstraction: there are no **Item** or **Collection** objects. API response is returned with a minimal layer to automate common tasks and offers unrestricted access to the response raw JSON data.
+* Abstraction: there are no **Item** or **Collection** objects. The API response is returned with a minimal layer to automate common tasks and offers unrestricted access to the raw response JSON data.
 
 Getting The Library
 ===================
@@ -65,7 +65,7 @@ A simple example of reading items from the public/test user library:
    const items = response.getData();
    ```
 
-4. Print the titles of all items in the library to the console:
+4. Print the titles of all items in the collection to the console:
 
    ```javascript
    console.log(items.map(i => i.title));
@@ -78,7 +78,7 @@ The library is composed of three layers:
 
 - **`api` function**: This is the only interface exported for use.
 - **Request engine**: This component does the heavy lifting and should not be used directly.
-- **ApiResponse class**: Thin wrapper around the response. Multiple specialised variants exist for handling different response types.
+- **ApiResponse class**: A thin wrapper around the response. Multiple specialised variants exist for handling different response types.
 
 
 API interface
@@ -95,7 +95,6 @@ This produces an API client already configured with your credentials and user li
 
 ```javascript
 const collectionsResponse = await myapi.collections().get();
-
 ```
 
 Items in that library:
@@ -106,9 +105,9 @@ const itemsResponse = await myapi.items().get();
 
 Or items in a specific collection:
 
-````js
+```js
 const collectionItemsResponse = await myapi.collections('EXAMPLE1').items().get();
-````
+```
 
 There are two types of API functions:
 
@@ -162,7 +161,7 @@ API Reference
         * [.getLinks()](#module_zotero-api-client..MultiWriteResponse+getLinks)
         * [.getMeta()](#module_zotero-api-client..MultiWriteResponse+getMeta)
         * [.getErrors()](#module_zotero-api-client..MultiWriteResponse+getErrors) ⇒ <code>Object</code>
-        * [.getEntityByKey(key)](#module_zotero-api-client..MultiWriteResponse+getEntityByKey)
+        * [.getEntityByKey(key)](#module_zotero-api-client..MultiWriteResponse+getEntityByKey) ⇒ <code>Object</code>
         * [.getEntityByIndex(index)](#module_zotero-api-client..MultiWriteResponse+getEntityByIndex) ⇒ <code>Object</code>
     * [~DeleteResponse](#module_zotero-api-client..DeleteResponse) ⇐ <code>ApiResponse</code>
         * [.getResponseType()](#module_zotero-api-client..DeleteResponse+getResponseType)
@@ -201,10 +200,10 @@ API Reference
         * [~trash()](#module_zotero-api-client..api..trash) ⇒ <code>Object</code>
         * [~children()](#module_zotero-api-client..api..children) ⇒ <code>Object</code>
         * [~settings(settings)](#module_zotero-api-client..api..settings) ⇒ <code>Object</code>
-        * [~deleted()](#module_zotero-api-client..api..deleted) ⇒ <code>Object</code>
+        * [~deleted(since)](#module_zotero-api-client..api..deleted) ⇒ <code>Object</code>
         * [~groups()](#module_zotero-api-client..api..groups) ⇒ <code>Object</code>
         * [~version(version)](#module_zotero-api-client..api..version) ⇒ <code>Object</code>
-        * [~attachment([fileName], [file], [mtime], [md5sum], patch, [algorithm])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
+        * [~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
         * [~registerAttachment(fileName, fileSize, mtime, md5sum)](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
         * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
         * [~verifyKeyAccess()](#module_zotero-api-client..api..verifyKeyAccess) ⇒ <code>Object</code>
@@ -216,7 +215,7 @@ API Reference
         * [~getConfig()](#module_zotero-api-client..api..getConfig) ⇒ <code>Object</code>
         * [~pretend(verb, data, opts)](#module_zotero-api-client..api..pretend) ⇒ <code>Promise</code>
         * [~use(extend)](#module_zotero-api-client..api..use) ⇒ <code>Object</code>
-    * [~request(config)](#module_zotero-api-client..request) ⇒ <code>Object</code>
+    * [~request(config)](#module_zotero-api-client..request) ⇒ <code>Promise</code>
 
 <a name="module_zotero-api-client..ApiResponse"></a>
 
@@ -374,7 +373,7 @@ Represents a response to a POST request
     * [.getLinks()](#module_zotero-api-client..MultiWriteResponse+getLinks)
     * [.getMeta()](#module_zotero-api-client..MultiWriteResponse+getMeta)
     * [.getErrors()](#module_zotero-api-client..MultiWriteResponse+getErrors) ⇒ <code>Object</code>
-    * [.getEntityByKey(key)](#module_zotero-api-client..MultiWriteResponse+getEntityByKey)
+    * [.getEntityByKey(key)](#module_zotero-api-client..MultiWriteResponse+getEntityByKey) ⇒ <code>Object</code>
     * [.getEntityByIndex(index)](#module_zotero-api-client..MultiWriteResponse+getEntityByIndex) ⇒ <code>Object</code>
 
 <a name="module_zotero-api-client..MultiWriteResponse+getResponseType"></a>
@@ -392,7 +391,7 @@ Represents a response to a POST request
 #### multiWriteResponse.getData() ⇒ <code>Array</code>
 Returns all entities POSTed in an array. Entities that have been written successfully
 are returned updated, other entities are returned unchanged. It is advised to verify
-if the request was entirely successful (see isSuccess and getError) before using this method.
+if the request was entirely successful (see isSuccess and getErrors) before using this method.
 
 **Kind**: instance method of [<code>MultiWriteResponse</code>](#module_zotero-api-client..MultiWriteResponse)  
 **Returns**: <code>Array</code> - A modified list of all entities posted.  
@@ -415,7 +414,7 @@ Returns all errors that have occurred.
 **Returns**: <code>Object</code> - Errors object where keys are indexes of the array of the original request and values are the errors occurred.  
 <a name="module_zotero-api-client..MultiWriteResponse+getEntityByKey"></a>
 
-#### multiWriteResponse.getEntityByKey(key)
+#### multiWriteResponse.getEntityByKey(key) ⇒ <code>Object</code>
 Allows getting an updated entity based on its key, otherwise identical to getEntityByIndex
 
 **Kind**: instance method of [<code>MultiWriteResponse</code>](#module_zotero-api-client..MultiWriteResponse)  
@@ -423,7 +422,7 @@ Allows getting an updated entity based on its key, otherwise identical to getEnt
 
 - <code>Error</code> If key is not present in the request
 
-**See**: [module:zotero-api-client.getEntityByIndex](module:zotero-api-client.getEntityByIndex)  
+**See**: [getEntityByIndex](#module_zotero-api-client..MultiWriteResponse+getEntityByIndex)  
 
 | Param | Type |
 | --- | --- |
@@ -560,7 +559,7 @@ Represents an error response from the api
 | response | <code>Object</code> | Response object for the request, with untouched body |
 | message | <code>String</code> | What error occurred, usually contains response code and status |
 | reason | <code>String</code> | More detailed reason for the failure, if provided by the API |
-| options | <code>String</code> | Configuration object used for this request |
+| options | <code>Object</code> | Configuration object used for this request |
 
 
 * [~ErrorResponse](#module_zotero-api-client..ErrorResponse) ⇐ <code>Error</code>
@@ -607,10 +606,10 @@ Wrapper function creates closure scope and calls api()
     * [~trash()](#module_zotero-api-client..api..trash) ⇒ <code>Object</code>
     * [~children()](#module_zotero-api-client..api..children) ⇒ <code>Object</code>
     * [~settings(settings)](#module_zotero-api-client..api..settings) ⇒ <code>Object</code>
-    * [~deleted()](#module_zotero-api-client..api..deleted) ⇒ <code>Object</code>
+    * [~deleted(since)](#module_zotero-api-client..api..deleted) ⇒ <code>Object</code>
     * [~groups()](#module_zotero-api-client..api..groups) ⇒ <code>Object</code>
     * [~version(version)](#module_zotero-api-client..api..version) ⇒ <code>Object</code>
-    * [~attachment([fileName], [file], [mtime], [md5sum], patch, [algorithm])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
+    * [~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
     * [~registerAttachment(fileName, fileSize, mtime, md5sum)](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
     * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
     * [~verifyKeyAccess()](#module_zotero-api-client..api..verifyKeyAccess) ⇒ <code>Object</code>
@@ -651,7 +650,7 @@ Configures which library api requests should use.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| [typeOrKey] | <code>\*</code> |  | Library key, e.g. g1234. Alternatively, if                          second parameter is present, library type i.e.                          either 'group' or 'user' |
+| [typeOrKey] | <code>\*</code> |  | Library key, e.g. g1234. Alternatively, if                           the second parameter is present, library type i.e.                          either 'group' or 'user' |
 | [id] | <code>Number</code> | <code></code> | Only when first argument is a type, library id |
 
 <a name="module_zotero-api-client..api..items"></a>
@@ -768,7 +767,7 @@ any of the execution function (e.g. get(), post())
 #### api~subcollections() ⇒ <code>Object</code>
 Configure api to use subcollections that reside underneath the specified
 collection.
-Should only be used in conjunction with both library() and collection()
+Should only be used in conjunction with both library() and collections()
 and any of the execution function (e.g. get(), post())
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
@@ -777,7 +776,7 @@ and any of the execution function (e.g. get(), post())
 <a name="module_zotero-api-client..api..publications"></a>
 
 #### api~publications() ⇒ <code>Object</code>
-Configure api to narrow the request to only consider items filled under
+Configure api to narrow the request to only consider items filed under
 "My Publications"
 Should only be used in conjunction with both library() and items()
 and any of the execution function (e.g. get(), post())
@@ -866,13 +865,18 @@ For usage with post() a settings key must not be included
 
 <a name="module_zotero-api-client..api..deleted"></a>
 
-#### api~deleted() ⇒ <code>Object</code>
+#### api~deleted(since) ⇒ <code>Object</code>
 Configure api to request deleted content
 Can only be used in conjunction with get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| since | <code>Number</code> | library version to request deletions since |
+
 <a name="module_zotero-api-client..api..groups"></a>
 
 #### api~groups() ⇒ <code>Object</code>
@@ -903,7 +907,7 @@ populate the If-Unmodified-Since-Version header.
 
 <a name="module_zotero-api-client..api..attachment"></a>
 
-#### api~attachment([fileName], [file], [mtime], [md5sum], patch, [algorithm]) ⇒ <code>Object</code>
+#### api~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm]) ⇒ <code>Object</code>
 Configure api to upload or download an attachment file.
 Can be only used in conjunction with items() and post()/get()/patch().
 Method patch() can only be used to upload a binary patch, in this case the last two arguments
@@ -924,7 +928,7 @@ Will populate format on download as well as Content-Type, If*Match headers in ca
 | [file] | <code>ArrayBuffer</code> | New file to be uploaded |
 | [mtime] | <code>Number</code> | New file's mtime, leave empty to assume current date/time |
 | [md5sum] | <code>String</code> | MD5 hash of an existing file, required for uploads that update existing file |
-| patch | <code>ArrayBuffer</code> | Binary patch, to be applied to the old file, to produce a new file |
+| [patch] | <code>ArrayBuffer</code> | Binary patch, to be applied to the old file, to produce a new file |
 | [algorithm] | <code>String</code> | Algorithm used to compute a diff: xdelta, vcdiff or bsdiff |
 
 <a name="module_zotero-api-client..api..registerAttachment"></a>
@@ -953,8 +957,8 @@ Will fail with a ErrorResponse if API does not return "exists".
 #### api~attachmentUrl() ⇒ <code>Object</code>
 Configure api to request a temporary attachment file url
 Can be only used in conjunction with items() and get()
-Use items() to select attachment item for which file is url is requested
-Will populate format, redirect
+Use items() to select the attachment item for which file url is requested
+Will populate format, redirect.
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -1084,11 +1088,11 @@ alternative/extended set of functions
 
 <a name="module_zotero-api-client..request"></a>
 
-### zotero-api-client~request(config) ⇒ <code>Object</code>
+### zotero-api-client~request(config) ⇒ <code>Promise</code>
 Executes request and returns a response. Not meant to be called directly, instead use [api](#module_zotero-api-client..api).
 
 **Kind**: inner method of [<code>zotero-api-client</code>](#module_zotero-api-client)  
-**Returns**: <code>Object</code> - Returns a Promise that will eventually return a response object  
+**Returns**: <code>Promise</code> - Returns a Promise that will eventually return a response object  
 **Throws**:
 
 - <code>Error</code> If options specify impossible configuration

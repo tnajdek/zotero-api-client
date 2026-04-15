@@ -70,29 +70,29 @@ const fetchParamNames = [
 
 const resourcesSpecs = [
 	//name in resource, name in the url (usually the same, but there are exceptions)
-	{'name': 'library', urlPart: 'library', isKeyResource: true},
-	{'name': 'collections', urlPart: 'collections', isKeyResource: true},
-	{'name': 'publications', urlPart: 'publications', isKeyResource: false},
-	{'name': 'items', urlPart: 'items', isKeyResource: true},
-	{'name': 'searches', urlPart: 'searches', isKeyResource: true},
-	{'name': 'top', urlPart: 'top', isKeyResource: false},
-	{'name': 'trash', urlPart: 'trash', isKeyResource: false},
-	{'name': 'tags', urlPart: 'tags', isKeyResource: true},
-	{'name': 'children', urlPart: 'children', isKeyResource: false},
-	{'name': 'groups', urlPart: 'groups', isKeyResource: false},
-	{'name': 'subcollections', urlPart: 'collections', isKeyResource: false},
-	{'name': 'itemTypes', urlPart: 'itemTypes', isKeyResource: false},
-	{'name': 'itemFields', urlPart: 'itemFields', isKeyResource: false},
-	{'name': 'schema', urlPart: 'schema', isKeyResource: false},
-	{'name': 'creatorFields', urlPart: 'creatorFields', isKeyResource: false},
-	{'name': 'itemTypeFields', urlPart: 'itemTypeFields', isKeyResource: false},
-	{'name': 'itemTypeCreatorTypes', urlPart: 'itemTypeCreatorTypes', isKeyResource: false},
-	{'name': 'template', urlPart: 'items/new', isKeyResource: false},
-	{'name': 'file', urlPart: 'file', isKeyResource: false},
-	{'name': 'fileUrl', urlPart: 'file/view/url', isKeyResource: false},
-	{'name': 'settings', urlPart: 'settings', isKeyResource: true},
-	{'name': 'deleted', 'urlPart': 'deleted', isKeyResource: false},
-	{'name': 'verifyKeyAccess', urlPart: 'keys/current', isKeyResource: false},
+	{name: 'library', urlPart: 'library', isKeyResource: true},
+	{name: 'collections', urlPart: 'collections', isKeyResource: true},
+	{name: 'publications', urlPart: 'publications', isKeyResource: false},
+	{name: 'items', urlPart: 'items', isKeyResource: true},
+	{name: 'searches', urlPart: 'searches', isKeyResource: true},
+	{name: 'top', urlPart: 'top', isKeyResource: false},
+	{name: 'trash', urlPart: 'trash', isKeyResource: false},
+	{name: 'tags', urlPart: 'tags', isKeyResource: true},
+	{name: 'children', urlPart: 'children', isKeyResource: false},
+	{name: 'groups', urlPart: 'groups', isKeyResource: false},
+	{name: 'subcollections', urlPart: 'collections', isKeyResource: false},
+	{name: 'itemTypes', urlPart: 'itemTypes', isKeyResource: false},
+	{name: 'itemFields', urlPart: 'itemFields', isKeyResource: false},
+	{name: 'schema', urlPart: 'schema', isKeyResource: false},
+	{name: 'creatorFields', urlPart: 'creatorFields', isKeyResource: false},
+	{name: 'itemTypeFields', urlPart: 'itemTypeFields', isKeyResource: false},
+	{name: 'itemTypeCreatorTypes', urlPart: 'itemTypeCreatorTypes', isKeyResource: false},
+	{name: 'template', urlPart: 'items/new', isKeyResource: false},
+	{name: 'file', urlPart: 'file', isKeyResource: false},
+	{name: 'fileUrl', urlPart: 'file/view/url', isKeyResource: false},
+	{name: 'settings', urlPart: 'settings', isKeyResource: true},
+	{name: 'deleted', urlPart: 'deleted', isKeyResource: false},
+	{name: 'verifyKeyAccess', urlPart: 'keys/current', isKeyResource: false},
 ];
 
 const defaults = {
@@ -138,7 +138,7 @@ const makeUrlPath = resource => {
 const makeUrlQuery = (options, paramNames) => {
 	let params = [];
 	for (let name of paramNames) {
-		if (options[name]) {
+		if (options[name] != null) {
 			if (queryParamsWithArraySupport.includes(name) && Array.isArray(options[name])) {
 				params.push(...options[name].map(k => `${name}=${encodeURIComponent(k)}`));
 			} else {
@@ -262,7 +262,7 @@ const request = async config => {
 	}
 
 	if (hasDefinedKey(options, 'filePatch')) {
-		// for partial file upload api uses patch(), however first request (file authorisation still uses POST
+		// for partial file upload api uses patch(), however first request (file authorisation) still uses POST
 		options.method = 'POST';
 	}
 
@@ -285,16 +285,16 @@ const request = async config => {
 	if ((hasDefinedKey(options, 'filePatch') || hasDefinedKey(options, 'file')) && hasDefinedKey(options, 'fileName')) {
 		let fileName = options.fileName;
 		let md5sum = SparkMD5.ArrayBuffer.hash(options.file);
-		let mtime = Date.now();
+		let mtime = options.mtime ?? Date.now();
 		let fileSize = options.file.byteLength;
 		fileUploadData = {fileName, md5sum, mtime, fileSize};
-		fetchConfig['body'] = `md5=${md5sum}&filename=${fileName}&filesize=${fileSize}&mtime=${mtime}`;
+		fetchConfig['body'] = `md5=${md5sum}&filename=${encodeURIComponent(fileName)}&filesize=${fileSize}&mtime=${mtime}`;
 	}
 
 	if (options.uploadRegisterOnly === true) {
 		const {fileName, fileSize, md5sum, mtime} = options;
 		fileUploadData = {fileName, md5sum, mtime, fileSize};
-		fetchConfig['body'] = `md5=${md5sum}&filename=${fileName}&filesize=${fileSize}&mtime=${mtime}`;
+		fetchConfig['body'] = `md5=${md5sum}&filename=${encodeURIComponent(fileName)}&filesize=${fileSize}&mtime=${mtime}`;
 	}
 
 	// checking against access-control-allow-methods seems to be case-sensitive
@@ -356,11 +356,12 @@ const request = async config => {
 					});
 					isUploadSuccessful = uploadResponse.status === 204;
 				} else {
-					let prefix = new Uint8ClampedArray(authData.prefix.split('').map(e => e.charCodeAt(0)));
-					let suffix = new Uint8ClampedArray(authData.suffix.split('').map(e => e.charCodeAt(0)));
-					let body = new Uint8ClampedArray(prefix.byteLength + options.file.byteLength + suffix.byteLength);
+					const encoder = new TextEncoder();
+					let prefix = encoder.encode(authData.prefix);
+					let suffix = encoder.encode(authData.suffix);
+					let body = new Uint8Array(prefix.byteLength + options.file.byteLength + suffix.byteLength);
 					body.set(prefix, 0);
-					body.set(new Uint8ClampedArray(options.file), prefix.byteLength);
+					body.set(new Uint8Array(options.file), prefix.byteLength);
 					body.set(suffix, prefix.byteLength + options.file.byteLength);
 
 					// full file upload request
@@ -373,13 +374,15 @@ const request = async config => {
 					});
 					isUploadSuccessful = uploadResponse.status === 201;
 
-					// register file request
-					registerResponse = await fetch(url, {
-						...fetchConfig,
-						body: `upload=${authData.uploadKey}`
-					});
-					if (!registerResponse.ok) {
-						return await throwErrorResponse(registerResponse, options, 'Upload stage 3: ');
+					if (isUploadSuccessful) {
+						// register file request
+						registerResponse = await fetch(url, {
+							...fetchConfig,
+							body: `upload=${authData.uploadKey}`
+						});
+						if (!registerResponse.ok) {
+							return await throwErrorResponse(registerResponse, options, 'Upload stage 3: ');
+						}
 					}
 				}
 
@@ -441,7 +444,7 @@ const request = async config => {
 				response = new FileDownloadResponse(rawData, options, rawResponse);
 			} else if ('fileUrl' in options.resource && options.method.toUpperCase() === 'GET') {
 				const url = await rawResponse.text();
-				response = new FileUrlResponse(url.replace('\n', '').trim(), options, rawResponse);
+				response = new FileUrlResponse(url.replace(/\n/g, '').trim(), options, rawResponse);
 			} else {
 				response = new RawApiResponse(rawResponse, options);
 			}

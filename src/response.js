@@ -38,7 +38,7 @@ class ApiResponse {
 	 * @return {object}
 	 */
 	getLinks() {
-		if ('links' in this.raw) {
+		if (this.raw && typeof this.raw === 'object' && 'links' in this.raw) {
 			return this.raw.links;
 		}
 		return null;
@@ -49,7 +49,7 @@ class ApiResponse {
 	 * @return {object}
 	 */
 	getMeta() {
-		if ('meta' in this.raw) {
+		if (this.raw && typeof this.raw === 'object' && 'meta' in this.raw) {
 			return this.raw.meta;
 		}
 		return null;
@@ -157,9 +157,8 @@ module:zotero-api-client~MultiReadResponse#getData}
 	 */
 	getRelLinks() {
 		const links = this.response.headers.get('link') ?? '';
-		const matches = Array.from(links.matchAll(/<(.*?)>;\s+rel="(.*?)"/ig));
 		return Array
-			.from(matches)
+			.from(links.matchAll(/<(.*?)>;\s+rel="(.*?)"/ig))
 			.reduce((acc, match) => {
 				const url = match[1];
 				const rel = match[2];
@@ -475,7 +474,6 @@ class ErrorResponse extends Error {
 		super(message);
 		this.response = response;
 		this.reason = reason;
-		this.message = message;
 		this.options = options;
 	}
 

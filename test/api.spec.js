@@ -662,6 +662,11 @@ describe('Zotero Api Client', () => {
 			assert.deepEqual(lrc.itemKey.sort(), keysToDelete.sort());
 			assert.strictEqual(lrc.pretend, true);
 		});
+
+		it('should normalize apiScheme passed as opts to a pretended post', () => {
+			api(KEY).library(LIBRARY_KEY).items().pretend('post', [{key: 'I1'}], {apiScheme: 'app://'});
+			assert.equal(lrc.apiScheme, 'app');
+		});
 	});
 
 	describe('Handles access calls', () => {

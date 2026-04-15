@@ -260,7 +260,7 @@ const api = function () {
 	 */
 	const searches = function (searches = null) {
 		return efr.bind(this)({
-			searches: searches
+			searches
 		})
 	};
 
@@ -681,14 +681,14 @@ const api = function () {
 			case 'post':
 			case 'put':
 			case 'patch':
-				requestConfig = {...config, ...opts, body, method};
+				requestConfig = {...config, ...processOpts(opts), body, method};
 				if ('version' in requestConfig) {
 					requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
 					delete requestConfig['version'];
 				}
 				return requestConfig;
 			case 'delete':
-				requestConfig = {...config, ...opts, method};
+				requestConfig = {...config, ...processOpts(opts), method};
 				keysToDelete = body;
 
 				if (keysToDelete && !Array.isArray(keysToDelete)) {

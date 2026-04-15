@@ -1,8 +1,9 @@
 export type HttpVerb = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
 export type RelLinks = {
+    first?: string;
+    prev?: string;
     next?: string;
-    previous?: string;
     last?: string;
     alternate?: string;
 };

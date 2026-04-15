@@ -380,7 +380,7 @@ describe('ZoteroJS request', () => {
 					parsedUrl = parsedUrl.search.slice(1);
 					parsedUrl = parsedUrl.split('&');
 					return parsedUrl.includes('itemKey=N7W92H48');
-					
+
 				},
 				[multiGetResponseFixture[0]]
 			);
@@ -810,6 +810,25 @@ describe('ZoteroJS request', () => {
 					items: null
 				},
 				tag: ['aaa', 'bbb'],
+			});
+		});
+
+		it('should include query params with value 0', () => {
+			fetchMock.route(
+				({url}) => {
+					assert.include(url, 'since=0');
+					return true;
+				}, multiGetResponseFixture
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: null
+				},
+				since: 0,
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
 			});
 		});
 	});
@@ -1821,6 +1840,114 @@ describe('ZoteroJS request', () => {
 				});
 		});
 
+		it('should not send register request when upload to storage fails', () => {
+			let apiCallCount = 0;
+			fetchMock.route('https://api.zotero.org/users/475425/items/ABCD1111/file', () => {
+				apiCallCount++;
+				return {
+					'url': 'https://storage.zotero.org',
+					'contentType': 'text/plain',
+					'prefix': 'some prefix',
+					'suffix': 'some suffix',
+					'uploadKey': 'some key',
+				};
+			});
+			fetchMock.once('https://storage.zotero.org', {
+				status: 400,
+				body: 'Upload failed'
+			});
+			return request({...fileUploadRequest})
+				.then(() => { throw new Error('fail'); })
+				.catch(error => {
+					assert.instanceOf(error, ErrorResponse);
+					assert.strictEqual(error.message, 'Upload stage 2: 400: Bad Request');
+					// only 1 API call (auth), register request must not have been sent
+					assert.strictEqual(apiCallCount, 1);
+				});
+		});
+
+		it('should produce correct upload body from prefix, binary file, and suffix', () => {
+			const UPLOAD_PREFIX = 'some prefix';
+			const UPLOAD_SUFFIX = 'some suffix';
+			// From https://evanhahn.com/worlds-smallest-png/ by Evan Hahn (Unlicense)
+			const pngArrayBuffer = new Uint8Array([
+				0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d,
+				0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01,
+				0x01, 0x00, 0x00, 0x00, 0x00, 0x37, 0x6e, 0xf9, 0x24, 0x00, 0x00, 0x00,
+				0x0a, 0x49, 0x44, 0x41, 0x54, 0x78, 0x01, 0x63, 0x60, 0x00, 0x00, 0x00,
+				0x02, 0x00, 0x01, 0x73, 0x75, 0x01, 0x18, 0x00, 0x00, 0x00, 0x00, 0x49,
+				0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
+			]).buffer;
+
+			let counter = 0;
+			fetchMock.route('https://api.zotero.org/users/475425/items/ABCD1111/file', () => {
+				switch (counter++) {
+					case 0:
+						return {
+							'url': 'https://storage.zotero.org',
+							'contentType': 'text/plain',
+							'prefix': UPLOAD_PREFIX,
+							'suffix': UPLOAD_SUFFIX,
+							'uploadKey': 'some key',
+						};
+					case 1:
+						return {
+							status: 204,
+							headers: {'Last-Modified-Version': 42}
+						};
+				}
+			});
+			fetchMock.once('https://storage.zotero.org', ({options}) => {
+				const uploaded = new Uint8Array(options.body);
+				const prefixBytes = new TextEncoder().encode(UPLOAD_PREFIX);
+				const suffixBytes = new TextEncoder().encode(UPLOAD_SUFFIX);
+				const fileBytes = new Uint8Array(pngArrayBuffer);
+
+				// verify total length
+				const expectedLength = prefixBytes.length + fileBytes.length + suffixBytes.length;
+				assert.strictEqual(uploaded.byteLength, expectedLength);
+
+				// verify prefix region
+				const actualPrefix = uploaded.slice(0, prefixBytes.length);
+				assert.deepEqual(Array.from(actualPrefix), Array.from(prefixBytes));
+
+				// verify file region -- binary PNG bytes must survive intact
+				const actualFile = uploaded.slice(prefixBytes.length, prefixBytes.length + fileBytes.length);
+				assert.deepEqual(Array.from(actualFile), Array.from(fileBytes));
+
+				// verify suffix region
+				const actualSuffix = uploaded.slice(prefixBytes.length + fileBytes.length);
+				assert.deepEqual(Array.from(actualSuffix), Array.from(suffixBytes));
+
+				return {status: 201};
+			});
+			return request({
+				...fileUploadRequest,
+				file: pngArrayBuffer,
+			}).then(response => {
+				assert.instanceOf(response, FileUploadResponse);
+			});
+		});
+
+		it('should use user-provided mtime in file upload auth request', () => {
+			const USER_MTIME = 1234567890;
+			fetchMock.once('https://api.zotero.org/users/475425/items/ABCD1111/file', ({options}) => {
+				const config = options.body.split('&').reduce((acc, val) => {
+					acc[val.split('=')[0]] = val.split('=')[1];
+					return acc;
+				}, {});
+				assert.strictEqual(config.mtime, USER_MTIME.toString());
+				return {
+					headers: {'Last-Modified-Version': 42},
+					body: {exists: 1}
+				};
+			});
+			return request({...fileUploadRequest, mtime: USER_MTIME}).then(response => {
+				assert.instanceOf(response, FileUploadResponse);
+				assert.strictEqual(response.getVersion(), 42);
+			});
+		});
+
 		let fileRegisterRequest = {
 			method: 'post',
 			resource: {
@@ -1944,6 +2071,18 @@ describe('ZoteroJS request', () => {
 			}).then(() => {
 				assert.isOk(fetchMock.callHistory.done());
 			});
+		});
+	});
+
+	describe('Response base class guards', () => {
+		it('should return null for getLinks() when response data is null', () => {
+			const response = new ApiResponse(null, {}, {});
+			assert.isNull(response.getLinks());
+		});
+
+		it('should return null for getMeta() when response data is null', () => {
+			const response = new ApiResponse(null, {}, {});
+			assert.isNull(response.getMeta());
 		});
 	});
 });

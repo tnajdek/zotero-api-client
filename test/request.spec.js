@@ -24,6 +24,7 @@ const FILE_NAME = 'test.txt';
 const NEW_FILE = Uint8ClampedArray.from('lorem dolot ipsum'.split('').map(e => e.charCodeAt(0))).buffer;
 const NEW_FILE_MD5 = '0293973cad1be8dbda55d94c53069865';
 const FILE_PATCH = new Uint8Array(28);
+const INNER_FILE_MD5 = 'aaaabbbbccccddddeeeeffff00001111';
 const API_KEY = 'test';
 
 const request = async (opts) => {
@@ -1559,6 +1560,13 @@ describe('ZoteroJS request', () => {
 			zoteroApiKey: API_KEY
 		};
 
+		let fileUploadZipRequest = {
+			...fileUploadRequest,
+			md5sum: INNER_FILE_MD5,
+			mtime: 12345,
+			zipFilename: 'ABCD1111.zip',
+		};
+
 		let filePatchFullRequest = {
 			method: 'post',
 			resource: {
@@ -1766,6 +1774,29 @@ describe('ZoteroJS request', () => {
 					assert.isOk(response.getData().exists);
 				});
 		});
+
+		it('should append zipMD5/zipFilename to body and surface inner md5 on response when zipFilename is set', () => {
+			// FILE_MD5 is the SparkMD5 hash of FILE (asserted by the existing upload tests),
+			// so when FILE is treated as the wrapper bytes its zipMD5 equals FILE_MD5.
+			fetchMock.once('https://api.zotero.org/users/475425/items/ABCD1111/file', ({options}) => {
+				assert.strictEqual(
+					options.body,
+					`md5=${INNER_FILE_MD5}&filename=${FILE_NAME}&filesize=${FILE.byteLength}&mtime=12345&zipMD5=${FILE_MD5}&zipFilename=ABCD1111.zip`
+				);
+				return {
+					headers: { 'Last-Modified-Version': 42 },
+					body: { exists: 1 }
+				};
+			});
+			return request({...fileUploadZipRequest})
+				.then(response => {
+					assert.instanceOf(response, FileUploadResponse);
+					assert.strictEqual(response.getVersion(), 42);
+					assert.strictEqual(response.getData().md5sum, INNER_FILE_MD5);
+					assert.notStrictEqual(response.getData().md5sum, FILE_MD5);
+				});
+		});
+
 		it('should detect invalid config: body and file', () => {
 			return request({
 				...fileUploadRequest,
@@ -1965,6 +1996,12 @@ describe('ZoteroJS request', () => {
 			uploadRegisterOnly: true,
 		};
 
+		let fileRegisterZipRequest = {
+			...fileRegisterRequest,
+			zipMD5: 'aabbccddeeff00112233445566778899',
+			zipFilename: 'ABCD1111.zip',
+		};
+
 		it('should only attempt to register file if requested', () => {
 			fetchMock.once('https://api.zotero.org/users/475425/items/ABCD1111/file', ({ options}) => {
 				assert.strictEqual(options.body, 'md5=9edb2ca32f7b57662acbc112a80cc59d&filename=test.txt&filesize=424242&mtime=12345');
@@ -1977,6 +2014,28 @@ describe('ZoteroJS request', () => {
 			});
 
 			return request({...fileRegisterRequest})
+				.then(response => {
+					assert.instanceOf(response, FileUploadResponse);
+					assert.strictEqual(response.getVersion(), 42);
+					assert.isOk(response.getData().exists);
+				});
+		});
+
+		it('should append zipMD5/zipFilename to body when register-only request includes them', () => {
+			fetchMock.once('https://api.zotero.org/users/475425/items/ABCD1111/file', ({ options }) => {
+				assert.strictEqual(
+					options.body,
+					'md5=9edb2ca32f7b57662acbc112a80cc59d&filename=test.txt&filesize=424242&mtime=12345&zipMD5=aabbccddeeff00112233445566778899&zipFilename=ABCD1111.zip'
+				);
+				return {
+					headers: {
+						'Last-Modified-Version': 42,
+					},
+					body: {exists: 1}
+				};
+			});
+
+			return request({...fileRegisterZipRequest})
 				.then(response => {
 					assert.instanceOf(response, FileUploadResponse);
 					assert.strictEqual(response.getVersion(), 42);

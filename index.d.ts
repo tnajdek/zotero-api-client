@@ -112,6 +112,8 @@ export interface RequestOptions {
   filePatch?: ArrayBuffer;
   algorithm?: 'xdelta' | 'vcdiff' | 'bsdiff';
   uploadRegisterOnly?: boolean | null;
+  zipMD5?: string;
+  zipFilename?: string;
 }
 
 export class ApiResponse<TData = any> {
@@ -262,9 +264,17 @@ export interface ApiChain {
     mtime?: number | null,
     md5sum?: string,
     patch?: ArrayBuffer,
-    algorithm?: 'xdelta' | 'vcdiff' | 'bsdiff' | string
+    algorithm?: 'xdelta' | 'vcdiff' | 'bsdiff' | string,
+    zipFilename?: string
   ): ApiChain;
-  registerAttachment(fileName: string, fileSize: number, mtime: number, md5sum: string): ApiChain;
+  registerAttachment(
+    fileName: string,
+    fileSize: number,
+    mtime: number,
+    md5sum: string,
+    zipMD5?: string,
+    zipFilename?: string
+  ): ApiChain;
   attachmentUrl(): ApiChain;
 
   // Access/keys

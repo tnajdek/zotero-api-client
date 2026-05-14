@@ -384,14 +384,24 @@ const api = function () {
 	 * @param {String} [md5sum] - MD5 hash of an existing file, required for uploads that update existing file
 	 * @param {ArrayBuffer} [patch] - Binary patch, to be applied to the old file, to produce a new file
 	 * @param {String} [algorithm] - Algorithm used to compute a diff: xdelta, vcdiff or bsdiff
+	 * @param {String} [zipFilename] - Filename of the zip wrapper on S3 (typically `<itemKey>.zip`) for zip-stored attachments (e.g. HTML snapshots). When provided, `file` is interpreted as the wrapper bytes; the wrapper MD5 is computed and sent as `zipMD5`, while the existing `md5sum` value populates the body's inner `md5` field (preserving `attachmentStorageHash`). Requires `md5sum`; incompatible with `patch`/`algorithm`.
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const attachment = function (fileName, file, mtime, md5sum, patch, algorithm) {
+	const attachment = function (fileName, file, mtime, md5sum, patch, algorithm, zipFilename) {
 		let resource = {
 			...this.resource,
 			file: null
 		};
+
+		if (zipFilename) {
+			if (!md5sum) {
+				throw new Error('Called attachment() with zipFilename but without md5sum; full uploads of zip wrappers require the existing inner-file MD5 for If-Match and to populate the new attachmentStorageHash.');
+			}
+			if (patch || algorithm) {
+				throw new Error('Called attachment() with both zipFilename and patch/algorithm; binary patch uploads of zip wrappers are not supported.');
+			}
+		}
 
 		let bindParams = {};
 
@@ -406,7 +416,7 @@ const api = function () {
 		}
 
 		if (fileName && file) {
-			return ef.bind(this)({
+			const bindArgs = {
 				format: null,
 				contentType: 'application/x-www-form-urlencoded',
 				fileName,
@@ -414,7 +424,12 @@ const api = function () {
 				file,
 				mtime,
 				...bindParams
-			})
+			};
+			if (zipFilename) {
+				bindArgs.md5sum = md5sum;
+				bindArgs.zipFilename = zipFilename;
+			}
+			return ef.bind(this)(bindArgs);
 		} else {
 			return ef.bind(this)({format: null, resource});
 		}
@@ -431,15 +446,20 @@ const api = function () {
 	 * @param  {Number} fileSize  - size of the existing file
 	 * @param  {Number} mtime     - mtime of the existing file
 	 * @param  {String} md5sum    - md5sum of the existing file
+	 * @param  {String} [zipMD5]      - MD5 hash of the existing zip wrapper on S3 (for zip-stored attachments such as HTML snapshots). Required together with `zipFilename` when re-registering a zip-stored attachment so the server can look up the wrapper on S3 and link it to the new item without re-uploading.
+	 * @param  {String} [zipFilename] - Filename of the existing zip wrapper on S3 (typically `<itemKey>.zip`). Required together with `zipMD5`.
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
-	const registerAttachment = function (fileName, fileSize, mtime, md5sum) {
+	const registerAttachment = function (fileName, fileSize, mtime, md5sum, zipMD5, zipFilename) {
 		let resource = {
 			...this.resource,
 			file: null
 		};
 		if (fileName && typeof (fileSize) !== 'undefined' && typeof (mtime) !== 'undefined' && md5sum) {
+			if ((zipMD5 && !zipFilename) || (!zipMD5 && zipFilename)) {
+				throw new Error('Called registerAttachment() with zipMD5 but without zipFilename (or vice versa); both must be provided together.');
+			}
 			return ef.bind(this)({
 				contentType: 'application/x-www-form-urlencoded',
 				fileName,
@@ -450,6 +470,8 @@ const api = function () {
 				mtime,
 				resource,
 				uploadRegisterOnly: true,
+				zipMD5,
+				zipFilename,
 			})
 		} else {
 			throw new Error('Called registerAttachment() without specifying required parameters');

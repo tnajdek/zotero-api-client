@@ -203,8 +203,8 @@ API Reference
         * [~deleted(since)](#module_zotero-api-client..api..deleted) ⇒ <code>Object</code>
         * [~groups()](#module_zotero-api-client..api..groups) ⇒ <code>Object</code>
         * [~version(version)](#module_zotero-api-client..api..version) ⇒ <code>Object</code>
-        * [~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
-        * [~registerAttachment(fileName, fileSize, mtime, md5sum)](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
+        * [~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm], [zipFilename])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
+        * [~registerAttachment(fileName, fileSize, mtime, md5sum, [zipMD5], [zipFilename])](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
         * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
         * [~verifyKeyAccess()](#module_zotero-api-client..api..verifyKeyAccess) ⇒ <code>Object</code>
         * [~get(opts)](#module_zotero-api-client..api..get) ⇒ <code>Promise</code>
@@ -609,8 +609,8 @@ Wrapper function creates closure scope and calls api()
     * [~deleted(since)](#module_zotero-api-client..api..deleted) ⇒ <code>Object</code>
     * [~groups()](#module_zotero-api-client..api..groups) ⇒ <code>Object</code>
     * [~version(version)](#module_zotero-api-client..api..version) ⇒ <code>Object</code>
-    * [~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
-    * [~registerAttachment(fileName, fileSize, mtime, md5sum)](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
+    * [~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm], [zipFilename])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
+    * [~registerAttachment(fileName, fileSize, mtime, md5sum, [zipMD5], [zipFilename])](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
     * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
     * [~verifyKeyAccess()](#module_zotero-api-client..api..verifyKeyAccess) ⇒ <code>Object</code>
     * [~get(opts)](#module_zotero-api-client..api..get) ⇒ <code>Promise</code>
@@ -907,7 +907,7 @@ populate the If-Unmodified-Since-Version header.
 
 <a name="module_zotero-api-client..api..attachment"></a>
 
-#### api~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm]) ⇒ <code>Object</code>
+#### api~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm], [zipFilename]) ⇒ <code>Object</code>
 Configure api to upload or download an attachment file.
 Can be only used in conjunction with items() and post()/get()/patch().
 Method patch() can only be used to upload a binary patch, in this case the last two arguments
@@ -930,10 +930,11 @@ Will populate format on download as well as Content-Type, If*Match headers in ca
 | [md5sum] | <code>String</code> | MD5 hash of an existing file, required for uploads that update existing file |
 | [patch] | <code>ArrayBuffer</code> | Binary patch, to be applied to the old file, to produce a new file |
 | [algorithm] | <code>String</code> | Algorithm used to compute a diff: xdelta, vcdiff or bsdiff |
+| [zipFilename] | <code>String</code> | Filename of the zip wrapper on S3 (typically `<itemKey>.zip`) for zip-stored attachments (e.g. HTML snapshots). When provided, `file` is interpreted as the wrapper bytes; the wrapper MD5 is computed and sent as `zipMD5`, while the existing `md5sum` value populates the body's inner `md5` field (preserving `attachmentStorageHash`). Requires `md5sum`; incompatible with `patch`/`algorithm`. |
 
 <a name="module_zotero-api-client..api..registerAttachment"></a>
 
-#### api~registerAttachment(fileName, fileSize, mtime, md5sum) ⇒ <code>Object</code>
+#### api~registerAttachment(fileName, fileSize, mtime, md5sum, [zipMD5], [zipFilename]) ⇒ <code>Object</code>
 Advanced function that will attempt to register an existing file with a given attachment item
 based on known file metadata. Can also be used to rename an existing file.
 Can be only used in conjunction with items() and post().
@@ -951,6 +952,8 @@ Will fail with a ErrorResponse if API does not return "exists".
 | fileSize | <code>Number</code> | size of the existing file |
 | mtime | <code>Number</code> | mtime of the existing file |
 | md5sum | <code>String</code> | md5sum of the existing file |
+| [zipMD5] | <code>String</code> | MD5 hash of the existing zip wrapper on S3 (for zip-stored attachments such as HTML snapshots). Required together with `zipFilename` when re-registering a zip-stored attachment so the server can look up the wrapper on S3 and link it to the new item without re-uploading. |
+| [zipFilename] | <code>String</code> | Filename of the existing zip wrapper on S3 (typically `<itemKey>.zip`). Required together with `zipMD5`. |
 
 <a name="module_zotero-api-client..api..attachmentUrl"></a>
 

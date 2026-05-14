@@ -284,17 +284,28 @@ const request = async config => {
 	// process the request for file upload authorisation request
 	if ((hasDefinedKey(options, 'filePatch') || hasDefinedKey(options, 'file')) && hasDefinedKey(options, 'fileName')) {
 		let fileName = options.fileName;
-		let md5sum = SparkMD5.ArrayBuffer.hash(options.file);
 		let mtime = options.mtime ?? Date.now();
 		let fileSize = options.file.byteLength;
-		fileUploadData = {fileName, md5sum, mtime, fileSize};
-		fetchConfig['body'] = `md5=${md5sum}&filename=${encodeURIComponent(fileName)}&filesize=${fileSize}&mtime=${mtime}`;
+		if (hasDefinedKey(options, 'zipFilename')) {
+			let zipMD5 = SparkMD5.ArrayBuffer.hash(options.file);
+			let md5sum = options.md5sum;
+			fileUploadData = {fileName, md5sum, mtime, fileSize};
+			fetchConfig['body'] = `md5=${md5sum}&filename=${encodeURIComponent(fileName)}&filesize=${fileSize}&mtime=${mtime}&zipMD5=${zipMD5}&zipFilename=${encodeURIComponent(options.zipFilename)}`;
+		} else {
+			let md5sum = SparkMD5.ArrayBuffer.hash(options.file);
+			fileUploadData = {fileName, md5sum, mtime, fileSize};
+			fetchConfig['body'] = `md5=${md5sum}&filename=${encodeURIComponent(fileName)}&filesize=${fileSize}&mtime=${mtime}`;
+		}
 	}
 
 	if (options.uploadRegisterOnly === true) {
-		const {fileName, fileSize, md5sum, mtime} = options;
+		const {fileName, fileSize, md5sum, mtime, zipMD5, zipFilename} = options;
 		fileUploadData = {fileName, md5sum, mtime, fileSize};
-		fetchConfig['body'] = `md5=${md5sum}&filename=${encodeURIComponent(fileName)}&filesize=${fileSize}&mtime=${mtime}`;
+		let body = `md5=${md5sum}&filename=${encodeURIComponent(fileName)}&filesize=${fileSize}&mtime=${mtime}`;
+		if (zipMD5 && zipFilename) {
+			body += `&zipMD5=${zipMD5}&zipFilename=${encodeURIComponent(zipFilename)}`;
+		}
+		fetchConfig['body'] = body;
 	}
 
 	// checking against access-control-allow-methods seems to be case-sensitive

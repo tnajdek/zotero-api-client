@@ -14,6 +14,8 @@ const NEW_FILE = Uint8ClampedArray.from('lorem dolot ipsum'.split('').map(e => e
 const PATCH = new Uint8Array(16);
 const FILE_NAME = 'test.txt';
 const MD5 = '9edb2ca32f7b57662acbc112a80cc59d';
+const ZIP_MD5 = 'aabbccddeeff00112233445566778899';
+const ZIP_FILENAME = 'IITTEEMM.zip';
 
 describe('Zotero Api Client', () => {
 	var lrc;
@@ -530,6 +532,26 @@ describe('Zotero Api Client', () => {
 			assert.isUndefined(lrc.body);
 		});
 
+		it('handles api.library.items(I).attachment(Fname, F, mtime, OLD_MD5, undefined, undefined, ZIP_FILENAME).post() to full-upload a zip wrapper', () => {
+			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY)
+				.attachment(FILE_NAME, FILE, null, MD5, undefined, undefined, ZIP_FILENAME)
+				.post();
+			assert.equal(lrc.method, 'post');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.items, ITEM_KEY);
+			assert.isNull(lrc.resource.file);
+			assert.equal(lrc.file.byteLength, FILE.byteLength);
+			assert.equal(lrc.fileName, FILE_NAME);
+			assert.equal(lrc.ifMatch, MD5);
+			assert.equal(lrc.md5sum, MD5);
+			assert.equal(lrc.zipFilename, ZIP_FILENAME);
+			assert.equal(lrc.contentType, 'application/x-www-form-urlencoded');
+			assert.isNull(lrc.format);
+			assert.isUndefined(lrc.body);
+			assert.isUndefined(lrc.filePatch);
+			assert.isUndefined(lrc.algorithm);
+		});
+
 		it('handles api.library.items(I).attachment().get()', () => {
 			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).attachment().get();
 			assert.equal(lrc.method, 'get');
@@ -567,6 +589,27 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.contentType, 'application/x-www-form-urlencoded');
 			assert.isNull(lrc.format);
 			assert.isUndefined(lrc.body);
+		});
+
+		it('handles api.library.items(I).registerAttachment(FName, FSize, Fmtime, Fmd5sum, ZIP_MD5, ZIP_FILENAME).post()', () => {
+			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY)
+				.registerAttachment(FILE_NAME, 11, 22, MD5, ZIP_MD5, ZIP_FILENAME)
+				.post();
+			assert.equal(lrc.method, 'post');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.items, ITEM_KEY);
+			assert.isNull(lrc.resource.file);
+			assert.equal(lrc.fileName, FILE_NAME);
+			assert.equal(lrc.fileSize, 11);
+			assert.equal(lrc.mtime, 22);
+			assert.equal(lrc.md5sum, MD5);
+			assert.equal(lrc.uploadRegisterOnly, true);
+			assert.equal(lrc.ifMatch, MD5);
+			assert.equal(lrc.contentType, 'application/x-www-form-urlencoded');
+			assert.isNull(lrc.format);
+			assert.isUndefined(lrc.body);
+			assert.equal(lrc.zipMD5, ZIP_MD5);
+			assert.equal(lrc.zipFilename, ZIP_FILENAME);
 		});
 	});
 
@@ -695,6 +738,38 @@ describe('Zotero Api Client', () => {
 			assert.throws(
 				configuredApi.registerAttachment.bind(configuredApi, FILE_NAME),
 				'Called registerAttachment() without specifying required parameters'
+			);
+		});
+
+		it('throws when registerAttachment is called with only zipMD5', () => {
+			let configuredApi = api(KEY).library(LIBRARY_KEY).items(ITEM_KEY);
+			assert.throws(
+				() => configuredApi.registerAttachment(FILE_NAME, 11, 22, MD5, ZIP_MD5),
+				'both must be provided together'
+			);
+		});
+
+		it('throws when registerAttachment is called with only zipFilename', () => {
+			let configuredApi = api(KEY).library(LIBRARY_KEY).items(ITEM_KEY);
+			assert.throws(
+				() => configuredApi.registerAttachment(FILE_NAME, 11, 22, MD5, undefined, ZIP_FILENAME),
+				'both must be provided together'
+			);
+		});
+
+		it('throws when attachment is called with zipFilename but without md5sum', () => {
+			let configuredApi = api(KEY).library(LIBRARY_KEY).items(ITEM_KEY);
+			assert.throws(
+				() => configuredApi.attachment(FILE_NAME, FILE, null, undefined, undefined, undefined, ZIP_FILENAME),
+				/zipFilename but without md5sum/
+			);
+		});
+
+		it('throws when attachment is called with both zipFilename and patch/algorithm', () => {
+			let configuredApi = api(KEY).library(LIBRARY_KEY).items(ITEM_KEY);
+			assert.throws(
+				() => configuredApi.attachment(FILE_NAME, FILE, null, MD5, PATCH, 'xdelta', ZIP_FILENAME),
+				/both zipFilename and patch\/algorithm/
 			);
 		});
 

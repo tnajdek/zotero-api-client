@@ -1,6 +1,7 @@
 import fetchMock from 'fetch-mock';
 import {assert} from 'chai';
 import _request from '../src/request.js';
+import {validateRequest} from '../src/validate.js';
 import {
 	ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
 	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
@@ -2142,6 +2143,28 @@ describe('ZoteroJS request', () => {
 		it('should return null for getMeta() when response data is null', () => {
 			const response = new ApiResponse(null, {}, {});
 			assert.isNull(response.getMeta());
+		});
+	});
+
+	describe('Request validation', () => {
+		it('rejects invalid request', () => {
+			// subcollections() without a parent collection is not a valid endpoint
+			assert.throws(
+				() => validateRequest({library: 'u475425', subcollections: null}, 'get'),
+				'not a recognized endpoint'
+			);
+			// the valid form (subcollections of a specific collection) is accepted
+			assert.doesNotThrow(
+				() => validateRequest({library: 'u475425', collections: 'N7W92H48', subcollections: null}, 'get')
+			);
+		});
+
+		it('rejects a request with no resource or method', () => {
+			// resource defaults to {} and method to 'get'; the empty signature is reported as "(empty)"
+			assert.throws(
+				() => validateRequest(),
+				'(empty)'
+			);
 		});
 	});
 });

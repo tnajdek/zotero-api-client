@@ -68,7 +68,7 @@ const fetchParamNames = [
 	'signal',
 ];
 
-const resourcesSpecs = [
+export const resourcesSpecs = [
 	//name in resource, name in the url (usually the same, but there are exceptions)
 	{name: 'library', urlPart: 'library', isKeyResource: true},
 	{name: 'collections', urlPart: 'collections', isKeyResource: true},

@@ -1,4 +1,5 @@
 import request from './request.js';
+import { validateRequest } from './validate.js';
 
 /**
  * @module zotero-api-client
@@ -18,6 +19,9 @@ const api = function () {
 	 * @param  {Object} opts - Optional api configuration. For a list of all
 	 *                         possible properties, see documentation for
 	 *                         request() function
+	 * @param  {Boolean} opts.skipValidation - skip client-side validation of the
+	 *                         resource/method combination. Validation is a chain-layer
+	 *                         feature only; calling request() directly is never validated.
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -699,7 +703,7 @@ const api = function () {
 					requestConfig['ifModifiedSinceVersion'] = requestConfig['version'];
 					delete requestConfig['version'];
 				}
-				return requestConfig;
+				break;
 			case 'post':
 			case 'put':
 			case 'patch':
@@ -708,7 +712,7 @@ const api = function () {
 					requestConfig['ifUnmodifiedSinceVersion'] = requestConfig['version'];
 					delete requestConfig['version'];
 				}
-				return requestConfig;
+				break;
 			case 'delete':
 				requestConfig = {...config, ...processOpts(opts), method};
 				keysToDelete = body;
@@ -744,8 +748,19 @@ const api = function () {
 						...keysToDelete
 					]
 				}
-				return requestConfig;
+				break;
 		}
+
+		// Reject impossible resource/method combinations before they reach the network.
+		if (requestConfig) {
+			const { skipValidation } = requestConfig;
+			delete requestConfig.skipValidation;
+			if (!skipValidation) {
+				validateRequest(requestConfig.resource, method);
+			}
+		}
+
+		return requestConfig;
 	}
 
 	const execute = async config => {

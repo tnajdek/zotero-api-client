@@ -638,6 +638,7 @@ and can be called to specify further api configuration.
 | --- | --- | --- |
 | key | <code>String</code> | Authentication key |
 | opts | <code>Object</code> | Optional api configuration. For a list of all                         possible properties, see documentation for                         request() function |
+| opts.skipValidation | <code>Boolean</code> | skip client-side validation of the                         resource/method combination. Validation is a chain-layer                         feature only; calling request() directly is never validated. |
 
 <a name="module_zotero-api-client..api..library"></a>
 

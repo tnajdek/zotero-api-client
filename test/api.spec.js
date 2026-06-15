@@ -230,14 +230,6 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.resource.collections, COLLECTION_KEY);
 		});
 
-		it('handles api.library.collections(C).children.get', () => {
-			api(KEY).library(LIBRARY_KEY).collections(COLLECTION_KEY).children().get();
-			assert.equal(lrc.method, 'get');
-			assert.equal(lrc.resource.library, LIBRARY_KEY);
-			assert.equal(lrc.resource.collections, COLLECTION_KEY);
-			assert.isNull(lrc.resource.children);
-		});
-
 		it('handles api.library.collections(C).items.get', () => {
 			api(KEY).library(LIBRARY_KEY).collections(COLLECTION_KEY).items().get();
 			assert.equal(lrc.method, 'get');
@@ -798,6 +790,46 @@ describe('Zotero Api Client', () => {
 			assert.throws(configuredApi.version.bind(configuredApi), 'version() requires a number argument');
 		});
 
+	});
+
+	describe('Rejects invalid resource/method combinations', () => {
+		it('throws when subcollections() is used without a collection key', () => {
+			const configuredApi = api(KEY).library(LIBRARY_KEY).subcollections();
+			assert.throws(configuredApi.get.bind(configuredApi), 'not a recognized endpoint');
+		});
+
+		it('throws on collections(C).children() (silently mis-routes server-side)', () => {
+			const configuredApi = api(KEY).library(LIBRARY_KEY).collections(COLLECTION_KEY).children();
+			assert.throws(configuredApi.get.bind(configuredApi), 'not a recognized endpoint');
+		});
+
+		it('throws on items(I).top() (subset applied to a single item)', () => {
+			const configuredApi = api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).top();
+			assert.throws(configuredApi.get.bind(configuredApi), 'not a recognized endpoint');
+		});
+
+		it('throws when a library-independent resource is scoped to a library', () => {
+			const configuredApi = api(KEY).library(LIBRARY_KEY).itemTypes();
+			assert.throws(configuredApi.get.bind(configuredApi), 'not a recognized endpoint');
+		});
+
+		it('throws when a method is not allowed on an otherwise valid endpoint', () => {
+			const configuredApi = api(KEY).library(LIBRARY_KEY).collections();
+			assert.throws(configuredApi.put.bind(configuredApi, {}), 'PUT is not supported');
+		});
+
+		it('bypasses validation when skipValidation is set', () => {
+			api(KEY).library(LIBRARY_KEY).collections(COLLECTION_KEY).children().get({ skipValidation: true });
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.collections, COLLECTION_KEY);
+			assert.isNull(lrc.resource.children);
+		});
+
+		it('consumes skipValidation so it never reaches request()', () => {
+			api(KEY).library(LIBRARY_KEY).collections(COLLECTION_KEY).children().get({ skipValidation: true });
+			assert.notProperty(lrc, 'skipValidation');
+		});
 	});
 
 	describe('Handles extensions', () => {

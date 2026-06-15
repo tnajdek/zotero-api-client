@@ -97,6 +97,7 @@ export interface RequestOptions {
 
   // Advanced
   pretend?: boolean;
+  skipValidation?: boolean; // skip endpoint-combination validation (chain only; request() is never validated)
   resource?: ResourceSelection;
   executors?: Array<(config: any) => Promise<any> | any>;
 

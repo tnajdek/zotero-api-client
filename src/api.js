@@ -373,6 +373,23 @@ const api = function () {
 	};
 
 	/**
+	 * Configure api to request a specific version of the Zotero API, populating
+	 * the Zotero-API-Version header.
+	 * This is optional: the API defaults to version 3 when no version is
+	 * requested. Pinning a version insulates a client against a future,
+	 * backwards-incompatible API version becoming the default.
+	 * @param  {Number} apiVersion - Zotero API version to request, e.g. 3
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const apiVersion = function (apiVersion) {
+		if (typeof (apiVersion) !== 'number' || isNaN(apiVersion)) {
+			throw new Error('apiVersion() requires a number argument');
+		}
+		return ef.bind(this)({zoteroApiVersion: apiVersion});
+	};
+
+	/**
 	 * Configure api to upload or download an attachment file.
 	 * Can be only used in conjunction with items() and post()/get()/patch().
 	 * Method patch() can only be used to upload a binary patch, in this case the last two arguments
@@ -649,7 +666,7 @@ const api = function () {
 	}
 
 	const functions = {
-		api, attachment, attachmentUrl, children, collections, creatorFields, delete: del, //delete is a keyword
+		api, apiVersion, attachment, attachmentUrl, children, collections, creatorFields, delete: del, //delete is a keyword
 		deleted, get, getConfig, groups, itemFields, items, itemTypeCreatorTypes, itemTypeFields,
 		itemTypes, library, patch, post, pretend, publications, put, registerAttachment, schema,
 		searches, settings, subcollections, tags, template, top, trash, use, verifyKeyAccess, version,

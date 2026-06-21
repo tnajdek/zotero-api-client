@@ -137,6 +137,16 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.ifUnmodifiedSinceVersion, 42);
 		});
 
+		it('convert apiVersion() to a Zotero-API-Version config key', () => {
+			api(KEY).library(LIBRARY_KEY).items().apiVersion(3).get();
+			assert.equal(lrc.zoteroApiVersion, 3);
+		});
+
+		it('does not request a specific API version unless apiVersion() is used', () => {
+			api(KEY).library(LIBRARY_KEY).items().get();
+			assert.notProperty(lrc, 'zoteroApiVersion');
+		});
+
 	});
 
 	describe('Construct get requests', () => {
@@ -788,6 +798,11 @@ describe('Zotero Api Client', () => {
 		it('throws when api.version() is called with invalid argument', () => {
 			let configuredApi = api();
 			assert.throws(configuredApi.version.bind(configuredApi), 'version() requires a number argument');
+		});
+
+		it('throws when api.apiVersion() is called with invalid argument', () => {
+			let configuredApi = api();
+			assert.throws(configuredApi.apiVersion.bind(configuredApi), 'apiVersion() requires a number argument');
 		});
 
 	});

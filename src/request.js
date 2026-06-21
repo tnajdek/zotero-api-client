@@ -15,6 +15,7 @@ const acceptedHeaderNames = {
 	ifNoneMatch: 'If-None-Match',
 	ifUnmodifiedSinceVersion: 'If-Unmodified-Since-Version',
 	zoteroApiKey: 'Zotero-API-Key',
+	zoteroApiVersion: 'Zotero-API-Version',
 	zoteroWriteToken: 'Zotero-Write-Token',
 	zoteroSchemaVersion: 'Zotero-Schema-Version',
 };
@@ -186,6 +187,7 @@ const sleep = seconds => {
  * @param {String} config.apiAuthorityPart - Authority part of the API URL
  * @param {String} config.apiPath - Path part of the API URL
  * @param {String} config.authorization - 'Authorization' header
+ * @param {Number} config.zoteroApiVersion - 'Zotero-API-Version' header. Optional.
  * @param {String} config.zoteroWriteToken - 'Zotero-Write-Token' header
  * @param {String} config.ifModifiedSinceVersion - 'If-Modified-Since-Version' header
  * @param {String} config.ifUnmodifiedSinceVersion - 'If-Unmodified-Since-Version' header

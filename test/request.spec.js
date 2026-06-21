@@ -697,6 +697,27 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
+		it('should send a Zotero-API-Version header when zoteroApiVersion is set', () => {
+			return request({
+				resource: { library: 'u475425', items: null },
+				zoteroApiVersion: 3,
+				pretend: true
+			}).then(response => {
+				const { fetchConfig } = response.getData();
+				assert.strictEqual(fetchConfig.headers['Zotero-API-Version'], 3);
+			});
+		});
+
+		it('should not send a Zotero-API-Version header by default', () => {
+			return request({
+				resource: { library: 'u475425', items: null },
+				pretend: true
+			}).then(response => {
+				const { fetchConfig } = response.getData();
+				assert.notProperty(fetchConfig.headers, 'Zotero-API-Version');
+			});
+		});
+
 		it('should verify key access', () => {
 			fetchMock.route(
 				'begin:https://api.zotero.org/keys/current',

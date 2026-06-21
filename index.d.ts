@@ -43,6 +43,7 @@ export interface RequestOptions {
   // Headers
   authorization?: string;
   zoteroApiKey?: string;
+  zoteroApiVersion?: number; // 'Zotero-API-Version' header. Optional; API defaults to 3 when omitted
   zoteroWriteToken?: string;
   zoteroSchemaVersion?: number;
   ifModifiedSinceVersion?: number;
@@ -257,6 +258,7 @@ export interface ApiChain {
   deleted(since: number): ApiChain;
   groups(): ApiChain;
   version(version: number): ApiChain;
+  apiVersion(apiVersion: number): ApiChain;
 
   // Files
   attachment(

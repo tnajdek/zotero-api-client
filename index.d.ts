@@ -112,7 +112,7 @@ export interface RequestOptions {
   fileSize?: number;
   mtime?: number | null;
   md5sum?: string;
-  filePatch?: ArrayBuffer;
+  filePatch?: BufferSource;
   algorithm?: 'xdelta' | 'vcdiff' | 'bsdiff';
   uploadRegisterOnly?: boolean | null;
   zipMD5?: string;
@@ -284,7 +284,7 @@ export interface ApiChain {
     file?: ArrayBuffer,
     mtime?: number | null,
     md5sum?: string,
-    patch?: ArrayBuffer,
+    patch?: BufferSource,
     algorithm?: 'xdelta' | 'vcdiff' | 'bsdiff' | string,
     zipFilename?: string
   ): ApiChain;
@@ -303,9 +303,9 @@ export interface ApiChain {
 
   // Execution
   get(opts?: Partial<RequestOptions>): Promise<AnyResponse>;
-  post(data: any, opts?: Partial<RequestOptions>): Promise<SingleWriteResponse | MultiWriteResponse>;
+  post(data?: any, opts?: Partial<RequestOptions>): Promise<SingleWriteResponse | MultiWriteResponse>;
   put(data: any, opts?: Partial<RequestOptions>): Promise<SingleWriteResponse>;
-  patch(data: any, opts?: Partial<RequestOptions>): Promise<SingleWriteResponse>;
+  patch(data?: any, opts?: Partial<RequestOptions>): Promise<SingleWriteResponse>;
   delete(keysToDelete?: string[], opts?: Partial<RequestOptions>): Promise<DeleteResponse>;
   pretend(verb?: HttpVerb, data?: any, opts?: Partial<RequestOptions>): Promise<PretendResponse>;
 

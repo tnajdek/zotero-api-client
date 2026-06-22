@@ -26,7 +26,6 @@ export default [
 			ecmaVersion: 14,
 			sourceType: "module",
 			globals: {
-				...globals.jest,
 				...globals.node,
 			},
 		},

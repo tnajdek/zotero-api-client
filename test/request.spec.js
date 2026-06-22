@@ -1,3 +1,4 @@
+import { describe, it, beforeEach, afterEach } from 'node:test';
 import fetchMock from 'fetch-mock';
 import {assert} from 'chai';
 import _request from '../src/request.js';
@@ -935,7 +936,7 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
-		it('should retry request on error if configured to do so', async () => {
+		it('should retry request on error if configured to do so', { timeout: 4000 }, async () => {
 			fetchMock.route('begin:https://api.zotero.org/users/475425/items/top', {
 				status: 500,
 				body: 'Nope'
@@ -958,7 +959,7 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
 				assert.strictEqual(response.options.retryCount, 2);
 			});
-		}, 4000) // timeout 4s: first retry after 1 sec, second after further 2 sec, 1 sec for everything else
+		}) // timeout 4s: first retry after 1 sec, second after further 2 sec, 1 sec for everything else
 
 		it('should retry request on error immediately configured to do so', async () => {
 			fetchMock.route('begin:https://api.zotero.org/users/475425/items/top', {
@@ -1625,7 +1626,7 @@ describe('ZoteroJS request', () => {
 		it('should upload a new file', () => {
 			let counter = 0;
 			fetchMock.route('https://api.zotero.org/users/475425/items/ABCD1111/file', ({url, options}) => {
-				var config = options.body.split('&').reduce(
+				let config = options.body.split('&').reduce(
 					(acc, val) => {
 						acc[val.split('=')[0]] = val.split('=')[1];
 						return acc
@@ -1732,7 +1733,7 @@ describe('ZoteroJS request', () => {
 		it('should update a file, using full upload', () => {
 			let counter = 0;
 			fetchMock.route('https://api.zotero.org/users/475425/items/ABCD1111/file', ({url, options}) => {
-				var config = options.body.split('&').reduce(
+				let config = options.body.split('&').reduce(
 					(acc, val) => {
 						acc[val.split('=')[0]] = val.split('=')[1];
 						return acc
@@ -1951,7 +1952,7 @@ describe('ZoteroJS request', () => {
 				}
 			});
 			fetchMock.once('https://storage.zotero.org', ({options}) => {
-				const uploaded = new Uint8Array(options.body);
+				const uploaded = new Uint8Array(/** @type {ArrayBuffer} */ (options.body));
 				const prefixBytes = new TextEncoder().encode(UPLOAD_PREFIX);
 				const suffixBytes = new TextEncoder().encode(UPLOAD_SUFFIX);
 				const fileBytes = new Uint8Array(pngArrayBuffer);
@@ -2216,6 +2217,13 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getExpectedCount(), 9);
 			});
 		});
+
+		it('should report null status and counts when fields are absent', () => {
+			const response = new FullTextStatusResponse({}, {}, {});
+			assert.isNull(response.getStatus());
+			assert.isNull(response.getIndexedCount());
+			assert.isNull(response.getExpectedCount());
+		});
 	})
 
 	describe('Configuration', () => {
@@ -2245,6 +2253,11 @@ describe('ZoteroJS request', () => {
 		it('should return null for getMeta() when response data is null', () => {
 			const response = new ApiResponse(null, {}, {});
 			assert.isNull(response.getMeta());
+		});
+
+		it('should return raw entries verbatim from MultiReadResponse#getData() when they have neither data nor tag', () => {
+			const response = new MultiReadResponse([{ key: 'ABCD1111' }], {}, {});
+			assert.deepEqual(response.getData(), [{ key: 'ABCD1111' }]);
 		});
 	});
 

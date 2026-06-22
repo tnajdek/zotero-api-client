@@ -1,3 +1,4 @@
+import { describe, it, beforeEach } from 'node:test';
 import {assert} from 'chai';
 import _api from '../src/api.js';
 import _request from '../src/request.js';
@@ -18,7 +19,7 @@ const ZIP_MD5 = 'aabbccddeeff00112233445566778899';
 const ZIP_FILENAME = 'IITTEEMM.zip';
 
 describe('Zotero Api Client', () => {
-	var lrc;
+	let lrc;
 	// mock api so it never calls request(), instead
 	// entire config is placed into lrc variable
 	const mockRequest = async opts => {
@@ -94,8 +95,8 @@ describe('Zotero Api Client', () => {
 
 		it('allows independendly configured clients', () => {
 			const myapi = api(KEY).api;
-			const request1 = myapi().library('user', '1');
-			const request2 = myapi().library('user', '2');
+			const request1 = myapi().library('user', 1);
+			const request2 = myapi().library('user', 2);
 			assert.equal(request1.getConfig().zoteroApiKey, KEY);
 			assert.equal(request1.getConfig().resource.library, 'u1');
 			assert.equal(request2.getConfig().zoteroApiKey, KEY);
@@ -109,12 +110,12 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('constructs user library key', () => {
-			const request = api(KEY).library('user', '111').getConfig();
+			const request = api(KEY).library('user', 111).getConfig();
 			assert.equal(request.resource.library, 'u111');
 		});
 
 		it('constructs group library key', () => {
-			const request = api(KEY).library('group', '111').getConfig();
+			const request = api(KEY).library('group', 111).getConfig();
 			assert.equal(request.resource.library, 'g111');
 		});
 
@@ -871,7 +872,7 @@ describe('Zotero Api Client', () => {
 				});
 			}
 
-			const response = await api().use(extension).library(LIBRARY_KEY).items('AABBCCDD').get();
+			const response = /** @type {unknown} */ (await api().use(extension).library(LIBRARY_KEY).items('AABBCCDD').get());
 
 			assert.equal(response, 'good');
 		});
@@ -885,7 +886,7 @@ describe('Zotero Api Client', () => {
 				});
 			}
 
-			const response = await api().use(extension).api().library(LIBRARY_KEY).api().items('AABBCCDD').api().get();
+			const response = /** @type {unknown} */ (await api().use(extension).api().library(LIBRARY_KEY).api().items('AABBCCDD').api().get());
 			assert.equal(response, 'good');
 		});
 

@@ -135,6 +135,18 @@ const api = function () {
 	}
 
 	/**
+	 * Configure api to request the full-text index status for a library
+	 * Must be used in conjunction with library() and get()
+	 * @returns {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const fulltextStatus = function () {
+		return efr.bind(this)({
+			fulltextIndex: null
+		});
+	}
+
+	/**
 	 * Configure api to request all valid fields for an item type
 	 * Can only be used in conjunction with get()
 	 * @param  {String} itemType - item type for which valid fields will be
@@ -667,7 +679,7 @@ const api = function () {
 
 	const functions = {
 		api, apiVersion, attachment, attachmentUrl, children, collections, creatorFields, delete: del, //delete is a keyword
-		deleted, get, getConfig, groups, itemFields, items, itemTypeCreatorTypes, itemTypeFields,
+		deleted, fulltextStatus, get, getConfig, groups, itemFields, items, itemTypeCreatorTypes, itemTypeFields,
 		itemTypes, library, patch, post, pretend, publications, put, registerAttachment, schema,
 		searches, settings, subcollections, tags, template, top, trash, use, verifyKeyAccess, version,
 	}

@@ -52,6 +52,7 @@ const validResourceMethods = {
 	// Other library-scoped
 	'library/groups': 'GET',
 	'library/deleted': 'GET',
+	'library/fulltextIndex': 'GET',
 	// My Publications
 	'library/publications/items': 'GET',
 	'library/publications/items*': 'GET',

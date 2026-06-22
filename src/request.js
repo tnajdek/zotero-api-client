@@ -3,8 +3,8 @@ import SparkMD5 from 'spark-md5';
 
 import {
 	ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
-	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
-	SchemaResponse, SingleReadResponse, SingleWriteResponse,
+	FileUrlResponse, FullTextStatusResponse, MultiReadResponse, MultiWriteResponse, PretendResponse,
+	RawApiResponse, SchemaResponse, SingleReadResponse, SingleWriteResponse,
 } from './response.js';
 
 const acceptedHeaderNames = {
@@ -93,6 +93,7 @@ export const resourcesSpecs = [
 	{name: 'fileUrl', urlPart: 'file/view/url', isKeyResource: false},
 	{name: 'settings', urlPart: 'settings', isKeyResource: true},
 	{name: 'deleted', urlPart: 'deleted', isKeyResource: false},
+	{name: 'fulltextIndex', urlPart: 'fulltext/index', isKeyResource: false},
 	{name: 'verifyKeyAccess', urlPart: 'keys/current', isKeyResource: false},
 ];
 
@@ -424,18 +425,18 @@ const request = async config => {
 			switch (options.method.toUpperCase()) {
 				case 'GET':
 				default:
-					if ('library' in options.resource) {
+					if ('fulltextIndex' in options.resource) {
+						response = new FullTextStatusResponse(content, options, rawResponse);
+					} else if ('library' in options.resource) {
 						if (content && Array.isArray(content)) {
 							response = new MultiReadResponse(content, options, rawResponse);
 						} else {
 							response = new SingleReadResponse(content, options, rawResponse);
 						}
+					} else if ('schema' in options.resource) {
+						response = new SchemaResponse(content, options, rawResponse);
 					} else {
-						if ('schema' in options.resource) {
-							response = new SchemaResponse(content, options, rawResponse);
-						} else {
-							response = new ApiResponse(content, options, rawResponse);
-						}
+						response = new ApiResponse(content, options, rawResponse);
 					}
 					break;
 				case 'POST':

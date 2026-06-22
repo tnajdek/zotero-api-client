@@ -141,6 +141,11 @@ API Reference
         * [.getLinks()](#module_zotero-api-client..ApiResponse+getLinks) ⇒ <code>object</code>
         * [.getMeta()](#module_zotero-api-client..ApiResponse+getMeta) ⇒ <code>object</code>
         * [.getVersion()](#module_zotero-api-client..ApiResponse+getVersion) ⇒ <code>number</code>
+    * [~FullTextStatusResponse](#module_zotero-api-client..FullTextStatusResponse) ⇐ <code>ApiResponse</code>
+        * [.getResponseType()](#module_zotero-api-client..FullTextStatusResponse+getResponseType)
+        * [.getStatus()](#module_zotero-api-client..FullTextStatusResponse+getStatus) ⇒ <code>string</code>
+        * [.getIndexedCount()](#module_zotero-api-client..FullTextStatusResponse+getIndexedCount) ⇒ <code>number</code>
+        * [.getExpectedCount()](#module_zotero-api-client..FullTextStatusResponse+getExpectedCount) ⇒ <code>number</code>
     * [~SingleReadResponse](#module_zotero-api-client..SingleReadResponse) ⇐ <code>ApiResponse</code>
         * [.getResponseType()](#module_zotero-api-client..SingleReadResponse+getResponseType)
         * [.getData()](#module_zotero-api-client..SingleReadResponse+getData) ⇒ <code>Object</code>
@@ -188,6 +193,7 @@ API Reference
         * [~itemFields()](#module_zotero-api-client..api..itemFields) ⇒ <code>Object</code>
         * [~creatorFields()](#module_zotero-api-client..api..creatorFields) ⇒ <code>Object</code>
         * [~schema()](#module_zotero-api-client..api..schema) ⇒ <code>Object</code>
+        * [~fulltextStatus()](#module_zotero-api-client..api..fulltextStatus) ⇒ <code>Object</code>
         * [~itemTypeFields(itemType)](#module_zotero-api-client..api..itemTypeFields) ⇒ <code>Object</code>
         * [~itemTypeCreatorTypes(itemType)](#module_zotero-api-client..api..itemTypeCreatorTypes) ⇒ <code>Object</code>
         * [~template(itemType, subType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
@@ -203,6 +209,7 @@ API Reference
         * [~deleted(since)](#module_zotero-api-client..api..deleted) ⇒ <code>Object</code>
         * [~groups()](#module_zotero-api-client..api..groups) ⇒ <code>Object</code>
         * [~version(version)](#module_zotero-api-client..api..version) ⇒ <code>Object</code>
+        * [~apiVersion(apiVersion)](#module_zotero-api-client..api..apiVersion) ⇒ <code>Object</code>
         * [~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm], [zipFilename])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
         * [~registerAttachment(fileName, fileSize, mtime, md5sum, [zipMD5], [zipFilename])](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
         * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
@@ -266,6 +273,40 @@ Value of the "Last-Modified-Version" header in response if present. Specialised 
 
 **Kind**: instance method of [<code>ApiResponse</code>](#module_zotero-api-client..ApiResponse)  
 **Returns**: <code>number</code> - Version of the content in response  
+<a name="module_zotero-api-client..FullTextStatusResponse"></a>
+
+### zotero-api-client~FullTextStatusResponse ⇐ <code>ApiResponse</code>
+Represents a response to a GET request for a library's full-text index status
+
+**Kind**: inner class of [<code>zotero-api-client</code>](#module_zotero-api-client)  
+**Extends**: <code>ApiResponse</code>  
+
+* [~FullTextStatusResponse](#module_zotero-api-client..FullTextStatusResponse) ⇐ <code>ApiResponse</code>
+    * [.getResponseType()](#module_zotero-api-client..FullTextStatusResponse+getResponseType)
+    * [.getStatus()](#module_zotero-api-client..FullTextStatusResponse+getStatus) ⇒ <code>string</code>
+    * [.getIndexedCount()](#module_zotero-api-client..FullTextStatusResponse+getIndexedCount) ⇒ <code>number</code>
+    * [.getExpectedCount()](#module_zotero-api-client..FullTextStatusResponse+getExpectedCount) ⇒ <code>number</code>
+
+<a name="module_zotero-api-client..FullTextStatusResponse+getResponseType"></a>
+
+#### fullTextStatusResponse.getResponseType()
+**Kind**: instance method of [<code>FullTextStatusResponse</code>](#module_zotero-api-client..FullTextStatusResponse)  
+**See**: [getResponseType](#module_zotero-api-client..ApiResponse+getResponseType)  
+<a name="module_zotero-api-client..FullTextStatusResponse+getStatus"></a>
+
+#### fullTextStatusResponse.getStatus() ⇒ <code>string</code>
+**Kind**: instance method of [<code>FullTextStatusResponse</code>](#module_zotero-api-client..FullTextStatusResponse)  
+**Returns**: <code>string</code> - Index status, one of "indexed", "incomplete", "reindexing" or "deindexed"  
+<a name="module_zotero-api-client..FullTextStatusResponse+getIndexedCount"></a>
+
+#### fullTextStatusResponse.getIndexedCount() ⇒ <code>number</code>
+**Kind**: instance method of [<code>FullTextStatusResponse</code>](#module_zotero-api-client..FullTextStatusResponse)  
+**Returns**: <code>number</code> - Number of items currently indexed, or null when not reported (status "indexed"/"deindexed")  
+<a name="module_zotero-api-client..FullTextStatusResponse+getExpectedCount"></a>
+
+#### fullTextStatusResponse.getExpectedCount() ⇒ <code>number</code>
+**Kind**: instance method of [<code>FullTextStatusResponse</code>](#module_zotero-api-client..FullTextStatusResponse)  
+**Returns**: <code>number</code> - Number of items expected to be indexed, or null when not reported (status "indexed"/"deindexed")  
 <a name="module_zotero-api-client..SingleReadResponse"></a>
 
 ### zotero-api-client~SingleReadResponse ⇐ <code>ApiResponse</code>
@@ -594,6 +635,7 @@ Wrapper function creates closure scope and calls api()
     * [~itemFields()](#module_zotero-api-client..api..itemFields) ⇒ <code>Object</code>
     * [~creatorFields()](#module_zotero-api-client..api..creatorFields) ⇒ <code>Object</code>
     * [~schema()](#module_zotero-api-client..api..schema) ⇒ <code>Object</code>
+    * [~fulltextStatus()](#module_zotero-api-client..api..fulltextStatus) ⇒ <code>Object</code>
     * [~itemTypeFields(itemType)](#module_zotero-api-client..api..itemTypeFields) ⇒ <code>Object</code>
     * [~itemTypeCreatorTypes(itemType)](#module_zotero-api-client..api..itemTypeCreatorTypes) ⇒ <code>Object</code>
     * [~template(itemType, subType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
@@ -609,6 +651,7 @@ Wrapper function creates closure scope and calls api()
     * [~deleted(since)](#module_zotero-api-client..api..deleted) ⇒ <code>Object</code>
     * [~groups()](#module_zotero-api-client..api..groups) ⇒ <code>Object</code>
     * [~version(version)](#module_zotero-api-client..api..version) ⇒ <code>Object</code>
+    * [~apiVersion(apiVersion)](#module_zotero-api-client..api..apiVersion) ⇒ <code>Object</code>
     * [~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm], [zipFilename])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
     * [~registerAttachment(fileName, fileSize, mtime, md5sum, [zipMD5], [zipFilename])](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
     * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
@@ -701,6 +744,15 @@ Can only be used in conjunction with get()
 #### api~schema() ⇒ <code>Object</code>
 Configure api to request schema
 Can only be used in conjunction with get()
+
+**Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+<a name="module_zotero-api-client..api..fulltextStatus"></a>
+
+#### api~fulltextStatus() ⇒ <code>Object</code>
+Configure api to request the full-text index status for a library
+Must be used in conjunction with library() and get()
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -906,6 +958,23 @@ populate the If-Unmodified-Since-Version header.
 | --- | --- | --- |
 | version | <code>Number</code> | local version of the entity |
 
+<a name="module_zotero-api-client..api..apiVersion"></a>
+
+#### api~apiVersion(apiVersion) ⇒ <code>Object</code>
+Configure api to request a specific version of the Zotero API, populating
+the Zotero-API-Version header.
+This is optional: the API defaults to version 3 when no version is
+requested. Pinning a version insulates a client against a future,
+backwards-incompatible API version becoming the default.
+
+**Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| apiVersion | <code>Number</code> | Zotero API version to request, e.g. 3 |
+
 <a name="module_zotero-api-client..api..attachment"></a>
 
 #### api~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm], [zipFilename]) ⇒ <code>Object</code>
@@ -1110,6 +1179,7 @@ Executes request and returns a response. Not meant to be called directly, instea
 | config.apiAuthorityPart | <code>String</code> | Authority part of the API URL |
 | config.apiPath | <code>String</code> | Path part of the API URL |
 | config.authorization | <code>String</code> | 'Authorization' header |
+| config.zoteroApiVersion | <code>Number</code> | 'Zotero-API-Version' header. Optional. |
 | config.zoteroWriteToken | <code>String</code> | 'Zotero-Write-Token' header |
 | config.ifModifiedSinceVersion | <code>String</code> | 'If-Modified-Since-Version' header |
 | config.ifUnmodifiedSinceVersion | <code>String</code> | 'If-Unmodified-Since-Version' header |

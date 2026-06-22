@@ -86,6 +86,42 @@ class SchemaResponse extends ApiResponse {
 }
 
 /**
+ * @class Represents a response to a GET request for a library's full-text index status
+ * @extends ApiResponse
+ * @memberof module:zotero-api-client
+ * @inner
+ */
+class FullTextStatusResponse extends ApiResponse {
+	/**
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
+	getResponseType() {
+		return 'FullTextStatusResponse';
+	}
+
+	/**
+	 * @return {?string} Index status, one of "indexed", "incomplete", "reindexing" or "deindexed"
+	 */
+	getStatus() {
+		return this.raw?.status ?? null;
+	}
+
+	/**
+	 * @return {?number} Number of items currently indexed, or null when not reported (status "indexed"/"deindexed")
+	 */
+	getIndexedCount() {
+		return this.raw?.indexedCount ?? null;
+	}
+
+	/**
+	 * @return {?number} Number of items expected to be indexed, or null when not reported (status "indexed"/"deindexed")
+	 */
+	getExpectedCount() {
+		return this.raw?.expectedCount ?? null;
+	}
+}
+
+/**
  * @class Represents a response to a GET request containing a single entity
  * @extends ApiResponse
  * @memberof module:zotero-api-client
@@ -495,6 +531,6 @@ class ErrorResponse extends Error {
 
 export {
 	ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse,
-	FileUploadResponse, FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse,
-	RawApiResponse, SchemaResponse, SingleReadResponse, SingleWriteResponse
+	FileUploadResponse, FileUrlResponse, FullTextStatusResponse, MultiReadResponse, MultiWriteResponse,
+	PretendResponse, RawApiResponse, SchemaResponse, SingleReadResponse, SingleWriteResponse
 };

@@ -4,8 +4,8 @@ import _request from '../src/request.js';
 import {validateRequest} from '../src/validate.js';
 import {
 	ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
-	FileUrlResponse, MultiReadResponse, MultiWriteResponse, PretendResponse, RawApiResponse,
-	SchemaResponse, SingleReadResponse, SingleWriteResponse,
+	FileUrlResponse, FullTextStatusResponse, MultiReadResponse, MultiWriteResponse, PretendResponse,
+	RawApiResponse, SchemaResponse, SingleReadResponse, SingleWriteResponse,
 } from '../src/response.js';
 
 import singleGetResponseFixture from './fixtures/single-object-get-response.js';
@@ -2137,6 +2137,87 @@ describe('ZoteroJS request', () => {
 		});
 	})
 
+	describe('Full-text index status', () => {
+		it('should report an indexed library without counts', () => {
+			fetchMock.get('begin:https://api.zotero.org/users/475425/fulltext/index', {
+				status: 200,
+				body: { status: 'indexed' }
+			});
+			return request({
+				method: 'get',
+				resource: {
+					library: 'u475425',
+					fulltextIndex: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, FullTextStatusResponse);
+				assert.strictEqual(response.getResponseType(), 'FullTextStatusResponse');
+				assert.strictEqual(response.getStatus(), 'indexed');
+				assert.isNull(response.getIndexedCount());
+				assert.isNull(response.getExpectedCount());
+				assert.deepEqual(response.getData(), { status: 'indexed' });
+				assert.isNull(response.getVersion());
+			});
+		});
+
+		it('should report a deindexed group library without counts', () => {
+			fetchMock.get('begin:https://api.zotero.org/groups/123/fulltext/index', {
+				status: 200,
+				body: { status: 'deindexed' }
+			});
+			return request({
+				method: 'get',
+				resource: {
+					library: 'g123',
+					fulltextIndex: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, FullTextStatusResponse);
+				assert.strictEqual(response.getStatus(), 'deindexed');
+				assert.isNull(response.getIndexedCount());
+				assert.isNull(response.getExpectedCount());
+			});
+		});
+
+		it('should report a reindexing library with counts', () => {
+			fetchMock.get('begin:https://api.zotero.org/users/475425/fulltext/index', {
+				status: 200,
+				body: { status: 'reindexing', indexedCount: 3, expectedCount: 10 }
+			});
+			return request({
+				method: 'get',
+				resource: {
+					library: 'u475425',
+					fulltextIndex: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, FullTextStatusResponse);
+				assert.strictEqual(response.getStatus(), 'reindexing');
+				assert.strictEqual(response.getIndexedCount(), 3);
+				assert.strictEqual(response.getExpectedCount(), 10);
+			});
+		});
+
+		it('should report an incomplete library with counts', () => {
+			fetchMock.get('begin:https://api.zotero.org/users/475425/fulltext/index', {
+				status: 200,
+				body: { status: 'incomplete', indexedCount: 7, expectedCount: 9 }
+			});
+			return request({
+				method: 'get',
+				resource: {
+					library: 'u475425',
+					fulltextIndex: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, FullTextStatusResponse);
+				assert.strictEqual(response.getStatus(), 'incomplete');
+				assert.strictEqual(response.getIndexedCount(), 7);
+				assert.strictEqual(response.getExpectedCount(), 9);
+			});
+		});
+	})
+
 	describe('Configuration', () => {
 		it('should honor api configuration', () => {
 			fetchMock.route('begin:app://some-other-api.zotero.org:123/prefix/users/475425/items/ABCD1111', 200);
@@ -2185,6 +2266,21 @@ describe('ZoteroJS request', () => {
 			assert.throws(
 				() => validateRequest(),
 				'(empty)'
+			);
+		});
+
+		it('accepts the full-text index status endpoint on GET only', () => {
+			// library-scoped read, signature "library/fulltextIndex"
+			assert.doesNotThrow(
+				() => validateRequest({library: 'u475425', fulltextIndex: null}, 'get')
+			);
+			assert.doesNotThrow(
+				() => validateRequest({library: 'g123', fulltextIndex: null}, 'get')
+			);
+			// it is GET-only on the server, so writes must be rejected
+			assert.throws(
+				() => validateRequest({library: 'u475425', fulltextIndex: null}, 'post'),
+				'not supported'
 			);
 		});
 	});

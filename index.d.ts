@@ -31,6 +31,7 @@ export interface ResourceSelection {
   fileUrl?: null;
   settings?: string | null;
   deleted?: null;
+  fulltextIndex?: null;
   verifyKeyAccess?: null;
 }
 
@@ -136,6 +137,21 @@ export class SchemaResponse<TData = any> extends ApiResponse<TData> {
   getMeta(): null;
 }
 
+export type FullTextIndexStatusType = 'indexed' | 'incomplete' | 'reindexing' | 'deindexed';
+
+export interface FullTextIndexStatus {
+  status: FullTextIndexStatusType;
+  indexedCount?: number;
+  expectedCount?: number;
+}
+
+export class FullTextStatusResponse extends ApiResponse<FullTextIndexStatus> {
+  getResponseType(): 'FullTextStatusResponse';
+  getStatus(): FullTextIndexStatusType | null;
+  getIndexedCount(): number | null;
+  getExpectedCount(): number | null;
+}
+
 export class SingleReadResponse<TData = any> extends ApiResponse<TData> {
   getResponseType(): 'SingleReadResponse';
   getData(): TData;
@@ -209,6 +225,7 @@ export class ErrorResponse extends Error {
 export type AnyResponse =
   | ApiResponse<any>
   | SchemaResponse<any>
+  | FullTextStatusResponse
   | SingleReadResponse<any>
   | MultiReadResponse<any>
   | SingleWriteResponse<any>
@@ -257,6 +274,7 @@ export interface ApiChain {
   settings(settings?: string | null): ApiChain;
   deleted(since: number): ApiChain;
   groups(): ApiChain;
+  fulltextStatus(): ApiChain;
   version(version: number): ApiChain;
   apiVersion(apiVersion: number): ApiChain;
 

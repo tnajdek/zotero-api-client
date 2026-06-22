@@ -56,6 +56,17 @@ class ApiResponse {
 	}
 
 	/**
+	 * Bib available in the response if requested via `options.include=bib`. Specialised classes provide extracted meta data depending on context.
+	 * @return {object}
+	 */
+	getBib() {
+		if('bib' in this.raw) {
+			return this.raw.bib;
+		}
+		return null;
+	}
+
+	/**
 	 * Value of the "Last-Modified-Version" header in response if present. Specialised classes provide
 	  version depending on context
 	 * @return {?number} Version of the content in response
@@ -142,6 +153,14 @@ module:zotero-api-client~MultiReadResponse#getData}
 	 */
 	getMeta() {
 		return this.raw.map(r => 'meta' in r && r.meta || null);
+	}
+
+	/**
+	 * @return {Array} a list of formatted references (if requested via `options.include=bib`), indexes of the array match indexes of entities in {@link
+module:zotero-api-client~MultiReadResponse#getData}
+	 */
+	getBib() {
+		return this.raw.map(r => 'bib' in r && r.bib || null);
 	}
 
 	/**

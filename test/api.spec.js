@@ -746,6 +746,15 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.method, 'get');
 			assert.isNull(lrc.resource.verifyKeyAccess);
 		});
+
+		it('handles api.local().authorize(appName).post()', () => {
+			api().local().authorize('Test App').post();
+			assert.equal(lrc.method, 'post');
+			assert.isNull(lrc.resource.local);
+			assert.isNull(lrc.resource.authorize);
+			assert.equal(lrc.appName, 'Test App');
+			assert.isUndefined(lrc.body);
+		});
 	});
 
 	describe('Handles invalid calls', () => {
@@ -836,6 +845,12 @@ describe('Zotero Api Client', () => {
 			assert.throws(configuredApi.serverID.bind(configuredApi, ''), 'serverID() requires a non-empty string argument');
 		});
 
+		it('throws when api.authorize() is called without an appName', () => {
+			let configuredApi = api().local();
+			assert.throws(configuredApi.authorize.bind(configuredApi), 'authorize() requires an appName argument');
+			assert.throws(configuredApi.authorize.bind(configuredApi, '  '), 'authorize() requires an appName argument');
+		});
+
 	});
 
 	describe('Rejects invalid resource/method combinations', () => {
@@ -862,6 +877,24 @@ describe('Zotero Api Client', () => {
 		it('throws when a method is not allowed on an otherwise valid endpoint', () => {
 			const configuredApi = api(KEY).library(LIBRARY_KEY).collections();
 			assert.throws(configuredApi.put.bind(configuredApi, {}), 'PUT is not supported');
+		});
+
+		it('throws on local().authorize() with methods other than POST', () => {
+			const configuredApi = api().local().authorize('Test App');
+			assert.throws(configuredApi.get.bind(configuredApi), 'GET is not supported');
+			assert.throws(configuredApi.put.bind(configuredApi, {}), 'PUT is not supported');
+		});
+
+		it('throws when local() is used without authorize() and vice versa', () => {
+			const localOnly = api().local();
+			assert.throws(localOnly.post.bind(localOnly, {}), 'not a recognized endpoint');
+			const authorizeOnly = api().authorize('Test App');
+			assert.throws(authorizeOnly.post.bind(authorizeOnly), 'not a recognized endpoint');
+		});
+
+		it('throws when local().authorize() is scoped to a library', () => {
+			const configuredApi = api().library(LIBRARY_KEY).local().authorize('Test App');
+			assert.throws(configuredApi.post.bind(configuredApi), 'not a recognized endpoint');
 		});
 
 		it('bypasses validation when skipValidation is set', () => {

@@ -2,9 +2,10 @@ import SparkMD5 from 'spark-md5';
 
 
 import {
-	ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
-	FileUrlResponse, FullTextStatusResponse, MultiReadResponse, MultiWriteResponse, PretendResponse,
-	RawApiResponse, SchemaResponse, SingleReadResponse, SingleWriteResponse,
+	ApiResponse, AuthorizeResponse, DeleteResponse, ErrorResponse, FileDownloadResponse,
+	FileUploadResponse, FileUrlResponse, FullTextStatusResponse, MultiReadResponse,
+	MultiWriteResponse, PretendResponse, RawApiResponse, SchemaResponse, SingleReadResponse,
+	SingleWriteResponse,
 } from './response.js';
 
 const acceptedHeaderNames = {
@@ -96,6 +97,8 @@ export const resourcesSpecs = [
 	{name: 'deleted', urlPart: 'deleted', isKeyResource: false},
 	{name: 'fulltextIndex', urlPart: 'fulltext/index', isKeyResource: false},
 	{name: 'verifyKeyAccess', urlPart: 'keys/current', isKeyResource: false},
+	{name: 'local', urlPart: 'local', isKeyResource: false},
+	{name: 'authorize', urlPart: 'authorize', isKeyResource: false},
 ];
 
 const defaults = {
@@ -234,8 +237,11 @@ const sleep = seconds => {
  * @param {String} config.resource.searches - use 'searches' resource
  * @param {String} config.resource.tags - use 'tags' resource
  * @param {String} config.resource.template - use 'template' resource
+ * @param {String} config.resource.local - use 'local' resource. Local API only
+ * @param {String} config.resource.authorize - use 'authorize' resource. Local API only
  * @param {String} config.method - forwarded to fetch()
  * @param {String} config.body - forwarded to fetch()
+ * @param {String} config.appName - name of the calling application, used to construct the body of a local API authorization request. Local API only. Incompatible with "body"
  * @param {String} config.mode - forwarded to fetch()
  * @param {String} config.cache - forwarded to fetch()
  * @param {String} config.credentials - forwarded to fetch()
@@ -260,6 +266,10 @@ const request = async config => {
 
 	if (hasDefinedKey(options, 'body') && (hasDefinedKey(options, 'file') || hasDefinedKey(options, 'oldFile'))) {
 		throw new Error('Cannot use both "file" and "body" in a single request.');
+	}
+
+	if (hasDefinedKey(options, 'body') && hasDefinedKey(options, 'appName')) {
+		throw new Error('Cannot use both "appName" and "body" in a single request.');
 	}
 
 	if (['POST', 'PUT', 'PATCH'].includes(options.method.toUpperCase()) && !('contentType' in config)) {
@@ -311,6 +321,11 @@ const request = async config => {
 			body += `&zipMD5=${zipMD5}&zipFilename=${encodeURIComponent(zipFilename)}`;
 		}
 		fetchConfig['body'] = body;
+	}
+
+	// process the request for local API authorization
+	if (hasDefinedKey(options, 'appName')) {
+		fetchConfig['body'] = JSON.stringify({appName: options.appName});
 	}
 
 	// checking against access-control-allow-methods seems to be case-sensitive
@@ -444,7 +459,9 @@ const request = async config => {
 				case 'POST':
 				case 'PUT':
 				case 'PATCH':
-					if (content && typeof content === 'object' && 'success' in content) {
+					if ('authorize' in options.resource) {
+						response = new AuthorizeResponse(content, options, rawResponse);
+					} else if (content && typeof content === 'object' && 'success' in content) {
 						response = new MultiWriteResponse(content, options, rawResponse);
 					} else {
 						response = new SingleWriteResponse(content, options, rawResponse);

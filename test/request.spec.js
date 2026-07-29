@@ -4,9 +4,10 @@ import {assert} from 'chai';
 import _request from '../src/request.js';
 import {validateRequest} from '../src/validate.js';
 import {
-	ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse, FileUploadResponse,
-	FileUrlResponse, FullTextStatusResponse, MultiReadResponse, MultiWriteResponse, PretendResponse,
-	RawApiResponse, SchemaResponse, SingleReadResponse, SingleWriteResponse,
+	ApiResponse, AuthorizeResponse, DeleteResponse, ErrorResponse, FileDownloadResponse,
+	FileUploadResponse, FileUrlResponse, FullTextStatusResponse, MultiReadResponse,
+	MultiWriteResponse, PretendResponse, RawApiResponse, SchemaResponse, SingleReadResponse,
+	SingleWriteResponse,
 } from '../src/response.js';
 
 import singleGetResponseFixture from './fixtures/single-object-get-response.js';
@@ -1632,6 +1633,81 @@ describe('ZoteroJS request', () => {
 		});
 	});
 
+	describe('Local API authorization', () => {
+		const localAuthorizeRequest = {
+			apiScheme: 'http',
+			apiAuthorityPart: 'localhost:23119',
+			apiPath: 'api/',
+			method: 'post',
+			appName: 'Test App',
+			zoteroServerID: '4X1XABCD',
+			resource: { local: null, authorize: null }
+		};
+
+		it('should post an authorization request to the local API', () => {
+			fetchMock.route(({url, options: opts}) => {
+				assert.isOk(url.startsWith('http://localhost:23119/api/local/authorize'));
+				assert.strictEqual(opts.method, 'post');
+				// fetch-mock v12 normalizes header names to lowercase
+				assert.strictEqual(opts.headers['zotero-server-id'], '4X1XABCD');
+				assert.strictEqual(opts.headers['content-type'], 'application/json');
+				assert.deepEqual(JSON.parse(opts.body), { appName: 'Test App' });
+				return true;
+			}, {
+				headers: { 'Zotero-Server-ID': '4X1XABCD' },
+				body: { key: 'abcdef1234567890abcdef1234567890', remember: false }
+			});
+
+			return request(localAuthorizeRequest).then(response => {
+				assert.instanceOf(response, AuthorizeResponse);
+				assert.strictEqual(response.getResponseType(), 'AuthorizeResponse');
+				assert.strictEqual(response.getKey(), 'abcdef1234567890abcdef1234567890');
+				assert.strictEqual(response.isRemembered(), false);
+				assert.strictEqual(response.getServerID(), '4X1XABCD');
+				assert.deepEqual(response.getData(), { key: 'abcdef1234567890abcdef1234567890', remember: false });
+			});
+		});
+
+		it('should report a persistent key as remembered', () => {
+			fetchMock.route('begin:http://localhost:23119/api/local/authorize', {
+				body: { key: 'abcdef1234567890abcdef1234567890', remember: true }
+			});
+
+			return request(localAuthorizeRequest).then(response => {
+				assert.instanceOf(response, AuthorizeResponse);
+				assert.strictEqual(response.getKey(), 'abcdef1234567890abcdef1234567890');
+				assert.strictEqual(response.isRemembered(), true);
+			});
+		});
+
+		it('should throw ErrorResponse when authorization is denied', () => {
+			fetchMock.route('begin:http://localhost:23119/api/local/authorize', {
+				status: 403,
+				body: { denied: true }
+			});
+
+			return request(localAuthorizeRequest).then(() => {
+				throw new Error('fail');
+			}).catch(error => {
+				assert.instanceOf(error, ErrorResponse);
+				assert.strictEqual(error.message, '403: Forbidden');
+				assert.strictEqual(error.reason, '{"denied":true}');
+			});
+		});
+
+		it('should detect invalid config: body and appName', () => {
+			return request({
+				...localAuthorizeRequest,
+				body: { appName: 'Other App' }
+			}).then(() => {
+				throw new Error('fail');
+			}).catch(error => {
+				assert.instanceOf(error, Error);
+				assert.match(error.toString(), /Cannot use both "appName" and "body" in a single request./);
+			})
+		});
+	});
+
 	describe('File upload', () => {
 		let fileUploadRequest = {
 			method: 'post',
@@ -2328,6 +2404,12 @@ describe('ZoteroJS request', () => {
 		it('should return raw entries verbatim from MultiReadResponse#getData() when they have neither data nor tag', () => {
 			const response = new MultiReadResponse([{ key: 'ABCD1111' }], {}, {});
 			assert.deepEqual(response.getData(), [{ key: 'ABCD1111' }]);
+		});
+
+		it('should return null key and false remembered from AuthorizeResponse when response data is null', () => {
+			const response = new AuthorizeResponse(null, {}, {});
+			assert.isNull(response.getKey());
+			assert.isFalse(response.isRemembered());
 		});
 	});
 

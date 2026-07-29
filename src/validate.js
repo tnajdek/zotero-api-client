@@ -16,6 +16,8 @@ const validResourceMethods = {
 	'template': 'GET',
 	'schema': 'GET',
 	'verifyKeyAccess': 'GET',
+	// Local API only
+	'local/authorize': 'POST',
 	// Collections
 	'library/collections': 'GET POST DELETE',
 	'library/collections*': 'GET PUT PATCH DELETE',

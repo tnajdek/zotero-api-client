@@ -171,6 +171,10 @@ API Reference
         * [.getEntityByIndex(index)](#module_zotero-api-client..MultiWriteResponse+getEntityByIndex) ⇒ <code>Object</code>
     * [~DeleteResponse](#module_zotero-api-client..DeleteResponse) ⇐ <code>ApiResponse</code>
         * [.getResponseType()](#module_zotero-api-client..DeleteResponse+getResponseType)
+    * [~AuthorizeResponse](#module_zotero-api-client..AuthorizeResponse) ⇐ <code>ApiResponse</code>
+        * [.getResponseType()](#module_zotero-api-client..AuthorizeResponse+getResponseType)
+        * [.getKey()](#module_zotero-api-client..AuthorizeResponse+getKey) ⇒ <code>string</code>
+        * [.isRemembered()](#module_zotero-api-client..AuthorizeResponse+isRemembered) ⇒ <code>boolean</code>
     * [~FileUploadResponse](#module_zotero-api-client..FileUploadResponse) ⇐ <code>ApiResponse</code>
         * [.getResponseType()](#module_zotero-api-client..FileUploadResponse+getResponseType)
         * [.getVersion()](#module_zotero-api-client..FileUploadResponse+getVersion)
@@ -217,6 +221,8 @@ API Reference
         * [~registerAttachment(fileName, fileSize, mtime, md5sum, [zipMD5], [zipFilename])](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
         * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
         * [~verifyKeyAccess()](#module_zotero-api-client..api..verifyKeyAccess) ⇒ <code>Object</code>
+        * [~local()](#module_zotero-api-client..api..local) ⇒ <code>Object</code>
+        * [~authorize(appName)](#module_zotero-api-client..api..authorize) ⇒ <code>Object</code>
         * [~get(opts)](#module_zotero-api-client..api..get) ⇒ <code>Promise</code>
         * [~post(data, opts)](#module_zotero-api-client..api..post) ⇒ <code>Promise</code>
         * [~put(data, opts)](#module_zotero-api-client..api..put) ⇒ <code>Promise</code>
@@ -509,6 +515,41 @@ Represents a response to a DELETE request
 #### deleteResponse.getResponseType()
 **Kind**: instance method of [<code>DeleteResponse</code>](#module_zotero-api-client..DeleteResponse)  
 **See**: [getResponseType](#module_zotero-api-client..ApiResponse+getResponseType)  
+<a name="module_zotero-api-client..AuthorizeResponse"></a>
+
+### zotero-api-client~AuthorizeResponse ⇐ <code>ApiResponse</code>
+Represents a response to a local API authorization request (POST /api/local/authorize).
+Local API only
+
+**Kind**: inner class of [<code>zotero-api-client</code>](#module_zotero-api-client)  
+**Extends**: <code>ApiResponse</code>  
+
+* [~AuthorizeResponse](#module_zotero-api-client..AuthorizeResponse) ⇐ <code>ApiResponse</code>
+    * [.getResponseType()](#module_zotero-api-client..AuthorizeResponse+getResponseType)
+    * [.getKey()](#module_zotero-api-client..AuthorizeResponse+getKey) ⇒ <code>string</code>
+    * [.isRemembered()](#module_zotero-api-client..AuthorizeResponse+isRemembered) ⇒ <code>boolean</code>
+
+<a name="module_zotero-api-client..AuthorizeResponse+getResponseType"></a>
+
+#### authorizeResponse.getResponseType()
+**Kind**: instance method of [<code>AuthorizeResponse</code>](#module_zotero-api-client..AuthorizeResponse)  
+**See**: [getResponseType](#module_zotero-api-client..ApiResponse+getResponseType)  
+<a name="module_zotero-api-client..AuthorizeResponse+getKey"></a>
+
+#### authorizeResponse.getKey() ⇒ <code>string</code>
+Local API key granted by the user, to be sent in the "Zotero-API-Key" header on
+	  subsequent write requests
+
+**Kind**: instance method of [<code>AuthorizeResponse</code>](#module_zotero-api-client..AuthorizeResponse)  
+**Returns**: <code>string</code> - Local API key authorizing write requests  
+<a name="module_zotero-api-client..AuthorizeResponse+isRemembered"></a>
+
+#### authorizeResponse.isRemembered() ⇒ <code>boolean</code>
+Whether the user granted persistent access ("Always Allow"). When false, the key
+	  is single-use: the first write request that successfully validates it consumes it
+
+**Kind**: instance method of [<code>AuthorizeResponse</code>](#module_zotero-api-client..AuthorizeResponse)  
+**Returns**: <code>boolean</code> - Whether the key is persistent  
 <a name="module_zotero-api-client..FileUploadResponse"></a>
 
 ### zotero-api-client~FileUploadResponse ⇐ <code>ApiResponse</code>
@@ -678,6 +719,8 @@ Wrapper function creates closure scope and calls api()
     * [~registerAttachment(fileName, fileSize, mtime, md5sum, [zipMD5], [zipFilename])](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
     * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
     * [~verifyKeyAccess()](#module_zotero-api-client..api..verifyKeyAccess) ⇒ <code>Object</code>
+    * [~local()](#module_zotero-api-client..api..local) ⇒ <code>Object</code>
+    * [~authorize(appName)](#module_zotero-api-client..api..authorize) ⇒ <code>Object</code>
     * [~get(opts)](#module_zotero-api-client..api..get) ⇒ <code>Promise</code>
     * [~post(data, opts)](#module_zotero-api-client..api..post) ⇒ <code>Promise</code>
     * [~put(data, opts)](#module_zotero-api-client..api..put) ⇒ <code>Promise</code>
@@ -1083,6 +1126,32 @@ Can only be used in conjunction with get()
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
 **Returns**: <code>Object</code> - Partially configured api functions  
+<a name="module_zotero-api-client..api..local"></a>
+
+#### api~local() ⇒ <code>Object</code>
+Configure api to use endpoints that only exist in the local API.
+Can only be used in conjunction with authorize() and post().
+
+**Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+<a name="module_zotero-api-client..api..authorize"></a>
+
+#### api~authorize(appName) ⇒ <code>Object</code>
+Configure api to request a key that authorizes write requests to the local API.
+Can only be used in conjunction with local() and post(), where post() should be
+called without arguments. Zotero prompts the user to allow or deny access for
+the given application name. Note that the local API requires the
+"Zotero-Server-ID" header on this request (see serverID()).
+
+**Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| appName | <code>String</code> | Name of the calling application, displayed to the                            user in the authorization prompt |
+
 <a name="module_zotero-api-client..api..get"></a>
 
 #### api~get(opts) ⇒ <code>Promise</code>
@@ -1262,8 +1331,11 @@ Executes request and returns a response. Not meant to be called directly, instea
 | config.resource.searches | <code>String</code> | use 'searches' resource |
 | config.resource.tags | <code>String</code> | use 'tags' resource |
 | config.resource.template | <code>String</code> | use 'template' resource |
+| config.resource.local | <code>String</code> | use 'local' resource. Local API only |
+| config.resource.authorize | <code>String</code> | use 'authorize' resource. Local API only |
 | config.method | <code>String</code> | forwarded to fetch() |
 | config.body | <code>String</code> | forwarded to fetch() |
+| config.appName | <code>String</code> | name of the calling application, used to construct the body of a local API authorization request. Local API only. Incompatible with "body" |
 | config.mode | <code>String</code> | forwarded to fetch() |
 | config.cache | <code>String</code> | forwarded to fetch() |
 | config.credentials | <code>String</code> | forwarded to fetch() |

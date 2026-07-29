@@ -33,6 +33,8 @@ export interface ResourceSelection {
   deleted?: null;
   fulltextIndex?: null;
   verifyKeyAccess?: null;
+  local?: null; // local API only
+  authorize?: null; // local API only
 }
 
 export interface RequestOptions {
@@ -82,6 +84,7 @@ export interface RequestOptions {
   // Execution / fetch
   method?: HttpVerb | string;
   body?: any;
+  appName?: string; // local API only: used to construct the authorize request body; incompatible with body
   mode?: string;
   cache?: string;
   credentials?: string;
@@ -188,6 +191,17 @@ export class DeleteResponse extends ApiResponse<any> {
   getResponseType(): 'DeleteResponse';
 }
 
+export interface LocalAuthorizationData {
+  key: string;
+  remember: boolean;
+}
+
+export class AuthorizeResponse extends ApiResponse<LocalAuthorizationData> {
+  getResponseType(): 'AuthorizeResponse';
+  getKey(): string | null;
+  isRemembered(): boolean;
+}
+
 export class FileUploadResponse extends ApiResponse<any> {
   uploadResponse?: any;
   registerResponse?: any;
@@ -234,6 +248,7 @@ export type AnyResponse =
   | SingleWriteResponse<any>
   | MultiWriteResponse<any>
   | DeleteResponse
+  | AuthorizeResponse
   | FileUploadResponse
   | FileDownloadResponse
   | FileUrlResponse
@@ -304,10 +319,12 @@ export interface ApiChain {
 
   // Access/keys
   verifyKeyAccess(): ApiChain;
+  local(): ApiChain;
+  authorize(appName: string): ApiChain;
 
   // Execution
   get(opts?: Partial<RequestOptions>): Promise<AnyResponse>;
-  post(data?: any, opts?: Partial<RequestOptions>): Promise<SingleWriteResponse | MultiWriteResponse>;
+  post(data?: any, opts?: Partial<RequestOptions>): Promise<SingleWriteResponse | MultiWriteResponse | AuthorizeResponse>;
   put(data: any, opts?: Partial<RequestOptions>): Promise<SingleWriteResponse>;
   patch(data?: any, opts?: Partial<RequestOptions>): Promise<SingleWriteResponse>;
   delete(keysToDelete?: string[], opts?: Partial<RequestOptions>): Promise<DeleteResponse>;

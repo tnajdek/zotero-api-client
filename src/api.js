@@ -562,6 +562,38 @@ const api = function () {
 	}
 
 	/**
+	 * Configure api to use endpoints that only exist in the local API.
+	 * Can only be used in conjunction with authorize() and post().
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const local = function () {
+		return efr.bind(this)({
+			local: null
+		})
+	}
+
+	/**
+	 * Configure api to request a key that authorizes write requests to the local API.
+	 * Can only be used in conjunction with local() and post(), where post() should be
+	 * called without arguments. Zotero prompts the user to allow or deny access for
+	 * the given application name. Note that the local API requires the
+	 * "Zotero-Server-ID" header on this request (see serverID()).
+	 * @param  {String} appName - Name of the calling application, displayed to the
+	 *                            user in the authorization prompt
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const authorize = function (appName) {
+		if (typeof (appName) !== 'string' || !appName.trim()) {
+			throw new Error('authorize() requires an appName argument');
+		}
+		return efr.bind(this)({
+			authorize: null
+		}, {appName})
+	}
+
+	/**
 	 * Execution function. Specifies that the request should use a GET method.
 	 * @param  {Object} opts - Optional api configuration. If duplicate,
 	 *                         overrides properties already present. For a list
@@ -695,9 +727,9 @@ const api = function () {
 	}
 
 	const functions = {
-		api, apiVersion, attachment, attachmentUrl, children, collections, creatorFields, delete: del, //delete is a keyword
+		api, apiVersion, attachment, attachmentUrl, authorize, children, collections, creatorFields, delete: del, //delete is a keyword
 		deleted, fulltextStatus, get, getConfig, groups, itemFields, items, itemTypeCreatorTypes, itemTypeFields,
-		itemTypes, library, patch, post, pretend, publications, put, registerAttachment, schema,
+		itemTypes, library, local, patch, post, pretend, publications, put, registerAttachment, schema,
 		searches, serverID, settings, subcollections, tags, template, top, trash, use, verifyKeyAccess, version,
 	}
 

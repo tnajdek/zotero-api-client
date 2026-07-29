@@ -395,6 +395,40 @@ class DeleteResponse extends ApiResponse {
 }
 
 /**
+ * @class Represents a response to a local API authorization request (POST /api/local/authorize).
+ * Local API only
+ * @extends ApiResponse
+ * @memberof module:zotero-api-client
+ * @inner
+ */
+class AuthorizeResponse extends ApiResponse {
+	/**
+	 * @see {@link module:zotero-api-client~ApiResponse#getResponseType}
+	 */
+	getResponseType() {
+		return 'AuthorizeResponse';
+	}
+
+	/**
+	 * Local API key granted by the user, to be sent in the "Zotero-API-Key" header on
+	  subsequent write requests
+	 * @return {?string} Local API key authorizing write requests
+	 */
+	getKey() {
+		return this.raw?.key ?? null;
+	}
+
+	/**
+	 * Whether the user granted persistent access ("Always Allow"). When false, the key
+	  is single-use: the first write request that successfully validates it consumes it
+	 * @return {boolean} Whether the key is persistent
+	 */
+	isRemembered() {
+		return this.raw?.remember ?? false;
+	}
+}
+
+/**
  * @class Represents a response to a file upload request
  * @extends ApiResponse
  * @property {Object} authResponse     - Response object for stage 1 (upload authorisation) request
@@ -548,7 +582,7 @@ class ErrorResponse extends Error {
 }
 
 export {
-	ApiResponse, DeleteResponse, ErrorResponse, FileDownloadResponse,
+	ApiResponse, AuthorizeResponse, DeleteResponse, ErrorResponse, FileDownloadResponse,
 	FileUploadResponse, FileUrlResponse, FullTextStatusResponse, MultiReadResponse, MultiWriteResponse,
 	PretendResponse, RawApiResponse, SchemaResponse, SingleReadResponse, SingleWriteResponse
 };

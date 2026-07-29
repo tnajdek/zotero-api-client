@@ -15,6 +15,7 @@ const acceptedHeaderNames = {
 	ifModifiedSinceVersion: 'If-Modified-Since-Version',
 	ifNoneMatch: 'If-None-Match',
 	ifUnmodifiedSinceVersion: 'If-Unmodified-Since-Version',
+	zoteroAllowedRequest: 'Zotero-Allowed-Request',
 	zoteroApiKey: 'Zotero-API-Key',
 	zoteroApiVersion: 'Zotero-API-Version',
 	zoteroServerID: 'Zotero-Server-ID',
@@ -194,6 +195,7 @@ const sleep = seconds => {
  * @param {String} config.authorization - 'Authorization' header
  * @param {Number} config.zoteroApiVersion - 'Zotero-API-Version' header. Optional.
  * @param {String} config.zoteroServerID - 'Zotero-Server-ID' header. Used with the local API only
+ * @param {String} config.zoteroAllowedRequest - 'Zotero-Allowed-Request' header. Used with the local API only; Zotero's local server drops requests that carry a browser-like user agent (or an Origin header) unless this header is present
  * @param {String} config.zoteroWriteToken - 'Zotero-Write-Token' header
  * @param {String} config.ifModifiedSinceVersion - 'If-Modified-Since-Version' header
  * @param {String} config.ifUnmodifiedSinceVersion - 'If-Unmodified-Since-Version' header

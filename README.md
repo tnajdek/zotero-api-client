@@ -1288,6 +1288,7 @@ Executes request and returns a response. Not meant to be called directly, instea
 | config.authorization | <code>String</code> | 'Authorization' header |
 | config.zoteroApiVersion | <code>Number</code> | 'Zotero-API-Version' header. Optional. |
 | config.zoteroServerID | <code>String</code> | 'Zotero-Server-ID' header. Used with the local API only |
+| config.zoteroAllowedRequest | <code>String</code> | 'Zotero-Allowed-Request' header. Used with the local API only; Zotero's local server drops requests that carry a browser-like user agent (or an Origin header) unless this header is present |
 | config.zoteroWriteToken | <code>String</code> | 'Zotero-Write-Token' header |
 | config.ifModifiedSinceVersion | <code>String</code> | 'If-Modified-Since-Version' header |
 | config.ifUnmodifiedSinceVersion | <code>String</code> | 'If-Unmodified-Since-Version' header |

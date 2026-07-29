@@ -48,6 +48,7 @@ export interface RequestOptions {
   zoteroApiKey?: string;
   zoteroApiVersion?: number; // 'Zotero-API-Version' header. Optional; API defaults to 3 when omitted
   zoteroServerID?: string; // 'Zotero-Server-ID' header. Optional; used with the local API only
+  zoteroAllowedRequest?: string; // 'Zotero-Allowed-Request' header. Optional; local API only, required with a browser-like user agent
   zoteroWriteToken?: string;
   zoteroSchemaVersion?: number;
   ifModifiedSinceVersion?: number;

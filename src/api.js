@@ -402,6 +402,23 @@ const api = function () {
 	};
 
 	/**
+	 * Configure api to send the "Zotero-Server-ID" header with the request.
+	 * Only used with the local API: every local API response identifies the Zotero
+	 * instance that produced it in a "Zotero-Server-ID" header (see {@link
+	 * module:zotero-api-client~ApiResponse#getServerID}) and write requests
+	 * must echo that value back to confirm they're reaching the same instance.
+	 * @param  {String} serverID - Server ID previously obtained from a local API response
+	 * @return {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const serverID = function (serverID) {
+		if (typeof (serverID) !== 'string' || serverID === '') {
+			throw new Error('serverID() requires a non-empty string argument');
+		}
+		return ef.bind(this)({zoteroServerID: serverID});
+	};
+
+	/**
 	 * Configure api to upload or download an attachment file.
 	 * Can be only used in conjunction with items() and post()/get()/patch().
 	 * Method patch() can only be used to upload a binary patch, in this case the last two arguments
@@ -681,7 +698,7 @@ const api = function () {
 		api, apiVersion, attachment, attachmentUrl, children, collections, creatorFields, delete: del, //delete is a keyword
 		deleted, fulltextStatus, get, getConfig, groups, itemFields, items, itemTypeCreatorTypes, itemTypeFields,
 		itemTypes, library, patch, post, pretend, publications, put, registerAttachment, schema,
-		searches, settings, subcollections, tags, template, top, trash, use, verifyKeyAccess, version,
+		searches, serverID, settings, subcollections, tags, template, top, trash, use, verifyKeyAccess, version,
 	}
 
 	const ef = function (opts) {

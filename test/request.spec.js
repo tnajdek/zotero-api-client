@@ -155,6 +155,26 @@ describe('ZoteroJS request', () => {
 				assert.strictEqual(response.getVersion(), 1);
 				assert.strictEqual(Object.keys(response.getLinks()).length, 2);
 				assert.strictEqual(response.getData().key, 'X42A7DEE');
+				assert.isNull(response.getServerID());
+			});
+		});
+
+		it('should expose a Zotero-Server-ID response header', () => {
+			fetchMock.route(
+				'begin:https://api.zotero.org/users/475425/items/X42A7DEE',
+				{
+					headers: {'Last-Modified-Version': 1, 'Zotero-Server-ID': '4X1XABCD'},
+					body: singleGetResponseFixture
+				}
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: 'X42A7DEE'
+				}
+			}).then(response => {
+				assert.strictEqual(response.getServerID(), '4X1XABCD');
 			});
 		});
 
@@ -719,6 +739,28 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
+		it('should send a Zotero-Server-ID header when zoteroServerID is set', () => {
+			return request({
+				resource: { library: 'u475425', items: null },
+				zoteroServerID: '4X1XABCD',
+				pretend: true
+			}).then(response => {
+				const { fetchConfig } = response.getData();
+				assert.strictEqual(fetchConfig.headers['Zotero-Server-ID'], '4X1XABCD');
+				assert.isNull(response.getServerID());
+			});
+		});
+
+		it('should not send a Zotero-Server-ID header by default', () => {
+			return request({
+				resource: { library: 'u475425', items: null },
+				pretend: true
+			}).then(response => {
+				const { fetchConfig } = response.getData();
+				assert.notProperty(fetchConfig.headers, 'Zotero-Server-ID');
+			});
+		});
+
 		it('should verify key access', () => {
 			fetchMock.route(
 				'begin:https://api.zotero.org/keys/current',
@@ -875,9 +917,32 @@ describe('ZoteroJS request', () => {
 				assert.instanceOf(error, ErrorResponse);
 				assert.strictEqual(error.getResponseType(), 'ErrorResponse');
 				assert.isNull(error.getVersion());
+				assert.isNull(error.getServerID());
 				assert.strictEqual(error.message, '404: Not Found');
 				assert.strictEqual(error.reason, 'These aren\'t the droids You are looking for');
 				assert.strictEqual(error.response.bodyUsed, false);
+			});
+		});
+
+		it('should expose a Zotero-Server-ID header on an ErrorResponse', () => {
+			fetchMock.route('begin:https://api.zotero.org/', {
+				status: 412,
+				headers: {'Zotero-Server-ID': '4X1XABCD'},
+				body: 'Zotero-Server-ID does not match this server'
+			});
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: null
+				},
+				method: 'post',
+				body: []
+			}).then(() => {
+				throw new Error('fail');
+			}).catch(error => {
+				assert.instanceOf(error, ErrorResponse);
+				assert.strictEqual(error.getServerID(), '4X1XABCD');
 			});
 		});
 
@@ -2253,6 +2318,11 @@ describe('ZoteroJS request', () => {
 		it('should return null for getMeta() when response data is null', () => {
 			const response = new ApiResponse(null, {}, {});
 			assert.isNull(response.getMeta());
+		});
+
+		it('should return null for getServerID() when there is no response or no headers', () => {
+			assert.isNull(new ApiResponse(null, {}, null).getServerID());
+			assert.isNull(new ApiResponse(null, {}, {}).getServerID());
 		});
 
 		it('should return raw entries verbatim from MultiReadResponse#getData() when they have neither data nor tag', () => {

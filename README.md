@@ -141,6 +141,7 @@ API Reference
         * [.getLinks()](#module_zotero-api-client..ApiResponse+getLinks) ⇒ <code>object</code>
         * [.getMeta()](#module_zotero-api-client..ApiResponse+getMeta) ⇒ <code>object</code>
         * [.getVersion()](#module_zotero-api-client..ApiResponse+getVersion) ⇒ <code>number</code>
+        * [.getServerID()](#module_zotero-api-client..ApiResponse+getServerID) ⇒ <code>string</code>
     * [~FullTextStatusResponse](#module_zotero-api-client..FullTextStatusResponse) ⇐ <code>ApiResponse</code>
         * [.getResponseType()](#module_zotero-api-client..FullTextStatusResponse+getResponseType)
         * [.getStatus()](#module_zotero-api-client..FullTextStatusResponse+getStatus) ⇒ <code>string</code>
@@ -184,6 +185,7 @@ API Reference
         * [.getVersion()](#module_zotero-api-client..PretendResponse+getVersion) ⇒ <code>Object</code>
     * [~ErrorResponse](#module_zotero-api-client..ErrorResponse) ⇐ <code>Error</code>
         * [.getVersion()](#module_zotero-api-client..ErrorResponse+getVersion) ⇒ <code>number</code>
+        * [.getServerID()](#module_zotero-api-client..ErrorResponse+getServerID) ⇒ <code>string</code>
         * [.getResponseType()](#module_zotero-api-client..ErrorResponse+getResponseType)
     * [~api()](#module_zotero-api-client..api) ⇒ <code>Object</code>
         * [~api(key, opts)](#module_zotero-api-client..api..api) ⇒ <code>Object</code>
@@ -210,6 +212,7 @@ API Reference
         * [~groups()](#module_zotero-api-client..api..groups) ⇒ <code>Object</code>
         * [~version(version)](#module_zotero-api-client..api..version) ⇒ <code>Object</code>
         * [~apiVersion(apiVersion)](#module_zotero-api-client..api..apiVersion) ⇒ <code>Object</code>
+        * [~serverID(serverID)](#module_zotero-api-client..api..serverID) ⇒ <code>Object</code>
         * [~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm], [zipFilename])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
         * [~registerAttachment(fileName, fileSize, mtime, md5sum, [zipMD5], [zipFilename])](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
         * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
@@ -238,6 +241,7 @@ this class is returned when doing an API request
     * [.getLinks()](#module_zotero-api-client..ApiResponse+getLinks) ⇒ <code>object</code>
     * [.getMeta()](#module_zotero-api-client..ApiResponse+getMeta) ⇒ <code>object</code>
     * [.getVersion()](#module_zotero-api-client..ApiResponse+getVersion) ⇒ <code>number</code>
+    * [.getServerID()](#module_zotero-api-client..ApiResponse+getServerID) ⇒ <code>string</code>
 
 <a name="module_zotero-api-client..ApiResponse+getResponseType"></a>
 
@@ -273,6 +277,14 @@ Value of the "Last-Modified-Version" header in response if present. Specialised 
 
 **Kind**: instance method of [<code>ApiResponse</code>](#module_zotero-api-client..ApiResponse)  
 **Returns**: <code>number</code> - Version of the content in response  
+<a name="module_zotero-api-client..ApiResponse+getServerID"></a>
+
+#### apiResponse.getServerID() ⇒ <code>string</code>
+Value of the "Zotero-Server-ID" header in response if present. Identifies the Zotero
+	  instance that served the request when using the local API
+
+**Kind**: instance method of [<code>ApiResponse</code>](#module_zotero-api-client..ApiResponse)  
+**Returns**: <code>string</code> - ID of the Zotero instance that produced the response  
 <a name="module_zotero-api-client..FullTextStatusResponse"></a>
 
 ### zotero-api-client~FullTextStatusResponse ⇐ <code>ApiResponse</code>
@@ -605,6 +617,7 @@ Represents an error response from the api
 
 * [~ErrorResponse](#module_zotero-api-client..ErrorResponse) ⇐ <code>Error</code>
     * [.getVersion()](#module_zotero-api-client..ErrorResponse+getVersion) ⇒ <code>number</code>
+    * [.getServerID()](#module_zotero-api-client..ErrorResponse+getServerID) ⇒ <code>string</code>
     * [.getResponseType()](#module_zotero-api-client..ErrorResponse+getResponseType)
 
 <a name="module_zotero-api-client..ErrorResponse+getVersion"></a>
@@ -614,6 +627,14 @@ Value of the "Last-Modified-Version" header in response if present. This is gene
 
 **Kind**: instance method of [<code>ErrorResponse</code>](#module_zotero-api-client..ErrorResponse)  
 **Returns**: <code>number</code> - Version of the content in response  
+<a name="module_zotero-api-client..ErrorResponse+getServerID"></a>
+
+#### errorResponse.getServerID() ⇒ <code>string</code>
+Value of the "Zotero-Server-ID" header in response if present. Identifies the Zotero
+	  instance that served the request when using the local API
+
+**Kind**: instance method of [<code>ErrorResponse</code>](#module_zotero-api-client..ErrorResponse)  
+**Returns**: <code>string</code> - ID of the Zotero instance that produced the response  
 <a name="module_zotero-api-client..ErrorResponse+getResponseType"></a>
 
 #### errorResponse.getResponseType()
@@ -652,6 +673,7 @@ Wrapper function creates closure scope and calls api()
     * [~groups()](#module_zotero-api-client..api..groups) ⇒ <code>Object</code>
     * [~version(version)](#module_zotero-api-client..api..version) ⇒ <code>Object</code>
     * [~apiVersion(apiVersion)](#module_zotero-api-client..api..apiVersion) ⇒ <code>Object</code>
+    * [~serverID(serverID)](#module_zotero-api-client..api..serverID) ⇒ <code>Object</code>
     * [~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm], [zipFilename])](#module_zotero-api-client..api..attachment) ⇒ <code>Object</code>
     * [~registerAttachment(fileName, fileSize, mtime, md5sum, [zipMD5], [zipFilename])](#module_zotero-api-client..api..registerAttachment) ⇒ <code>Object</code>
     * [~attachmentUrl()](#module_zotero-api-client..api..attachmentUrl) ⇒ <code>Object</code>
@@ -975,6 +997,22 @@ backwards-incompatible API version becoming the default.
 | --- | --- | --- |
 | apiVersion | <code>Number</code> | Zotero API version to request, e.g. 3 |
 
+<a name="module_zotero-api-client..api..serverID"></a>
+
+#### api~serverID(serverID) ⇒ <code>Object</code>
+Configure api to send the "Zotero-Server-ID" header with the request.
+Only used with the local API: every local API response identifies the Zotero
+instance that produced it in a "Zotero-Server-ID" header (see [getServerID](#module_zotero-api-client..ApiResponse+getServerID)) and write requests
+must echo that value back to confirm they're reaching the same instance.
+
+**Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| serverID | <code>String</code> | Server ID previously obtained from a local API response |
+
 <a name="module_zotero-api-client..api..attachment"></a>
 
 #### api~attachment([fileName], [file], [mtime], [md5sum], [patch], [algorithm], [zipFilename]) ⇒ <code>Object</code>
@@ -1180,6 +1218,7 @@ Executes request and returns a response. Not meant to be called directly, instea
 | config.apiPath | <code>String</code> | Path part of the API URL |
 | config.authorization | <code>String</code> | 'Authorization' header |
 | config.zoteroApiVersion | <code>Number</code> | 'Zotero-API-Version' header. Optional. |
+| config.zoteroServerID | <code>String</code> | 'Zotero-Server-ID' header. Used with the local API only |
 | config.zoteroWriteToken | <code>String</code> | 'Zotero-Write-Token' header |
 | config.ifModifiedSinceVersion | <code>String</code> | 'If-Modified-Since-Version' header |
 | config.ifUnmodifiedSinceVersion | <code>String</code> | 'If-Unmodified-Since-Version' header |

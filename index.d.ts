@@ -45,6 +45,7 @@ export interface RequestOptions {
   authorization?: string;
   zoteroApiKey?: string;
   zoteroApiVersion?: number; // 'Zotero-API-Version' header. Optional; API defaults to 3 when omitted
+  zoteroServerID?: string; // 'Zotero-Server-ID' header. Optional; used with the local API only
   zoteroWriteToken?: string;
   zoteroSchemaVersion?: number;
   ifModifiedSinceVersion?: number;
@@ -129,6 +130,7 @@ export class ApiResponse<TData = any> {
   getLinks(): any;
   getMeta(): any;
   getVersion(): number | null;
+  getServerID(): string | null;
 }
 
 export class SchemaResponse<TData = any> extends ApiResponse<TData> {
@@ -219,6 +221,7 @@ export class ErrorResponse extends Error {
   reason: string;
   options: RequestOptions;
   getVersion(): number | null;
+  getServerID(): string | null;
   getResponseType(): 'ErrorResponse';
 }
 
@@ -277,6 +280,7 @@ export interface ApiChain {
   fulltextStatus(): ApiChain;
   version(version: number): ApiChain;
   apiVersion(apiVersion: number): ApiChain;
+  serverID(serverID: string): ApiChain;
 
   // Files
   attachment(

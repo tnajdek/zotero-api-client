@@ -63,6 +63,15 @@ class ApiResponse {
 	getVersion() {
 		return parseIntHeaders(this.response.headers, 'Last-Modified-Version');
 	}
+
+	/**
+	 * Value of the "Zotero-Server-ID" header in response if present. Identifies the Zotero
+	  instance that served the request when using the local API
+	 * @return {?string} ID of the Zotero instance that produced the response
+	 */
+	getServerID() {
+		return this.response?.headers?.get('Zotero-Server-ID') ?? null;
+	}
 }
 
 class SchemaResponse extends ApiResponse {
@@ -519,6 +528,15 @@ class ErrorResponse extends Error {
 	 */
 	getVersion() {
 		return parseIntHeaders(this.response.headers, 'Last-Modified-Version');
+	}
+
+	/**
+	 * Value of the "Zotero-Server-ID" header in response if present. Identifies the Zotero
+	  instance that served the request when using the local API
+	 * @return {?string} ID of the Zotero instance that produced the response
+	 */
+	getServerID() {
+		return this.response?.headers?.get('Zotero-Server-ID') ?? null;
 	}
 
 	/**

@@ -148,6 +148,16 @@ describe('Zotero Api Client', () => {
 			assert.notProperty(lrc, 'zoteroApiVersion');
 		});
 
+		it('convert serverID() to a Zotero-Server-ID config key', () => {
+			api(KEY).library(LIBRARY_KEY).items().serverID('4X1XABCD').get();
+			assert.equal(lrc.zoteroServerID, '4X1XABCD');
+		});
+
+		it('does not send a server ID unless serverID() is used', () => {
+			api(KEY).library(LIBRARY_KEY).items().get();
+			assert.notProperty(lrc, 'zoteroServerID');
+		});
+
 	});
 
 	describe('Construct get requests', () => {
@@ -818,6 +828,12 @@ describe('Zotero Api Client', () => {
 		it('throws when api.apiVersion() is called with invalid argument', () => {
 			let configuredApi = api();
 			assert.throws(configuredApi.apiVersion.bind(configuredApi), 'apiVersion() requires a number argument');
+		});
+
+		it('throws when api.serverID() is called with invalid argument', () => {
+			let configuredApi = api();
+			assert.throws(configuredApi.serverID.bind(configuredApi), 'serverID() requires a non-empty string argument');
+			assert.throws(configuredApi.serverID.bind(configuredApi, ''), 'serverID() requires a non-empty string argument');
 		});
 
 	});

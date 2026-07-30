@@ -8,14 +8,13 @@ import terser from '@rollup/plugin-terser';
 const config = {
 	external: [
 		'spark-md5',
-		'cross-fetch/polyfill',
 		/@babel\/runtime/
 	],
 	treeshake: {
 		preset: 'smallest',
 		unknownGlobalSideEffects: false,
 		moduleSideEffects: (id) => {
-			if (id.includes('cross-fetch/') || id.includes('core-js/')) {
+			if (id.includes('core-js/')) {
 				return true;
 			}
 			return false;
@@ -51,11 +50,6 @@ if (process.env.DEBUG) {
 
 export default [
 	{...config, input: 'src/main.js', output: {...config.output, file: 'lib/main.cjs'}},
-	{
-		...config,
-		input: 'src/main-node.js',
-		output: {...config.output, file: 'lib/main-node.cjs'},
-	},
 	{
 		...config,
 		external: [],

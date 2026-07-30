@@ -379,6 +379,25 @@ describe('Zotero Api Client', () => {
 			assert.deepEqual(lrc.body, body);
 		});
 
+		it('handles api.library.items(I1).fulltext().put(FT)', () => {
+			let body = {content: 'Lorem ipsum', indexedChars: 11, totalChars: 11};
+			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).fulltext().put(body);
+			assert.equal(lrc.method, 'put');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.items, ITEM_KEY);
+			assert.isNull(lrc.resource.fulltext);
+			assert.deepEqual(lrc.body, body);
+		});
+
+		it('handles api.library.fulltext().post([FT1, FT2])', () => {
+			let body = [{key: 'ITEM1111', content: 'Lorem'}, {key: 'ITEM2222', content: 'Ipsum'}];
+			api(KEY).library(LIBRARY_KEY).fulltext().post(body);
+			assert.equal(lrc.method, 'post');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.isNull(lrc.resource.fulltext);
+			assert.deepEqual(lrc.body, body);
+		});
+
 		it('handles api.library.items(I1).patch(I1pb)', () => {
 			let body = {key: 'ITEM1111', thing: 'updated'};
 			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).patch(body);
@@ -599,6 +618,22 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.method, 'get');
 			assert.equal(lrc.resource.library, 'g123');
 			assert.isNull(lrc.resource.fulltextIndex);
+		});
+
+		it('handles api.library.items(I).fulltext().get()', () => {
+			api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).fulltext().get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.equal(lrc.resource.items, ITEM_KEY);
+			assert.isNull(lrc.resource.fulltext);
+		});
+
+		it('handles api.library.fulltext().get({ since })', () => {
+			api(KEY).library(LIBRARY_KEY).fulltext().get({ since: 42 });
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.isNull(lrc.resource.fulltext);
+			assert.equal(lrc.since, 42);
 		});
 
 		it('handles api.library.items(I).registerAttachment(FName, FSize, Fmtime, Fmd5sum).post()', () => {
@@ -895,6 +930,15 @@ describe('Zotero Api Client', () => {
 		it('throws when local().authorize() is scoped to a library', () => {
 			const configuredApi = api().library(LIBRARY_KEY).local().authorize('Test App');
 			assert.throws(configuredApi.post.bind(configuredApi), 'not a recognized endpoint');
+		});
+
+		it('throws on invalid full-text content combinations', () => {
+			const itemLevel = api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).fulltext();
+			assert.throws(itemLevel.post.bind(itemLevel, []), 'POST is not supported');
+			const libraryLevel = api(KEY).library(LIBRARY_KEY).fulltext();
+			assert.throws(libraryLevel.put.bind(libraryLevel, {}), 'PUT is not supported');
+			const noLibrary = api(KEY).fulltext();
+			assert.throws(noLibrary.get.bind(noLibrary), 'not a recognized endpoint');
 		});
 
 		it('bypasses validation when skipValidation is set', () => {

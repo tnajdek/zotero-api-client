@@ -200,6 +200,7 @@ API Reference
         * [~creatorFields()](#module_zotero-api-client..api..creatorFields) ⇒ <code>Object</code>
         * [~schema()](#module_zotero-api-client..api..schema) ⇒ <code>Object</code>
         * [~fulltextStatus()](#module_zotero-api-client..api..fulltextStatus) ⇒ <code>Object</code>
+        * [~fulltext()](#module_zotero-api-client..api..fulltext) ⇒ <code>Object</code>
         * [~itemTypeFields(itemType)](#module_zotero-api-client..api..itemTypeFields) ⇒ <code>Object</code>
         * [~itemTypeCreatorTypes(itemType)](#module_zotero-api-client..api..itemTypeCreatorTypes) ⇒ <code>Object</code>
         * [~template(itemType, subType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
@@ -698,6 +699,7 @@ Wrapper function creates closure scope and calls api()
     * [~creatorFields()](#module_zotero-api-client..api..creatorFields) ⇒ <code>Object</code>
     * [~schema()](#module_zotero-api-client..api..schema) ⇒ <code>Object</code>
     * [~fulltextStatus()](#module_zotero-api-client..api..fulltextStatus) ⇒ <code>Object</code>
+    * [~fulltext()](#module_zotero-api-client..api..fulltext) ⇒ <code>Object</code>
     * [~itemTypeFields(itemType)](#module_zotero-api-client..api..itemTypeFields) ⇒ <code>Object</code>
     * [~itemTypeCreatorTypes(itemType)](#module_zotero-api-client..api..itemTypeCreatorTypes) ⇒ <code>Object</code>
     * [~template(itemType, subType)](#module_zotero-api-client..api..template) ⇒ <code>Object</code>
@@ -818,6 +820,20 @@ Can only be used in conjunction with get()
 #### api~fulltextStatus() ⇒ <code>Object</code>
 Configure api to request the full-text index status for a library
 Must be used in conjunction with library() and get()
+
+**Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
+**Chainable**  
+**Returns**: <code>Object</code> - Partially configured api functions  
+<a name="module_zotero-api-client..api..fulltext"></a>
+
+#### api~fulltext() ⇒ <code>Object</code>
+Configure api to request or write full-text content.
+When used in conjunction with library() and items() with a single item key,
+use get() to retrieve and put() to store full-text content for that
+attachment item.
+When used in conjunction with library() alone, use get() with a `since`
+option to request a map of item keys to full-text content versions, or
+post() to write full-text content for multiple items at a time.
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -1334,6 +1350,7 @@ Executes request and returns a response. Not meant to be called directly, instea
 | config.resource.template | <code>String</code> | use 'template' resource |
 | config.resource.local | <code>String</code> | use 'local' resource. Local API only |
 | config.resource.authorize | <code>String</code> | use 'authorize' resource. Local API only |
+| config.resource.fulltext | <code>String</code> | use 'fulltext' resource |
 | config.method | <code>String</code> | forwarded to fetch() |
 | config.body | <code>String</code> | forwarded to fetch() |
 | config.appName | <code>String</code> | name of the calling application, used to construct the body of a local API authorization request. Local API only. Incompatible with "body" |

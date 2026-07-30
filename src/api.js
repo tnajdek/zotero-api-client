@@ -147,6 +147,23 @@ const api = function () {
 	}
 
 	/**
+	 * Configure api to request or write full-text content.
+	 * When used in conjunction with library() and items() with a single item key,
+	 * use get() to retrieve and put() to store full-text content for that
+	 * attachment item.
+	 * When used in conjunction with library() alone, use get() with a `since`
+	 * option to request a map of item keys to full-text content versions, or
+	 * post() to write full-text content for multiple items at a time.
+	 * @returns {Object} Partially configured api functions
+	 * @chainable
+	 */
+	const fulltext = function () {
+		return efr.bind(this)({
+			fulltext: null
+		});
+	}
+
+	/**
 	 * Configure api to request all valid fields for an item type
 	 * Can only be used in conjunction with get()
 	 * @param  {String} itemType - item type for which valid fields will be
@@ -728,7 +745,7 @@ const api = function () {
 
 	const functions = {
 		api, apiVersion, attachment, attachmentUrl, authorize, children, collections, creatorFields, delete: del, //delete is a keyword
-		deleted, fulltextStatus, get, getConfig, groups, itemFields, items, itemTypeCreatorTypes, itemTypeFields,
+		deleted, fulltext, fulltextStatus, get, getConfig, groups, itemFields, items, itemTypeCreatorTypes, itemTypeFields,
 		itemTypes, library, local, patch, post, pretend, publications, put, registerAttachment, schema,
 		searches, serverID, settings, subcollections, tags, template, top, trash, use, verifyKeyAccess, version,
 	}

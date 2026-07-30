@@ -31,6 +31,7 @@ export interface ResourceSelection {
   fileUrl?: null;
   settings?: string | null;
   deleted?: null;
+  fulltext?: null;
   fulltextIndex?: null;
   verifyKeyAccess?: null;
   local?: null; // local API only
@@ -293,6 +294,7 @@ export interface ApiChain {
   settings(settings?: string | null): ApiChain;
   deleted(since: number): ApiChain;
   groups(): ApiChain;
+  fulltext(): ApiChain;
   fulltextStatus(): ApiChain;
   version(version: number): ApiChain;
   apiVersion(apiVersion: number): ApiChain;

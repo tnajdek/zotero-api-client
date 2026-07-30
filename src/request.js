@@ -96,6 +96,7 @@ export const resourcesSpecs = [
 	{name: 'fileUrl', urlPart: 'file/view/url', isKeyResource: false},
 	{name: 'settings', urlPart: 'settings', isKeyResource: true},
 	{name: 'deleted', urlPart: 'deleted', isKeyResource: false},
+	{name: 'fulltext', urlPart: 'fulltext', isKeyResource: false},
 	{name: 'fulltextIndex', urlPart: 'fulltext/index', isKeyResource: false},
 	{name: 'verifyKeyAccess', urlPart: 'keys/current', isKeyResource: false},
 	{name: 'local', urlPart: 'local', isKeyResource: false},
@@ -241,6 +242,7 @@ const sleep = seconds => {
  * @param {String} config.resource.template - use 'template' resource
  * @param {String} config.resource.local - use 'local' resource. Local API only
  * @param {String} config.resource.authorize - use 'authorize' resource. Local API only
+ * @param {String} config.resource.fulltext - use 'fulltext' resource
  * @param {String} config.method - forwarded to fetch()
  * @param {String} config.body - forwarded to fetch()
  * @param {String} config.appName - name of the calling application, used to construct the body of a local API authorization request. Local API only. Incompatible with "body"

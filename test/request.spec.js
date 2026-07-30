@@ -2282,6 +2282,114 @@ describe('ZoteroJS request', () => {
 		});
 	})
 
+	describe('Full-text content', () => {
+		it('should get full-text content for an item', () => {
+			fetchMock.route(
+				'begin:https://api.zotero.org/users/475425/items/ABCD1111/fulltext',
+				{
+					headers: { 'Last-Modified-Version': 42 },
+					body: { content: 'Lorem ipsum', indexedPages: 50, totalPages: 50 }
+				}
+			);
+
+			return request({
+				resource: {
+					library: 'u475425',
+					items: 'ABCD1111',
+					fulltext: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, SingleReadResponse);
+				assert.strictEqual(response.getVersion(), 42);
+				assert.deepEqual(response.getData(), { content: 'Lorem ipsum', indexedPages: 50, totalPages: 50 });
+			});
+		});
+
+		it('should write full-text content for an item', () => {
+			fetchMock.route(({url, options: opts}) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/items/ABCD1111/fulltext'));
+				assert.strictEqual(opts.method, 'put');
+				assert.deepEqual(JSON.parse(opts.body), { content: 'Lorem ipsum', indexedChars: 11, totalChars: 11 });
+				return true;
+			}, {
+				status: 204,
+				headers: { 'Last-Modified-Version': 43 }
+			});
+
+			return request({
+				method: 'put',
+				body: { content: 'Lorem ipsum', indexedChars: 11, totalChars: 11 },
+				resource: {
+					library: 'u475425',
+					items: 'ABCD1111',
+					fulltext: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, SingleWriteResponse);
+				assert.strictEqual(response.getVersion(), 43);
+				assert.strictEqual(response.getData().content, 'Lorem ipsum');
+				assert.strictEqual(response.getData().version, 43);
+			});
+		});
+
+		it('should get full-text content versions for a library', () => {
+			fetchMock.route(({url}) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/fulltext'));
+				assert.include(url, 'since=5');
+				return true;
+			}, {
+				headers: { 'Last-Modified-Version': 100 },
+				body: { 'ABCD1111': 42, 'EFGH2222': 77 }
+			});
+
+			return request({
+				resource: {
+					library: 'u475425',
+					fulltext: null
+				},
+				since: 5
+			}).then(response => {
+				assert.instanceOf(response, SingleReadResponse);
+				assert.strictEqual(response.getVersion(), 100);
+				assert.deepEqual(response.getData(), { 'ABCD1111': 42, 'EFGH2222': 77 });
+			});
+		});
+
+		it('should write full-text content for multiple items', () => {
+			const body = [
+				{ key: 'ABCD1111', content: 'Lorem', indexedChars: 5, totalChars: 5 },
+				{ key: 'EFGH2222', content: 'Ipsum', indexedChars: 5, totalChars: 5 }
+			];
+
+			fetchMock.route(({url, options: opts}) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/fulltext'));
+				assert.strictEqual(opts.method, 'post');
+				assert.deepEqual(JSON.parse(opts.body), body);
+				return true;
+			}, {
+				headers: { 'Last-Modified-Version': 101 },
+				body: { success: { 0: 'ABCD1111', 1: 'EFGH2222' }, unchanged: {}, failed: {} }
+			});
+
+			return request({
+				method: 'post',
+				body,
+				resource: {
+					library: 'u475425',
+					fulltext: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiWriteResponse);
+				assert.isOk(response.isSuccess());
+				assert.strictEqual(response.getVersion(), 101);
+				assert.deepEqual(
+					response.getEntityByIndex(0),
+					{ key: 'ABCD1111', content: 'Lorem', indexedChars: 5, totalChars: 5, version: 101 }
+				);
+			});
+		});
+	});
+
 	describe('Full-text index status', () => {
 		it('should report an indexed library without counts', () => {
 			fetchMock.get('begin:https://api.zotero.org/users/475425/fulltext/index', {

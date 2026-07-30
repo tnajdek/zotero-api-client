@@ -42,6 +42,9 @@ const validResourceMethods = {
 	// Item files
 	'library/items*/file': 'GET POST PATCH',
 	'library/items*/fileUrl': 'GET',
+	// Full-text content
+	'library/items*/fulltext': 'GET PUT',
+	'library/fulltext': 'GET POST',
 	// Searches
 	'library/searches': 'GET POST DELETE',
 	'library/searches*': 'GET PUT PATCH DELETE',

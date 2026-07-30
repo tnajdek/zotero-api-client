@@ -1675,6 +1675,28 @@ describe('ZoteroJS request', () => {
 			resource: { local: null, authorize: null }
 		};
 
+		it('should obtain the server ID from a bare API root request', () => {
+			fetchMock.route(({url, options: opts}) => {
+				assert.strictEqual(url, 'http://localhost:23119/api/?format=json');
+				assert.strictEqual(opts.method, 'get');
+				return true;
+			}, {
+				headers: { 'Content-Type': 'text/plain', 'Zotero-Server-ID': '4X1XABCD' },
+				body: 'Nothing to see here.'
+			});
+
+			return request({
+				apiScheme: 'http',
+				apiAuthorityPart: 'localhost:23119',
+				apiPath: 'api/',
+				resource: {}
+			}).then(response => {
+				assert.instanceOf(response, ApiResponse);
+				assert.isNull(response.getData());
+				assert.strictEqual(response.getServerID(), '4X1XABCD');
+			});
+		});
+
 		it('should post an authorization request to the local API', () => {
 			fetchMock.route(({url, options: opts}) => {
 				assert.isOk(url.startsWith('http://localhost:23119/api/local/authorize'));
@@ -2565,11 +2587,13 @@ describe('ZoteroJS request', () => {
 			);
 		});
 
-		it('rejects a request with no resource or method', () => {
-			// resource defaults to {} and method to 'get'; the empty signature is reported as "(empty)"
+		it('accepts a request with no resource on GET only', () => {
+			// resource defaults to {} and method to 'get' -- the API root, used to
+			// obtain the 'Zotero-Server-ID' header from the local API
+			assert.doesNotThrow(() => validateRequest());
 			assert.throws(
-				() => validateRequest(),
-				'(empty)'
+				() => validateRequest({}, 'post'),
+				'not supported'
 			);
 		});
 

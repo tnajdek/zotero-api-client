@@ -941,6 +941,17 @@ describe('Zotero Api Client', () => {
 			assert.throws(noLibrary.get.bind(noLibrary), 'not a recognized endpoint');
 		});
 
+		it('allows a bare api().get() request against the API root', () => {
+			api().get();
+			assert.equal(lrc.method, 'get');
+			assert.isUndefined(lrc.resource);
+		});
+
+		it('throws on non-GET requests against the API root', () => {
+			const configuredApi = api();
+			assert.throws(configuredApi.post.bind(configuredApi, {}), 'POST is not supported');
+		});
+
 		it('bypasses validation when skipValidation is set', () => {
 			api(KEY).library(LIBRARY_KEY).collections(COLLECTION_KEY).children().get({ skipValidation: true });
 			assert.equal(lrc.method, 'get');

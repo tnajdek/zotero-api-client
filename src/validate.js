@@ -7,6 +7,9 @@ import { resourcesSpecs } from './request.js';
 // 'collections*' is a specific collection, 'collections' is the listing); `library` is always
 // keyed and is written without the marker.
 const validResourceMethods = {
+	// API root -- returns a plain-text placeholder on both the web and the local API;
+	// on the local API this is the documented way to obtain the 'Zotero-Server-ID' header
+	'': 'GET',
 	// Library-independent
 	'itemTypes': 'GET',
 	'itemFields': 'GET',
@@ -85,7 +88,7 @@ const validateRequest = (resource, method) => {
 	const httpMethod = (method || 'get').toUpperCase();
 	const allowedMethods = validResourceMethods[signature];
 	if (!allowedMethods) {
-		throw new Error(`Invalid Zotero API request: "${signature || '(empty)'}" is not a recognized endpoint.`);
+		throw new Error(`Invalid Zotero API request: "${signature}" is not a recognized endpoint.`);
 	}
 	if (!allowedMethods.split(' ').includes(httpMethod)) {
 		throw new Error(`Invalid Zotero API request: ${httpMethod} is not supported on "${signature}" (allowed: ${allowedMethods.split(' ').join(', ')}).`);

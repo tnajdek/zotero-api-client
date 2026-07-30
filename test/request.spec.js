@@ -2597,6 +2597,27 @@ describe('ZoteroJS request', () => {
 			);
 		});
 
+		it('requires format "versions" on the library-scoped full-text content endpoint', () => {
+			const resource = {library: 'u475425', fulltext: null};
+			// 'format' defaults to 'json' in request(), which this endpoint rejects
+			assert.throws(
+				() => validateRequest(resource, 'get'),
+				'only supports format "versions"'
+			);
+			assert.throws(
+				() => validateRequest(resource, 'post', 'json'),
+				'only supports format "versions"'
+			);
+			assert.doesNotThrow(() => validateRequest(resource, 'get', 'versions'));
+			assert.doesNotThrow(() => validateRequest(resource, 'post', 'versions'));
+			// an explicit null omits the parameter, so the server applies its own default
+			assert.doesNotThrow(() => validateRequest(resource, 'get', null));
+			// the item-scoped endpoint ignores 'format'
+			assert.doesNotThrow(
+				() => validateRequest({library: 'u475425', items: 'ABCD1111', fulltext: null}, 'get')
+			);
+		});
+
 		it('accepts the full-text index status endpoint on GET only', () => {
 			// library-scoped read, signature "library/fulltextIndex"
 			assert.doesNotThrow(

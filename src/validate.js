@@ -70,6 +70,11 @@ const validResourceMethods = {
 	'library/publications/items*/file': 'GET',
 };
 
+// Endpoints that accept only one specific 'format'
+const requiredResourceFormats = {
+	'library/fulltext': 'versions',
+};
+
 const makeResourceSignature = resource => {
 	const segments = [];
 	for (let spec of resourcesSpecs) {
@@ -81,9 +86,8 @@ const makeResourceSignature = resource => {
 	return segments.join('/');
 };
 
-// Throws if the resource/method combination is not a recognised Zotero API endpoint.
 // Callers can bypass this via the `skipValidation` config option.
-const validateRequest = (resource, method) => {
+const validateRequest = (resource, method, format) => {
 	const signature = makeResourceSignature(resource || {});
 	const httpMethod = (method || 'get').toUpperCase();
 	const allowedMethods = validResourceMethods[signature];
@@ -92,6 +96,13 @@ const validateRequest = (resource, method) => {
 	}
 	if (!allowedMethods.split(' ').includes(httpMethod)) {
 		throw new Error(`Invalid Zotero API request: ${httpMethod} is not supported on "${signature}" (allowed: ${allowedMethods.split(' ').join(', ')}).`);
+	}
+	const requiredFormat = requiredResourceFormats[signature];
+	if (requiredFormat && format !== null) {
+		const requestedFormat = format ?? 'json';
+		if (requestedFormat !== requiredFormat) {
+			throw new Error(`Invalid Zotero API request: "${signature}" only supports format "${requiredFormat}", got "${requestedFormat}".`);
+		}
 	}
 };
 

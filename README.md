@@ -866,6 +866,7 @@ attachment item.
 When used in conjunction with library() alone, use get() with a `since`
 option to request a map of item keys to full-text content versions, or
 post() to write full-text content for multiple items at a time.
+The library-scoped endpoint only accepts `format: 'versions'`.
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  

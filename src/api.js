@@ -154,6 +154,7 @@ const api = function () {
 	 * When used in conjunction with library() alone, use get() with a `since`
 	 * option to request a map of item keys to full-text content versions, or
 	 * post() to write full-text content for multiple items at a time.
+	 * The library-scoped endpoint only accepts `format: 'versions'`.
 	 * @returns {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -860,7 +861,7 @@ const api = function () {
 			const { skipValidation } = requestConfig;
 			delete requestConfig.skipValidation;
 			if (!skipValidation) {
-				validateRequest(requestConfig.resource, method);
+				validateRequest(requestConfig.resource, method, requestConfig.format);
 			}
 		}
 

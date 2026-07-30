@@ -391,7 +391,7 @@ describe('Zotero Api Client', () => {
 
 		it('handles api.library.fulltext().post([FT1, FT2])', () => {
 			let body = [{key: 'ITEM1111', content: 'Lorem'}, {key: 'ITEM2222', content: 'Ipsum'}];
-			api(KEY).library(LIBRARY_KEY).fulltext().post(body);
+			api(KEY).library(LIBRARY_KEY).fulltext().post(body, { format: 'versions' });
 			assert.equal(lrc.method, 'post');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.isNull(lrc.resource.fulltext);
@@ -629,7 +629,7 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('handles api.library.fulltext().get({ since })', () => {
-			api(KEY).library(LIBRARY_KEY).fulltext().get({ since: 42 });
+			api(KEY).library(LIBRARY_KEY).fulltext().get({ since: 42, format: 'versions' });
 			assert.equal(lrc.method, 'get');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.isNull(lrc.resource.fulltext);
@@ -939,6 +939,22 @@ describe('Zotero Api Client', () => {
 			assert.throws(libraryLevel.put.bind(libraryLevel, {}), 'PUT is not supported');
 			const noLibrary = api(KEY).fulltext();
 			assert.throws(noLibrary.get.bind(noLibrary), 'not a recognized endpoint');
+		});
+
+		it('throws on library-scoped full-text content requests without format: versions', () => {
+			// 'format' defaults to 'json', which the API rejects on this endpoint
+			const libraryLevel = api(KEY).library(LIBRARY_KEY).fulltext();
+			assert.throws(libraryLevel.get.bind(libraryLevel, { since: 42 }), 'only supports format "versions"');
+			assert.throws(libraryLevel.post.bind(libraryLevel, []), 'only supports format "versions"');
+			assert.throws(
+				libraryLevel.get.bind(libraryLevel, { since: 42, format: 'atom' }),
+				'only supports format "versions"'
+			);
+			// an explicit null omits the parameter, leaving the server to default it to 'versions'
+			assert.doesNotThrow(libraryLevel.get.bind(libraryLevel, { since: 42, format: null }));
+			// the item-scoped endpoint ignores 'format', so the default is fine there
+			const itemLevel = api(KEY).library(LIBRARY_KEY).items(ITEM_KEY).fulltext();
+			assert.doesNotThrow(itemLevel.get.bind(itemLevel));
 		});
 
 		it('allows a bare api().get() request against the API root', () => {

@@ -1237,7 +1237,7 @@ method.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| keysToDelete | <code>Array</code> | An array of keys to delete. Depending on                                how api has been configured, these will                                be item keys, collection keys, search                                keys or tag names. If not present, api                                should be configured to use specific                                item, collection, saved search or settings                                key, in which case, that entity will be deleted |
+| keysToDelete | <code>Array</code> | An array of keys to delete. Depending on                                how api has been configured, these will                                be item keys, collection keys, search                                keys or tag names. If not present, api                                should be configured to use specific                                item, collection, saved search or settings                                key, in which case, that entity will be deleted.                                Tag names are joined into a single ' || '-separated                                query parameter, hence a tag name that contains                                ' || ' cannot be deleted (see zotero/dataserver#118) |
 | opts | <code>Object</code> | Optional api configuration. If duplicate,                         overrides properties already present. For a list                         of all possible properties, see documentation                         for request() function |
 
 <a name="module_zotero-api-client..api..getConfig"></a>

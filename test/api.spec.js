@@ -481,7 +481,7 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.method, 'delete');
 			assert.equal(lrc.resource.library, LIBRARY_KEY);
 			assert.isNull(lrc.resource.tags);
-			assert.deepEqual(lrc.tag.sort(), keysToDelete.sort())
+			assert.equal(lrc.tag, 'TTAAGG11 || TTAAGG22');
 		});
 
 		it('handles api.library.settings().post(SE1)', () => {

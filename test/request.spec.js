@@ -1542,6 +1542,34 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
+		it('should delete multiple tags using a single query parameter', () => {
+			fetchMock.route(({url, options: opts}) => {
+				assert.isOk(url.startsWith('https://api.zotero.org/users/475425/tags'));
+				assert.strictEqual(opts.method, 'delete');
+				assert.include(url, `tag=${encodeURIComponent('foo || bar')}`);
+				assert.lengthOf(new URL(url).searchParams.getAll('tag'), 1);
+				return true;
+			}, {
+				status: 204,
+				headers: {
+					'Last-Modified-Version': 1234
+				}
+			});
+
+			return request({
+				method: 'delete',
+				resource: {
+					library: 'u475425',
+					tags: null
+				},
+				tag: 'foo || bar'
+			}).then(response => {
+				assert.instanceOf(response, DeleteResponse);
+				assert.strictEqual(response.getVersion(), 1234);
+				assert.strictEqual(response.response.status, 204);
+			});
+		});
+
 		it('should override default headers based on config', () => {
 			fetchMock.route(
 				({ options: opts}) => {

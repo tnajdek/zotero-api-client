@@ -677,7 +677,10 @@ const api = function () {
 	 *                                keys or tag names. If not present, api
 	 *                                should be configured to use specific
 	 *                                item, collection, saved search or settings
-	 *                                key, in which case, that entity will be deleted
+	 *                                key, in which case, that entity will be deleted.
+	 *                                Tag names are joined into a single ' || '-separated
+	 *                                query parameter, hence a tag name that contains
+	 *                                ' || ' cannot be deleted (see zotero/dataserver#118)
 	 * @param  {Object} opts - Optional api configuration. If duplicate,
 	 *                         overrides properties already present. For a list
 	 *                         of all possible properties, see documentation
@@ -838,10 +841,16 @@ const api = function () {
 				}
 
 				if (keysToDelete) {
-					requestConfig[relevantSearchKey] = [
-						...(requestConfig[relevantSearchKey] || []),
-						...keysToDelete
-					]
+					if (relevantSearchKey === 'tag') {
+						// tags are deleted using a single ' || '-separated 'tag' query parameter;
+						// repeated 'tag' parameters are only valid when filtering items
+						requestConfig.tag = [].concat(requestConfig.tag ?? [], keysToDelete).join(' || ');
+					} else {
+						requestConfig[relevantSearchKey] = [
+							...(requestConfig[relevantSearchKey] || []),
+							...keysToDelete
+						]
+					}
 				}
 				break;
 		}

@@ -1,6 +1,14 @@
 import request from './request.js';
 import { validateRequest } from './validate.js';
 
+// Address of the local API, used by requests flagged with local(). Explicitly configured
+// values take precedence
+const localDefaults = {
+	apiAuthorityPart: 'localhost:23119',
+	apiPath: 'api/',
+	apiScheme: 'http',
+};
+
 /**
  * @module zotero-api-client
  */
@@ -580,8 +588,8 @@ const api = function () {
 	}
 
 	/**
-	 * Configure api to use endpoints that only exist in the local API.
-	 * Can only be used in conjunction with authorize() and post().
+	 * Configure api to target the local API, defaulting to its address unless configured
+	 * otherwise. Required by endpoints that only exist in the local API.
 	 * @return {Object} Partially configured api functions
 	 * @chainable
 	 */
@@ -854,6 +862,10 @@ const api = function () {
 					}
 				}
 				break;
+		}
+
+		if (requestConfig?.resource && 'local' in requestConfig.resource) {
+			requestConfig = {...localDefaults, ...requestConfig};
 		}
 
 		// Reject impossible resource/method combinations before they reach the network.

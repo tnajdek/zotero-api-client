@@ -34,8 +34,8 @@ export interface ResourceSelection {
   fulltext?: null;
   fulltextIndex?: null;
   verifyKeyAccess?: null;
-  local?: null; // local API only
-  authorize?: null; // local API only
+  local?: null; // flags a local API request, required by local API-only endpoints; defaults the address to http://localhost:23119/api/
+  authorize?: null; // local API only, requires local
 }
 
 export interface RequestOptions {

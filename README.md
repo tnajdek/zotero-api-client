@@ -133,11 +133,17 @@ For a complete list of all properties `request()` accepts, please refer to the d
 Local API
 =========
 
-The Zotero desktop application can serve a local version of the API at `http://localhost:23119/api/` (enable "Allow other applications on this computer to communicate with Zotero" in Zotero's Advanced settings). It mirrors the web API, user ID `0` refers to the local profile's user. Read requests require no API key:
+The Zotero desktop application can serve a local version of the API at `http://localhost:23119/api/` (enable "Allow other applications on this computer to communicate with Zotero" in Zotero's Advanced settings). It mirrors the web API, user ID `0` refers to the local profile's user. Use `local()` to target it: requests then default to the local API address, unless `apiScheme`, `apiAuthorityPart` or `apiPath` are configured explicitly (e.g. when Zotero listens on a different port). Read requests require no API key:
 
 ```javascript
-const localapi = api('', { apiScheme: 'http', apiAuthorityPart: 'localhost:23119', apiPath: 'api/' });
+const localapi = api().local();
 const response = await localapi.library('user', 0).items().get();
+```
+
+Unlike the web API, the local API can also execute a saved search and return the matching items. Endpoints that only exist in the local API are rejected before the request is sent unless `local()` is part of the chain:
+
+```javascript
+const response = await localapi.library('user', 0).searches(searchKey).items().get();
 ```
 
 Write requests require two extra pieces:
@@ -147,17 +153,16 @@ Write requests require two extra pieces:
 
 ```javascript
 const serverID = (await localapi.get()).getServerID();
-const auth = await localapi.serverID(serverID).local().authorize('My App').post();
+const auth = await localapi.serverID(serverID).authorize('My App').post();
 const key = auth.getKey();
 ```
 
-If the user picks "Always allow", `auth.isRemembered()` returns `true` and the key remains valid until revoked in Zotero's settings. Otherwise the key is single-use: it is consumed by the first write request, and a write with a used or unknown key fails with `401`, at which point authorization should be requested again.
+If the user picks "Always allow", `auth.isRemembered()` returns `true` and the key remains valid until revoked in Zotero's settings. Otherwise, the key is single-use: it is consumed by the first write request, and a write request with a used or unknown key fails with `401`, at which point authorization should be requested again.
 
 With both in hand, writes look exactly like web API writes:
 
 ```javascript
-await api(key, { apiScheme: 'http', apiAuthorityPart: 'localhost:23119', apiPath: 'api/' })
-	.library('user', 0).serverID(serverID).items().post([ /* items */ ]);
+await api(key).local().library('user', 0).serverID(serverID).items().post([ /* items */ ]);
 ```
 
 Note: the local API drops requests that appear to come from a browser (a `Mozilla/` user agent or an `Origin` header) unless the `Zotero-Allowed-Request` header is present; set it via the `zoteroAllowedRequest` option.
@@ -1178,8 +1183,8 @@ Can only be used in conjunction with get()
 <a name="module_zotero-api-client..api..local"></a>
 
 #### api~local() ⇒ <code>Object</code>
-Configure api to use endpoints that only exist in the local API.
-Can only be used in conjunction with authorize() and post().
+Configure api to target the local API, defaulting to its address unless configured
+otherwise. Required by endpoints that only exist in the local API.
 
 **Kind**: inner method of [<code>api</code>](#module_zotero-api-client..api)  
 **Chainable**  
@@ -1381,7 +1386,6 @@ Executes request and returns a response. Not meant to be called directly, instea
 | config.resource.searches | <code>String</code> | use 'searches' resource |
 | config.resource.tags | <code>String</code> | use 'tags' resource |
 | config.resource.template | <code>String</code> | use 'template' resource |
-| config.resource.local | <code>String</code> | use 'local' resource. Local API only |
 | config.resource.authorize | <code>String</code> | use 'authorize' resource. Local API only |
 | config.resource.fulltext | <code>String</code> | use 'fulltext' resource |
 | config.method | <code>String</code> | forwarded to fetch() |

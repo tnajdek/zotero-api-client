@@ -719,6 +719,23 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
+		it('should place the saved search before items in the url', () => {
+			return request({
+				resource: {
+					library: 'u0',
+					searches: 'HHF7BB4C',
+					items: null,
+				},
+				apiScheme: 'http',
+				apiAuthorityPart: 'localhost:23119',
+				apiPath: 'api/',
+				pretend: true
+			}).then(response => {
+				const { url } = response.getData();
+				assert.include(url, 'http://localhost:23119/api/users/0/searches/HHF7BB4C/items?');
+			});
+		});
+
 		it('should send a Zotero-API-Version header when zoteroApiVersion is set', () => {
 			return request({
 				resource: { library: 'u475425', items: null },
@@ -1672,7 +1689,7 @@ describe('ZoteroJS request', () => {
 			method: 'post',
 			appName: 'Test App',
 			zoteroServerID: '4X1XABCD',
-			resource: { local: null, authorize: null }
+			resource: { authorize: null }
 		};
 
 		it('should obtain the server ID from a bare API root request', () => {
@@ -2616,6 +2633,16 @@ describe('ZoteroJS request', () => {
 			assert.doesNotThrow(
 				() => validateRequest({library: 'u475425', items: 'ABCD1111', fulltext: null}, 'get')
 			);
+		});
+
+		it('accepts local API-only endpoints only with the local flag', () => {
+			const searchItems = {library: 'u0', searches: 'HHF7BB4C', items: null};
+			assert.throws(() => validateRequest(searchItems, 'get'), 'only exists in the local API');
+			assert.doesNotThrow(() => validateRequest({...searchItems, local: null}, 'get'));
+			assert.throws(() => validateRequest({authorize: null}, 'post'), 'only exists in the local API');
+			assert.doesNotThrow(() => validateRequest({local: null, authorize: null}, 'post'));
+			// the flag is not part of the signature, so endpoints shared with the web API stay valid
+			assert.doesNotThrow(() => validateRequest({library: 'u0', local: null, items: null}, 'get'));
 		});
 
 		it('accepts the full-text index status endpoint on GET only', () => {

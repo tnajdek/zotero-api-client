@@ -298,6 +298,15 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.resource.searches, SEARCH_KEY);
 		});
 
+		it('handles api.library.local.searches(S).items.get', () => {
+			api(KEY).library(LIBRARY_KEY).local().searches(SEARCH_KEY).items().get();
+			assert.equal(lrc.method, 'get');
+			assert.equal(lrc.resource.library, LIBRARY_KEY);
+			assert.isNull(lrc.resource.local);
+			assert.equal(lrc.resource.searches, SEARCH_KEY);
+			assert.isNull(lrc.resource.items);
+		});
+
 		it('handles api.library.tags().get', () => {
 			api(KEY).library(LIBRARY_KEY).tags().get();
 			assert.equal(lrc.method, 'get');
@@ -790,6 +799,36 @@ describe('Zotero Api Client', () => {
 			assert.equal(lrc.appName, 'Test App');
 			assert.isUndefined(lrc.body);
 		});
+
+		it('defaults to the local API address when local() is used', () => {
+			api(KEY).local().library(LIBRARY_KEY).items().get();
+			assert.isNull(lrc.resource.local);
+			assert.equal(lrc.apiScheme, 'http');
+			assert.equal(lrc.apiAuthorityPart, 'localhost:23119');
+			assert.equal(lrc.apiPath, 'api/');
+			api(KEY).library(LIBRARY_KEY).items().get();
+			assert.notProperty(lrc, 'apiScheme');
+			assert.notProperty(lrc, 'apiAuthorityPart');
+			assert.notProperty(lrc, 'apiPath');
+		});
+
+		it('keeps an explicitly configured address regardless of local() position', () => {
+			api(KEY, { apiAuthorityPart: 'localhost:23120' }).local().library(LIBRARY_KEY).items().get();
+			assert.equal(lrc.apiScheme, 'http');
+			assert.equal(lrc.apiAuthorityPart, 'localhost:23120');
+			assert.equal(lrc.apiPath, 'api/');
+			api(KEY).local().library(LIBRARY_KEY).items().get({ apiScheme: 'https', apiPath: '/zotero' });
+			assert.equal(lrc.apiScheme, 'https');
+			assert.equal(lrc.apiAuthorityPart, 'localhost:23119');
+			assert.equal(lrc.apiPath, 'zotero/');
+		});
+
+		it('builds local API urls without a local segment', async () => {
+			const response = await _api().local().library('user', 0).searches(SEARCH_KEY).items().pretend('get');
+			assert.include(response.getData().url, `http://localhost:23119/api/users/0/searches/${SEARCH_KEY}/items?`);
+			const authorizeResponse = await _api().local().authorize('Test App').pretend('post');
+			assert.include(authorizeResponse.getData().url, 'http://localhost:23119/api/local/authorize?');
+		});
 	});
 
 	describe('Handles invalid calls', () => {
@@ -914,6 +953,27 @@ describe('Zotero Api Client', () => {
 			assert.throws(configuredApi.put.bind(configuredApi, {}), 'PUT is not supported');
 		});
 
+		it('throws on saved search items without local()', () => {
+			const configuredApi = api(KEY).library(LIBRARY_KEY).searches(SEARCH_KEY).items();
+			assert.throws(configuredApi.get.bind(configuredApi), 'only exists in the local API');
+		});
+
+		it('throws on saved search items combinations the local API does not serve', () => {
+			const searchItems = api(KEY).library(LIBRARY_KEY).local().searches(SEARCH_KEY).items();
+			assert.throws(searchItems.post.bind(searchItems, []), 'POST is not supported');
+			const noSearchKey = api(KEY).library(LIBRARY_KEY).local().searches().items();
+			assert.throws(noSearchKey.get.bind(noSearchKey), 'not a recognized endpoint');
+			const topItems = api(KEY).library(LIBRARY_KEY).local().searches(SEARCH_KEY).items().top();
+			assert.throws(topItems.get.bind(topItems), 'not a recognized endpoint');
+			const itemTags = api(KEY).library(LIBRARY_KEY).local().searches(SEARCH_KEY).items().tags();
+			assert.throws(itemTags.get.bind(itemTags), 'not a recognized endpoint');
+		});
+
+		it('allows local() on endpoints shared with the web API', () => {
+			const configuredApi = api(KEY).library(LIBRARY_KEY).local().items();
+			assert.doesNotThrow(configuredApi.get.bind(configuredApi));
+		});
+
 		it('throws on local().authorize() with methods other than POST', () => {
 			const configuredApi = api().local().authorize('Test App');
 			assert.throws(configuredApi.get.bind(configuredApi), 'GET is not supported');
@@ -921,10 +981,11 @@ describe('Zotero Api Client', () => {
 		});
 
 		it('throws when local() is used without authorize() and vice versa', () => {
+			// local() alone targets the API root, which is GET only
 			const localOnly = api().local();
-			assert.throws(localOnly.post.bind(localOnly, {}), 'not a recognized endpoint');
+			assert.throws(localOnly.post.bind(localOnly, {}), 'POST is not supported');
 			const authorizeOnly = api().authorize('Test App');
-			assert.throws(authorizeOnly.post.bind(authorizeOnly), 'not a recognized endpoint');
+			assert.throws(authorizeOnly.post.bind(authorizeOnly), 'only exists in the local API');
 		});
 
 		it('throws when local().authorize() is scoped to a library', () => {

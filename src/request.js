@@ -76,9 +76,9 @@ export const resourcesSpecs = [
 	//name in resource, name in the url (usually the same, but there are exceptions)
 	{name: 'library', urlPart: 'library', isKeyResource: true},
 	{name: 'collections', urlPart: 'collections', isKeyResource: true},
+	{name: 'searches', urlPart: 'searches', isKeyResource: true},
 	{name: 'publications', urlPart: 'publications', isKeyResource: false},
 	{name: 'items', urlPart: 'items', isKeyResource: true},
-	{name: 'searches', urlPart: 'searches', isKeyResource: true},
 	{name: 'top', urlPart: 'top', isKeyResource: false},
 	{name: 'trash', urlPart: 'trash', isKeyResource: false},
 	{name: 'tags', urlPart: 'tags', isKeyResource: true},
@@ -99,8 +99,7 @@ export const resourcesSpecs = [
 	{name: 'fulltext', urlPart: 'fulltext', isKeyResource: false},
 	{name: 'fulltextIndex', urlPart: 'fulltext/index', isKeyResource: false},
 	{name: 'verifyKeyAccess', urlPart: 'keys/current', isKeyResource: false},
-	{name: 'local', urlPart: 'local', isKeyResource: false},
-	{name: 'authorize', urlPart: 'authorize', isKeyResource: false},
+	{name: 'authorize', urlPart: 'local/authorize', isKeyResource: false},
 ];
 
 const defaults = {
@@ -240,7 +239,6 @@ const sleep = seconds => {
  * @param {String} config.resource.searches - use 'searches' resource
  * @param {String} config.resource.tags - use 'tags' resource
  * @param {String} config.resource.template - use 'template' resource
- * @param {String} config.resource.local - use 'local' resource. Local API only
  * @param {String} config.resource.authorize - use 'authorize' resource. Local API only
  * @param {String} config.resource.fulltext - use 'fulltext' resource
  * @param {String} config.method - forwarded to fetch()

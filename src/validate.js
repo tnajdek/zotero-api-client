@@ -5,7 +5,8 @@ import { resourcesSpecs } from './request.js';
 // A "signature" is the set of resource keys present (see resourcesSpecs), in resourcesSpecs
 // order, joined by '/'. A key-bearing resource that carries a value gets a '*' suffix (e.g.
 // 'collections*' is a specific collection, 'collections' is the listing); `library` is always
-// keyed and is written without the marker.
+// keyed and is written without the marker. `local` (see local() in api.js) is a flag rather than
+// a resource and is never part of a signature.
 const validResourceMethods = {
 	// API root -- returns a plain-text placeholder on both the web and the local API;
 	// on the local API this is the documented way to obtain the 'Zotero-Server-ID' header
@@ -19,8 +20,6 @@ const validResourceMethods = {
 	'template': 'GET',
 	'schema': 'GET',
 	'verifyKeyAccess': 'GET',
-	// Local API only
-	'local/authorize': 'POST',
 	// Collections
 	'library/collections': 'GET POST DELETE',
 	'library/collections*': 'GET PUT PATCH DELETE',
@@ -70,6 +69,13 @@ const validResourceMethods = {
 	'library/publications/items*/file': 'GET',
 };
 
+// Endpoints that exist only in the local API, valid only on requests flagged with `local`
+const localOnlyResourceMethods = {
+	'authorize': 'POST',
+	// items matching a saved search; the web API stores saved searches but never executes them
+	'library/searches*/items': 'GET',
+};
+
 // Endpoints that accept only one specific 'format'
 const requiredResourceFormats = {
 	'library/fulltext': 'versions',
@@ -88,10 +94,15 @@ const makeResourceSignature = resource => {
 
 // Callers can bypass this via the `skipValidation` config option.
 const validateRequest = (resource, method, format) => {
-	const signature = makeResourceSignature(resource || {});
+	resource = resource || {};
+	const signature = makeResourceSignature(resource);
 	const httpMethod = (method || 'get').toUpperCase();
-	const allowedMethods = validResourceMethods[signature];
+	const isLocal = 'local' in resource;
+	const allowedMethods = validResourceMethods[signature] ?? (isLocal ? localOnlyResourceMethods[signature] : undefined);
 	if (!allowedMethods) {
+		if (signature in localOnlyResourceMethods) {
+			throw new Error(`Invalid Zotero API request: "${signature}" only exists in the local API, add local() to target it.`);
+		}
 		throw new Error(`Invalid Zotero API request: "${signature}" is not a recognized endpoint.`);
 	}
 	if (!allowedMethods.split(' ').includes(httpMethod)) {

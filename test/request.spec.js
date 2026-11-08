@@ -542,6 +542,33 @@ describe('ZoteroJS request', () => {
 			});
 		});
 
+		it('should get a set of manual tags for top items in a collection', () => {
+			fetchMock.route(
+				({url}) => {
+					assert.isOk(
+						url.startsWith('https://api.zotero.org/users/475425/collections/N7W92H48/items/top/tags')
+					);
+					assert.include(url, 'tagType=0');
+					return true;
+				}, tagsResponseFixture
+			);
+
+			return request({
+				tagType: 0,
+				resource: {
+					library: 'u475425',
+					collections: 'N7W92H48',
+					items: null,
+					top: null,
+					tags: null
+				}
+			}).then(response => {
+				assert.instanceOf(response, MultiReadResponse);
+				assert.strictEqual(response.getResponseType(), 'MultiReadResponse');
+				assert.strictEqual(response.getData().length, 25);
+			});
+		});
+
 		it('should get a set of tags for trashed items', () => {
 			fetchMock.route(
 				'begin:https://api.zotero.org/users/475425/items/trash/tags',
@@ -855,7 +882,7 @@ describe('ZoteroJS request', () => {
 					return [
 						'collectionKey', 'content', 'direction', 'format', 'include', 'includeTrashed',
 						'itemKey', 'itemType', 'limit', 'q', 'qmode', 'searchKey', 'since', 'sort',
-						'start', 'style', 'tag'
+						'start', 'style', 'tag', 'tagType'
 					].every(qp => url.includes(`${qp}=${qp}`));
 				}, {}
 			);
@@ -882,6 +909,7 @@ describe('ZoteroJS request', () => {
 				start: 'start',
 				style: 'style',
 				tag: 'tag',
+				tagType: 'tagType',
 			});
 		});
 

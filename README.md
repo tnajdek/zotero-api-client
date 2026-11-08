@@ -1370,6 +1370,7 @@ Executes request and returns a response. Not meant to be called directly, instea
 | config.start | <code>Number</code> | 'start' query argument |
 | config.style | <code>String</code> | 'style' query argument |
 | config.tag | <code>String</code> \| <code>Array.&lt;String&gt;</code> | 'tag' query argument |
+| config.tagType | <code>Number</code> | 'tagType' query argument. 0 for manual tags, 1 for automatic tags |
 | config.pretend | <code>Boolean</code> | triggers pretend mode where fetch request is prepared and returned without execution |
 | config.resource.top | <code>String</code> | use 'top' resource |
 | config.resource.trash | <code>String</code> | use 'trash' resource |

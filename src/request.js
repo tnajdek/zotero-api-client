@@ -50,6 +50,7 @@ const queryParamNames = [
 	'start',
 	'style',
 	'tag',
+	'tagType',
 ];
 
 const filePatchQueryParamNames = [
@@ -223,6 +224,7 @@ const sleep = seconds => {
  * @param {Number} config.start - 'start' query argument
  * @param {String} config.style - 'style' query argument
  * @param {String|String[]} config.tag - 'tag' query argument
+ * @param {Number} config.tagType - 'tagType' query argument. 0 for manual tags, 1 for automatic tags
  * @param {Boolean} config.pretend - triggers pretend mode where fetch request is prepared and returned without execution
  * @param {String} config.resource.top - use 'top' resource
  * @param {String} config.resource.trash - use 'trash' resource

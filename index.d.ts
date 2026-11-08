@@ -82,6 +82,7 @@ export interface RequestOptions {
   start?: number | string;
   style?: string;
   tag?: string | string[];
+  tagType?: number | string; // 0 for manual tags, 1 for automatic tags
 
   // Execution / fetch
   method?: HttpVerb | string;
